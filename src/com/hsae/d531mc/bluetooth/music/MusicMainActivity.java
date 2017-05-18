@@ -325,7 +325,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-
+		
 		boolean isUsb = isUsbConnected() || !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 		super.onResume();
@@ -579,7 +579,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				if (bundle != null) {
 					intent.putExtras(bundle);
 				}
-
 				startActivity(intent);
 				finish();
 			}

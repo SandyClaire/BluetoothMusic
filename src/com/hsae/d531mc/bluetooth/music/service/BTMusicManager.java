@@ -256,7 +256,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		LogUtil.i(TAG, "------------- exitDiagnoseMode ");
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
 	}
 

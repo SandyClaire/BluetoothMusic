@@ -14,6 +14,7 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 
@@ -27,10 +28,12 @@ import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
+import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
+import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.util.Util;
 
 /**
@@ -80,6 +83,8 @@ public class BluetoothMusicModel {
 	 */
 	public ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
 
+	private AudioManager audioManager;
+
 	/**
 	 * 随机集合
 	 */
@@ -89,8 +94,13 @@ public class BluetoothMusicModel {
 		mContext = context;
 		if (null == mInstance) {
 			mInstance = new BluetoothMusicModel();
+
 		}
 		return mInstance;
+	}
+
+	public BluetoothMusicModel() {
+		audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
 	}
 
 	public void bindService() {
@@ -1156,10 +1166,8 @@ public class BluetoothMusicModel {
 	 */
 	public void mainAudioChanged(boolean isBack) {
 		LogUtil.i(TAG, "requestAudioSource == " + isBack);
-		isPlayByPower = false;
 		Source source = new Source();
 		source.mainAudioChanged(App.BT_MUSIC, isBack);
-
 	}
 
 	/**
@@ -1173,14 +1181,14 @@ public class BluetoothMusicModel {
 			int mode = getStreamMode();
 			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
 			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
 			if (soApp != App.BT_MUSIC) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 			} else if (soApp == App.BT_MUSIC
 					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -1188,58 +1196,41 @@ public class BluetoothMusicModel {
 	}
 
 	public boolean isAudioFocused = false;
-	public AudioManager audioManager;
-
-	public boolean isPlayByPower = false;
 
 	/** 获取Android音频焦点 */
 	public synchronized void requestAudioFocus(boolean flag) {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
-		if (source.getCurrentSource() == App.BT_MUSIC) {
-			mainAudioChanged(flag);
-			// 如果手动点击停止，不进行播放；
-			if (isHandPuse) {
-				return;
-			}
-			try {
-				AVRCPControl(AudioControl.CONTROL_PLAY);
-			} catch (RemoteException e) {
-			}
-			return;
-		}
-		LogUtil.i(TAG, "requestAudioFocus---request audio focus");
-		audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
-		int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
-				AudioManager.AUDIOFOCUS_GAIN);
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED"
-					+ "BluetoothMusicModel获取音频焦点成功");
-			if (!isAudioFocused) {
+
+		try {
+			if (source.getCurrentSource() == App.BT_MUSIC) {
 				mainAudioChanged(flag);
-			}
-			autoConnectA2DP();
-			isAudioFocused = true;
-		} else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-			LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
-			isAudioFocused = false;
-		} else {
-			isAudioFocused = false;
-			LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
-		}
-		notifyLauncherInfo();
-		if (isAudioFocused) {
-			try {
-				audioStreamEnable();
-				if (isHandPuse) {
-					LogUtil.i(TAG, "requestAudioFocus --- isHandPuse");
-					return;
+				// 如果手动点击停止，不进行播放；
+				if (!isHandPuse) {
+					AVRCPControl(AudioControl.CONTROL_PLAY);
 				}
-				LogUtil.i(TAG, "requestAudioFocus --- play");
-				AVRCPControl(AudioControl.CONTROL_PLAY);
-			} catch (RemoteException e) {
-				e.printStackTrace();
+			} else {
+				LogUtil.i("cruze", "准备抢占焦点");
+				if (!isAudioFocused) {
+					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+							AudioManager.AUDIOFOCUS_GAIN);
+					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+						isAudioFocused = true;
+						mainAudioChanged(flag);
+						autoConnectA2DP();
+						if (!isHandPuse) {
+							AVRCPControl(AudioControl.CONTROL_PLAY);
+						}
+						getPlayStatus();
+					} else {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+						isAudioFocused = false;
+					}
+					notifyLauncherInfo();
+				}
 			}
+		} catch (RemoteException e) {
 		}
 	}
 
@@ -1257,21 +1248,16 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	public void audioStreamEnable() {
-		mHandler.postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					getPlayStatus();
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}, 300);
-		LogUtil.i(TAG, "audioStreamEnable --- play");
-	}
+	// public void audioStreamEnable() {
+	// mHandler.post(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	//
+	// }
+	// });
+	// LogUtil.i(TAG, "audioStreamEnable --- play");
+	// }
 
 	private Handler mHandler = new Handler();
 
@@ -1349,26 +1335,15 @@ public class BluetoothMusicModel {
 				notifyAutroMusicInfo(null);
 				break;
 			}
-			notifyLauncherInfo();
-			if (isAudioFocused) {
-				try {
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+			LogUtil.i("cruze", "mAFCListener : isAudioFocused =  " + isAudioFocused);
+			try {
+				if (isAudioFocused && !isHandPuse) {
 					// 如果是手动暂停 不执行播放
-					if (isHandPuse) {
-						return;
-					}
 					AVRCPControl(AudioControl.CONTROL_PLAY);
-				} catch (RemoteException e) {
+				} else {
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
 				}
-			} else {
-				try {
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
-					if (isCurrentA2DPPlaying()) {
-						AVRCPControl(AudioControl.CONTROL_PAUSE);
-					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
+			} catch (RemoteException e) {
 			}
 		}
 	};

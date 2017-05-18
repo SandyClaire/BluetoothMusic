@@ -83,11 +83,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		try {
 			mBluetoothMusicModel.AVRCPControl(command);
 			getMusicMatedata();
+			if (command == AudioControl.CONTROL_PAUSE) {
+				mBluetoothMusicModel.isHandPuse = true;
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
-		}
-		if (command == AudioControl.CONTROL_PAUSE) {
-			mBluetoothMusicModel.isHandPuse = true;
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
@@ -315,7 +315,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public void setNextClicked() {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);		
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
 }
