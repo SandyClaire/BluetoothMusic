@@ -190,7 +190,7 @@
                     android:id="@+id/btn_repeat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_music_repeat"
+                    android:background="@drawable/btn_music_repeat_singel"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="@dimen/music_buttom_button_mergin"
                     android:layout_marginLeft="@dimen/music_buttom_button_mergin"  />
@@ -207,8 +207,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                     android:layout_marginLeft="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_shulle" />
+                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"
+                    android:background="@drawable/btn_music_shuffle_open" />
             </LinearLayout>
             
             <LinearLayout
