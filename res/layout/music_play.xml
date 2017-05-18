@@ -74,12 +74,9 @@
 
         <ImageView
             android:id="@+id/btn_playlist"
-            android:layout_width="80dp"
-            android:layout_height="149dp"
-            android:layout_gravity="end|top"
-            android:layout_marginTop="269dp"
-            android:paddingBottom="50dp"
-            android:paddingTop="55dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
             android:paddingEnd="14dp"
             android:paddingStart="13dp"
             android:src="@drawable/selector_source_list" />
@@ -95,10 +92,8 @@
         <ImageView
             android:id="@+id/right_bg"
             android:layout_width="80dp"
-            android:layout_height="152dp"
-           android:layout_gravity="end|top"
-            android:layout_marginEnd="0dp"
-            android:layout_marginTop="269dp"
+            android:layout_height="wrap_content"
+           android:layout_gravity="end|center_vertical"
             android:background="@drawable/ic_right_btn_bg" />
     </FrameLayout>
 
