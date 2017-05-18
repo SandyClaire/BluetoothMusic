@@ -2,6 +2,7 @@ package com.hsae.d531mc.bluetooth.music.presenter;
 
 import android.content.Context;
 import android.os.Message;
+import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
@@ -35,13 +36,13 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
-			if (conStatus == 1) {
-				mIMusicModel.playStatus();
-			}
+//			if (conStatus == 1) {
+//				mIMusicModel.playStatus();
+//			}
 			mIMusicView.updateViewByConnectStatus(conStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
-			int playStatus = inMessage.getData().getInt("playStatus");
+			boolean playStatus = inMessage.getData().getBoolean("playStatus");
 			mIMusicView.updatePlayBtnByStatus(playStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_PREV:
@@ -69,7 +70,8 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:
 			String currentTime = inMessage.getData().getString("currentTime");
-			mIMusicView.updateMusicPlayCurrentTime(currentTime);
+			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
+			mIMusicView.updateMusicPlayCurrentTime(currentTime,isPlaying);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REPEAT_ALL:
 			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 4);
@@ -97,7 +99,8 @@ public class MusicPersenter implements IObserver {
 		int status = mIMusicModel.getA2DPConnectStatus();
 		mIMusicView.updateViewByConnectStatus(status);
 		if (status == 1) {
-			mIMusicModel.playStatus();
+			int playStatus = mIMusicModel.playStatus();
+			Log.e("wangda", "init ---- playStatus = " + playStatus);
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			String title = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);
 			String atrist = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_ARTIST_NAME);
@@ -105,6 +108,7 @@ public class MusicPersenter implements IObserver {
 			String totalTime = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
 			mIMusicView.updateMusicDataInfo(bean , isSupport);
+//			mIMusicView.updatePlayBtnByStatus(playStatus);
 		}
 	}
 

@@ -14,7 +14,7 @@ public interface IMusicView {
 	 * update play button by status
 	 * @param status
 	 */
-	public void updatePlayBtnByStatus(int status);
+	public void updatePlayBtnByStatus(boolean flag);
 
 	/**
 	 * update data info
@@ -28,6 +28,6 @@ public interface IMusicView {
 	 * update music play current time
 	 * @param currentTime
 	 */
-	public void updateMusicPlayCurrentTime(String currentTime);
+	public void updateMusicPlayCurrentTime(String currentTime , boolean isPlaying);
 
 }

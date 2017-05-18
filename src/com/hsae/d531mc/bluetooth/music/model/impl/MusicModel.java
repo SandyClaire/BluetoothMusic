@@ -1,7 +1,5 @@
 package com.hsae.d531mc.bluetooth.music.model.impl;
 
-import java.util.regex.Pattern;
-
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +18,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Handler mHandler = new Handler();
+	private int playStatus = -1;
 
 	public MusicModel(Context mContext) {
 		super();
@@ -69,28 +68,29 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	}
 
 	@Override
-	public void updatePlayOrPauseStatus(int status) {
+	public void updatePlayOrPauseStatus(boolean flag) {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE;
 		Bundle mBundle = new Bundle();
-		mBundle.putInt("playStatus", status);
+		mBundle.putBoolean("playStatus", flag);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
 	@Override
-	public void playStatus() {
+	public int playStatus() {
 		mHandler.postDelayed(new Runnable() {
 			
 			@Override
 			public void run() {
 				try {
-					mBluetoothMusicModel.getPlayStatus();
+					playStatus = mBluetoothMusicModel.getPlayStatus();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
 		}, 500);
+		return playStatus;
 	}
 
 	@Override
@@ -127,11 +127,12 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	}
 	
 	@Override
-	public void getCurrentMusicPlayPosition(String position) {
+	public void getCurrentMusicPlayPosition(String position , Boolean isPlaying) {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE;
 		Bundle mBundle = new Bundle();
 		mBundle.putString("currentTime", position);
+		mBundle.putBoolean("playStatus", isPlaying);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
 	}

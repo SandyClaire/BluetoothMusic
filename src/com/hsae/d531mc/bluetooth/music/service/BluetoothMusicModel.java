@@ -501,9 +501,9 @@ public class BluetoothMusicModel {
 		}
 	}
 	
-	public void updatePlayStatus(int status) {
+	public void updatePlayStatus(boolean flag) {
 		if (null != mIMusicModel) {
-			mIMusicModel.updatePlayOrPauseStatus(status);
+			mIMusicModel.updatePlayOrPauseStatus(flag);
 		}
 	}
 	
@@ -513,9 +513,9 @@ public class BluetoothMusicModel {
 		}
 	}
 	
-	public void updateCurrentPlayTime(String position) {
+	public void updateCurrentPlayTime(String position , boolean isPlaying) {
 		if (null != mIMusicModel) {
-			mIMusicModel.getCurrentMusicPlayPosition(position);
+			mIMusicModel.getCurrentMusicPlayPosition(position,isPlaying);
 		}
 	}
 	

@@ -34,13 +34,13 @@ public interface IMusicModel {
 	 * update play or pause status
 	 * @param status
 	 */
-	public void updatePlayOrPauseStatus(int status);
+	public void updatePlayOrPauseStatus(boolean flag);
 	
 	/**
 	 * update play or pause status
 	 * @param status
 	 */
-	public void playStatus();
+	public int playStatus();
 	
 	/**
 	 * support metadata or not
@@ -65,7 +65,7 @@ public interface IMusicModel {
 	 * get current music play position
 	 * @param position
 	 */
-	public void getCurrentMusicPlayPosition(String position);
+	public void getCurrentMusicPlayPosition(String position , Boolean isPlaying);
 	
 	/**
 	 * set current player ap setting

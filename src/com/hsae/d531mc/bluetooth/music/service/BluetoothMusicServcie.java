@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
@@ -23,6 +24,7 @@ public class BluetoothMusicServcie extends Service {
 	private String mAtrist = "";
 	private String mAlbum = "";
 	private String mTotalTIme = "";
+	private boolean isplaying = false;
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -81,12 +83,8 @@ public class BluetoothMusicServcie extends Service {
 								.updateMsgByConnectStatusChange(mConnectStatus);
 					} else if (nProfile == MangerConstant.PROFILE_AVRCP_BROWSING_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
-						Log.e("wangda",
-								"PROFILE_AVRCP_BROWSING_CHANNEL = mConnectStatus");
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
-						Log.e("wangda",
-								"PROFILE_AUDIO_CONTROL_CHANNEL = mConnectStatus");
 					}
 				}
 			} else if (strAction
@@ -165,7 +163,13 @@ public class BluetoothMusicServcie extends Service {
 					.equals(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("PlayStatus");
-					mBluetoothMusicModel.updatePlayStatus(nPlayStatus);
+					
+					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
+						isplaying = true;
+					}else {
+						isplaying = false;
+					}
+					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					// Log.e("wangda",
 					// "MSG_ACTION_A2DP_PLAYSTATUS -- nPlayStatus = "
 					// + nPlayStatus);
@@ -174,10 +178,10 @@ public class BluetoothMusicServcie extends Service {
 					.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
 				if (mBundle != null) {
 					String strPos = mBundle.getString("Position");
-					mBluetoothMusicModel.updateCurrentPlayTime(strPos);
-					// Log.e("wangda",
-					// "MSG_ACTION_A2DP_PLAYBACKPOS -- nPlayStatus = "
-					// + nPlayStatus);
+					mBluetoothMusicModel.updateCurrentPlayTime(strPos,isplaying);
+					 Log.e("wangda",
+					 "MSG_ACTION_A2DP_PLAYBACKPOS -- strPos = "
+					 + strPos);
 				}
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
@@ -186,13 +190,22 @@ public class BluetoothMusicServcie extends Service {
 					// Log.e("wangda",
 					// "MSG_ACTION_A2DP_STREAMSTATUS -- nPlayStatus = "
 					// + nPlayStatus);
-					mBluetoothMusicModel.updatePlayStatus(nPlayStatus);
 					switch (nPlayStatus) {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						// mHandler.removeCallbacks(A2DPActivity.this);
 						// mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
+						if (isplaying == false) {
+							try {
+								isplaying = true;
+								String totalTime = mBluetoothMusicModel.A2DPGetCurrentAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
+								mBluetoothMusicModel.updateCurrentPlayTime(totalTime , isplaying);
+								Log.e("wangda", "------ ################");
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						}
 						// if(bPlaying == false)
 						// ChangerMetaDataSupportStatus();
 						// bPlaying = true;

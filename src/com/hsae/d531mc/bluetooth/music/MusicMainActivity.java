@@ -67,13 +67,17 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.e("wangda", "oncreate ------------ 1 --------------- " + System.currentTimeMillis());
+		Log.e("wangda",
+				"oncreate ------------ 1 --------------- "
+						+ System.currentTimeMillis());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.music_main);
-//		InitService();
+		// InitService();
 		initView();
 		initMvp();
-		Log.e("wangda", "oncreate ------------ 2 --------------- " + System.currentTimeMillis());
+		Log.e("wangda",
+				"oncreate ------------ 2 --------------- "
+						+ System.currentTimeMillis());
 	}
 
 	private void initMvp() {
@@ -140,13 +144,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		});
 		isfirst = true;
 	}
-	
+
 	private void showFram() {
 		if (isfirst) {
-			mFragmentManager
-			.beginTransaction()
-			.replace(R.id.bluetooth_music_frame,
-					mFragmet).commit();
+			mFragmentManager.beginTransaction()
+					.replace(R.id.bluetooth_music_frame, mFragmet).commit();
 			isfirst = false;
 		}
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
@@ -210,11 +212,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			showShufflePopUp(playModeListener);
 			break;
 		case R.id.btn_home:
-			Intent intent = new Intent(Intent.ACTION_MAIN);  
-	        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
-	        intent.addCategory(Intent.CATEGORY_HOME);  
-	        startActivity(intent);
-	        this.finish();
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			startActivity(intent);
+			this.finish();
 			break;
 		default:
 			break;
@@ -228,10 +230,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 			Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
 					.show();
 			updateViewShow(false);
-			mTextTitle
-					.setText(getResources().getString(R.string.music_matedate_unsupport));
-			mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
-			mTextAlbum.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextTitle.setText(getResources().getString(
+					R.string.music_bluetooth_disconnect));
+			mTextArtist.setText(getResources().getString(
+					R.string.music_bluetooth_disconnect));
+			mTextAlbum.setText(getResources().getString(
+					R.string.music_bluetooth_disconnect));
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
@@ -251,14 +255,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	@Override
-	public void updatePlayBtnByStatus(int status) {
-		if (status == MUSIC_PALYING) {
+	public void updatePlayBtnByStatus(boolean flag) {
+		if (flag) {
 			isPlaying = true;
-			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_pause));;
-		} else if (status == MUSIC_PAUSE || status == MUSIC_STOP) {
+			mBtnPlay.setBackground(getResources().getDrawable(
+					R.drawable.btn_music_pause));
+			;
+		} else {
 			isPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_play));;
+			mBtnPlay.setBackground(getResources().getDrawable(
+					R.drawable.btn_music_play));
+			;
 		}
 	}
 
@@ -270,11 +278,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextArtist.setText(bean.getAtrist());
 			mTextAlbum.setText(bean.getAlbum());
 			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
+			Log.e("wangda", "~~~~~~~~~~~~~~~~~~~~~~~~ totaltime = "
+					+ getTotalTime(bean.getTotalTime()));
 		} else {
-			mTextTitle
-					.setText(getResources().getString(R.string.music_matedate_unsupport));
-			mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
-			mTextAlbum.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextTitle.setText(getResources().getString(
+					R.string.music_matedate_unsupport));
+			mTextArtist.setText(getResources().getString(
+					R.string.music_matedate_unsupport));
+			mTextAlbum.setText(getResources().getString(
+					R.string.music_matedate_unsupport));
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
@@ -368,19 +380,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	@Override
-	public void updateMusicPlayCurrentTime(String currentTime) {
-		if (!currentTime.equals("-1")) {
-			mTextCurTime.setText(getCurrentTime(currentTime));
-		}
-		if (mMusicHandler != null) {
-			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
+	public void updateMusicPlayCurrentTime(String currentTime,boolean isPlaying) {
+		mTextCurTime.setText(getCurrentTime(currentTime));
+		if (isPlaying && (mMusicHandler != null)) {
+			    Log.e("wangda", "sssssssssssssssssss");
+				mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+				mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
 		}
 	}
 
 	private View mRepeatView;
 
-	private PopupWindow repeatWindow ;
+	private PopupWindow repeatWindow;
 
 	@SuppressLint("InlinedApi")
 	private void showRepeatPopUp(OnClickListener clickListener) {
@@ -397,7 +408,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		btnRepeatAll.setOnClickListener(clickListener);
 		btnRepeatSingle.setOnClickListener(clickListener);
 		btnRepeatOrder.setOnClickListener(clickListener);
-		
+
 		repeatWindow = new PopupWindow(MusicMainActivity.this);
 		repeatWindow.setContentView(mRepeatView);
 		repeatWindow.setWidth(LayoutParams.WRAP_CONTENT);
@@ -477,12 +488,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE;
 				break;
 			default:
-				
+
 				break;
 			}
 			MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
 		}
 	};
-	
 
 }
