@@ -10,6 +10,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.source.Source;
@@ -570,6 +571,13 @@ public class BluetoothMusicModel {
             Log.i(TAG, "requestAudioFocus---" + "FocusManager获取音频焦点失败");
         }
         mainAudioChanged(isAudioFocused);
+        if (isAudioFocused) {
+			try {
+				AVRCPControl(AudioControl.CONTROL_PLAY);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
     }
     
     public void releaseAudioFocus() {
@@ -611,6 +619,19 @@ public class BluetoothMusicModel {
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                 break;
             }
+		    if (isAudioFocused) {
+				try {
+					AVRCPControl(AudioControl.CONTROL_PLAY);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}else {
+				try {
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
 		    mainAudioChanged(isAudioFocused);
 		}
 	};
