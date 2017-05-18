@@ -226,15 +226,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 					.show();
 			updateViewShow(false);
 			mTextTitle
-					.setText(String.format(
-							getResources().getString(R.string.music_name),
-							"UnSupport"));
-			mTextArtist.setText(String.format(
-					getResources().getString(R.string.music_artist),
-					"UnSupport"));
-			mTextAlbum.setText(String
-					.format(getResources().getString(R.string.music_album),
-							"UnSupport"));
+					.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextAlbum.setText(getResources().getString(R.string.music_matedate_unsupport));
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
@@ -269,27 +263,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateMusicDataInfo(MusicBean bean, boolean isSupport) {
 		isSupportMetadata = isSupport;
 		if (isSupport && null != bean) {
-			mTextTitle.setText(String.format(
-					getResources().getString(R.string.music_name),
-					bean.getTitle()));
-			mTextArtist.setText(String.format(
-					getResources().getString(R.string.music_artist),
-					bean.getAtrist()));
-			mTextAlbum.setText(String.format(
-					getResources().getString(R.string.music_album),
-					bean.getAlbum()));
+			mTextTitle.setText(bean.getTitle());
+			mTextArtist.setText(bean.getAtrist());
+			mTextAlbum.setText(bean.getAlbum());
 			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 		} else {
 			mTextTitle
-					.setText(String.format(
-							getResources().getString(R.string.music_name),
-							"UnSupport"));
-			mTextArtist.setText(String.format(
-					getResources().getString(R.string.music_artist),
-					"UnSupport"));
-			mTextAlbum.setText(String
-					.format(getResources().getString(R.string.music_album),
-							"UnSupport"));
+					.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextAlbum.setText(getResources().getString(R.string.music_matedate_unsupport));
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
@@ -498,5 +480,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
 		}
 	};
+	
 
 }

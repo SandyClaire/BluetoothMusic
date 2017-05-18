@@ -146,6 +146,8 @@ public class BluetoothMusicServcie extends Service {
 							break;
 						case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
 							mTotalTIme = strMetadata;
+							Log.e("wangda", "1111111111111111111111111 = "
+									+ strMetadata);
 							break;
 						default:
 							MusicBean bean = new MusicBean(mTitle, mAtrist,
