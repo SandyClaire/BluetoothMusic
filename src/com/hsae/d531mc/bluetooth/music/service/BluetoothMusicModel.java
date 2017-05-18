@@ -1301,6 +1301,9 @@ public class BluetoothMusicModel {
 						autoConnectA2DP();
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
+							if (!handler.hasMessages(MSG_AUTOPLAY)) {
+								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+							}
 						}
 						getPlayStatus();
 					} else {
@@ -1374,17 +1377,17 @@ public class BluetoothMusicModel {
 			int callstatus = phoneProxy.getPhoneState();
 			switch (focusChange) {
 			case AudioManager.AUDIOFOCUS_GAIN:
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
+				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
 				mainAudioChanged(isCallActivityShow());
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
 				isAudioFocused = true;
 				mainAudioChanged(isCallActivityShow());
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
 				isAudioFocused = true;
 				mainAudioChanged(isCallActivityShow());
 				break;
@@ -1394,22 +1397,23 @@ public class BluetoothMusicModel {
 				} else {
 					isPauseByCall = false;
 				}
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
 			}
-			LogUtil.i("cruze", "mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = " + isHandPuse);
+			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
+					+ isHandPuse);
 			try {
 				if (isHandPuse) {
 					return;
@@ -1417,12 +1421,12 @@ public class BluetoothMusicModel {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
 					if (!isPlay && !isPauseByCall) {
-//						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
 				} else {
 					if (isPlay && !isPauseByCall) {
-//						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					}
 				}
