@@ -1,5 +1,7 @@
 package com.anwsdk.service;
 
+import com.anwsdk.service.SmsData.GsmSmsState;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 

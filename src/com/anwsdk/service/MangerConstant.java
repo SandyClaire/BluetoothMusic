@@ -19,6 +19,7 @@ public class MangerConstant
 	public static final int PROFILE_PHONEBOOK_CHANNEL = 12; // PBAP
 	public static final int PROFILE_SMS_CHANNEL = 13;//MAP
 	public static final int PROFILE_OPP_CHANNEL = 14;
+	public static final int PROFILE_EMAIL_CHANNEL = 15;
 
 	
 	public static final int BTPOWER_STATUS_OFF =0;
@@ -53,6 +54,10 @@ public class MangerConstant
 	public static final int DATATYPE_MC = 4;
 	public static final int DATATYPE_DC = 5;
 	public static final int DATATYPE_FINISH = 6;	
+	public static final int DATATYPE_CC = 7;	
+	public static final int DATATYPE_SPD = 8;	
+	public static final int DATATYPE_FAV = 9;	
+
 	
 	//Use in ANWBT_GetContacts - Memetype
 	public static final int PBK_MEMTYPE_ME = 0x0001;
@@ -110,6 +115,7 @@ public class MangerConstant
 	public static final String MSG_ACTION_OPP_PUSH_REQ = "android.bluetooth.anw.action.OPP_PUSH_REQ";
 	public static final String MSG_ACTION_OPP_PULL_REQ = "android.bluetooth.anw.action.OPP_PULL_REQ";
 	public static final String MSG_ACTION_BLE_SMP_EVENT = "android.bluetooth.anw.action.BLE_SMP_EVENT";
+	public static final String MSG_ACTION_INCOMINGEMAIL = "android.bluetooth.anw.action.INCOMINGEMAIL";
 	
 	//A2DP
 	public static final int AUDIO_STREAM_MODE_UNMUTE 	= 0;
@@ -215,4 +221,8 @@ public class MangerConstant
 	public static final int BLE_GATT_errInsufficientEncryption			 =15;
 	public static final int BLE_GATT_errUnsupportedGroupType			 =16;
 	public static final int BLE_GATT_errInsufficientResources			 =17;
+	
+	
+	public static final int MESSAGE_GET_TYPE_SMS				=1;
+	public static final int MESSAGE_GET_TYPE_EMAIL				=2;
 }

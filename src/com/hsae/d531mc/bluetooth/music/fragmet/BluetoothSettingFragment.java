@@ -305,6 +305,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 				@Override
 				public void onClick(View v) {
+					for(BluetoothDevice mBluetoothDevice:mListPairedDevices){
+						if(mBluetoothDevice.getStatus() == BluetoothDevice.DEVICE_CONNECTING){
+							return;
+						}
+					}
 					connectRequest(bean);
 				}
 			});
@@ -491,6 +496,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 				@Override
 				public void onClick(View v) {
+					for(BluetoothDevice mBluetoothDevice:mListVisibleDevices){
+						if(mBluetoothDevice.getStatus() == BluetoothDevice.DEVICE_PAIRING){
+							return;
+						}
+					}
 					BluetoothDevice bean = mListVisibleDevices.get(position);
 					bean.setStatus(BluetoothDevice.DEVICE_PAIRING);
 					notifyDataSetChanged();

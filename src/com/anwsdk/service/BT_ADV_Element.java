@@ -11,7 +11,7 @@ public class BT_ADV_Element {
 	public byte[] getElementData() {
 		return element_data;
 	}	
-	public BT_ADV_Element(byte type,  byte[] data) {
+	public BT_ADV_Element(int type,  byte[] data) {
 		element_type =  type & 0xFF; //signed to unsigned
 		if(data!=null)
 		{

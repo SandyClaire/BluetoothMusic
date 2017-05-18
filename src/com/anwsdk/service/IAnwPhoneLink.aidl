@@ -3,6 +3,7 @@ package com.anwsdk.service;
 import com.anwsdk.service.IAnwInquiryCallBack;
 import com.anwsdk.service.IAnwPhonebookCallBack;
 import com.anwsdk.service.IAnwSMSCallBack;
+import com.anwsdk.service.IAnwEmailCallBack;
 import com.anwsdk.service.SupportMobileFunction;
 import com.anwsdk.service.IAnwSPPDataCallBack;
 import com.anwsdk.service.IAnwBrowsingCallBack;
@@ -15,11 +16,14 @@ import com.anwsdk.service.DeviceIDInfoData;
 import com.anwsdk.service.ProfileSupportInfo;
 import com.anwsdk.service.CallInfoData;
 import com.anwsdk.service.SmsData;
+import com.anwsdk.service.EmailData;
 import com.anwsdk.service.IAnwObexTxfCallBack;
 import com.anwsdk.service.IAnwBrowsingChangePathCallBack;
 import com.anwsdk.service.IAnwBLEDiscoveryCallBack;
 import com.anwsdk.service.IAnwBLEConnectionCallBack;
 import com.anwsdk.service.BT_ADV_DATA;
+import com.anwsdk.service.MAPFolderInfo;
+
 interface IAnwPhoneLink {
 	int 		ANWBT_BTPowerOn();
 	int 		ANWBT_BTPowerOff();
@@ -240,4 +244,11 @@ interface IAnwPhoneLink {
 	
 	boolean   	ANWBT_GetGATTInitStatus();	
 	boolean		ANWBT_BLE_IsCurrentGetAllService(int nIndex);
+	
+	int   		ANWBT_GetMessages(int nGetTypeMask,String foldername,boolean bRefresh,int nMaxGet_SMS,IAnwSMSCallBack cb,int nMaxGet_EMAIL,IAnwEmailCallBack emailcb);
+	void		ANWBT_UnRegistryEmailCallback(IAnwEmailCallBack cb);
+	int   		ANWBT_SendEmail(in EmailData email);
+	int   		ANWBT_SetEmailProperty(in EmailData email,int nPropertyValue);
+	int   		ANWBT_GetMessageFolderListing(out MAPFolderInfo[] FolderInfo);
+	
 }

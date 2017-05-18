@@ -16,6 +16,7 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
 public class MusicPersenter implements IObserver {
 
+	private static final String TAG = "MusicPersenter";
 	private Context mContext;
 	private IMusicModel mIMusicModel;
 	private IMusicView mIMusicView;
@@ -72,11 +73,13 @@ public class MusicPersenter implements IObserver {
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			MusicBean bean = (MusicBean) inMessage.getData().getSerializable(
 					"musicBean");
+			Log.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:
 			String currentTime = inMessage.getData().getString("currentTime");
 			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
+			Log.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:

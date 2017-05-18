@@ -37,7 +37,6 @@ public class BluetoothMusicModel {
 	private static Context mContext;
 	private IAnwPhoneLink mIAnwPhoneLink;
 	private BluetoothConnection mConnection = new BluetoothConnection();
-	private int nPowerStatus = MangerConstant.BTPOWER_STATUS_OFF;
 	private static ShowLog mLog;
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
@@ -74,9 +73,9 @@ public class BluetoothMusicModel {
 				return;
 			}
 			try {
-				nPowerStatus = mIAnwPhoneLink.ANWBT_GetBTPowerStatus();
-				if (nPowerStatus == MangerConstant.BTPOWER_STATUS_OFF)
-					mIAnwPhoneLink.ANWBT_BTPowerOn();
+//				nPowerStatus = mIAnwPhoneLink.ANWBT_GetBTPowerStatus();
+//				if (nPowerStatus == MangerConstant.BTPOWER_STATUS_OFF)
+//					mIAnwPhoneLink.ANWBT_BTPowerOn();
 				
 				if (getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0) == 1) {
 					getCurrentPlayerAPSetting();
@@ -691,6 +690,23 @@ public class BluetoothMusicModel {
 	}
 	
 	/**
+	 * Use this function to set stream volume to mute or un-mute.
+	 * @param mode
+	 * @return
+	 * @throws RemoteException
+	 */
+	public int audioSetStreamMode(int mode) throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
+	} 
+	
+	/**
 	 * 获取本机名称
 	 * @return
 	 * @throws RemoteException
@@ -764,7 +780,6 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	
 	/**
 	 * regist music status listener
 	 * @param nMusicModel
@@ -874,7 +889,6 @@ public class BluetoothMusicModel {
 		}
 		return false;
 	}
-
 	
 	/**
      * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
@@ -884,6 +898,13 @@ public class BluetoothMusicModel {
     	Source source = new Source();
     	source.mainAudioChanged(App.BT_MUSIC, isChanged);
         Log.i(TAG, "requestAudioSource == " + isChanged);
+        if (source.getCurrentSource() == App.BT_MUSIC) {
+			try {
+				audioSetStreamMode(0);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
     }
     
     public boolean isAudioFocused = false;
