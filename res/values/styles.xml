@@ -105,5 +105,10 @@
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:padding">7dp</item>
     </style>
+    
+    <style name="timeText">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
 
 </resources>
