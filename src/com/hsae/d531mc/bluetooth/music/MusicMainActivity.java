@@ -17,6 +17,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,8 +50,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private Button mBtnPrev;
 	private Button mBtnPlay;
 	private Button mBtnNext;
-	private Button mBtnRepeat;
-	private Button mBtnShuffle;
+	private LinearLayout mBtnRepeat;
+	private LinearLayout mBtnShuffle;
 	private Button mBtnHome;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
@@ -63,6 +65,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private MusicSwitchFragmet mFragmet;
 	private boolean ismPlaying = false;
 	private boolean isfirst = false;
+	private ImageView mImageShuffle;
+	private ImageView mImageRepeat;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +91,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnPrev = (Button) findViewById(R.id.btn_prev);
 		mBtnPlay = (Button) findViewById(R.id.btn_play);
 		mBtnNext = (Button) findViewById(R.id.btn_next);
-		mBtnRepeat = (Button) findViewById(R.id.btn_repeat);
-		mBtnShuffle = (Button) findViewById(R.id.btn_shuffle);
+		mBtnRepeat = (LinearLayout) findViewById(R.id.btn_repeat);
+		mBtnShuffle = (LinearLayout) findViewById(R.id.btn_shuffle);
 		mSeekBar = (SeekBar) findViewById(R.id.music_seekbar);
 		mTextTitle = (TextView) findViewById(R.id.music_title);
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
@@ -98,6 +102,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
 		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
 		mBtnHome = (Button) findViewById(R.id.btn_home);
+		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
+		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
@@ -425,9 +431,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mRepeatAllowedlist.addAll(allowList);
 		Log.i("wangda", "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setEnabled(false);
+			mBtnRepeat.setVisibility(View.GONE);;
 		}else {
-			mBtnRepeat.setEnabled(true);
+			mBtnRepeat.setVisibility(View.VISIBLE);;
 		}
 	}
 
@@ -437,9 +443,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mShuffleAllowedlist.addAll(allowList);
 		Log.i("wangda", "mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setEnabled(false);
+			mBtnShuffle.setVisibility(View.GONE);
 		}else {
-			mBtnShuffle.setEnabled(true);
+			mBtnShuffle.setVisibility(View.VISIBLE);
 		}
 	}
 	
@@ -458,16 +464,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 				switch(nAttrValue)
 				{
 				case AudioControl.PLAYER_REPEAT_MODE_OFF:
-					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
+					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK:
-					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
+					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_ALL_TRACK:
-					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_GROUP:
-					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
 					break;				
 				}			
 			}
@@ -480,13 +486,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 				switch(nAttrValue)
 				{
 				case AudioControl.PLAYER_SHUFFLE_OFF:
-					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
+					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
 					break;
 				case AudioControl.PLAYER_SHUFFLE_ALL_TRACK:
-					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
 					break;
 				case AudioControl.PLAYER_SHUFFLE_GROUP:
-					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
 					break;
 		
 				}	
@@ -501,11 +507,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 		for (int i = 0; i < num; i++) {
 			mShuffleAllowedlist.add(AllowArray[i]);
 		}
-		Log.i("wangda", "mShuffleAllowedlist 11111111111 size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setEnabled(false);
+			mBtnShuffle.setVisibility(View.GONE);
 		}else {
-			mBtnShuffle.setEnabled(true);
+			mBtnShuffle.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -515,11 +520,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 		for (int i = 0; i < num; i++) {
 			mRepeatAllowedlist.add(AllowArray[i]);
 		}
-		Log.i("wangda", "mRepeatAllowedlist 11111111111 size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setEnabled(false);
+			mBtnRepeat.setVisibility(View.GONE);
 		}else {
-			mBtnRepeat.setEnabled(true);
+			mBtnRepeat.setVisibility(View.VISIBLE);
 		}
 	}
 	

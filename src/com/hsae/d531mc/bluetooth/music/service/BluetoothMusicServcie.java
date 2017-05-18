@@ -172,6 +172,7 @@ public class BluetoothMusicServcie extends Service {
 						}
 					} else {
 						isplaying = false;
+						notifyAutroMusicInfo(null);
 					}
 					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					Log.i(TAG,
@@ -197,17 +198,6 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
-						// if (isplaying == false) {
-						// try {
-						// isplaying = true;
-						// String totalTime = mBluetoothMusicModel
-						// .A2DPGetCurrentAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
-						// mBluetoothMusicModel.updateCurrentPlayTime(
-						// totalTime, isplaying);
-						// } catch (RemoteException e) {
-						// e.printStackTrace();
-						// }
-						// }
 						break;
 					}
 				}

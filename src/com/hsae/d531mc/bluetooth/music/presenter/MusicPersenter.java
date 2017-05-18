@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Message;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
@@ -79,6 +78,7 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
 			mIMusicModel.requestAudioFoucs();
+			initMusicModel();
 			break;
 		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
 			ArrayList<Integer> allowRepeatList = inMessage.getData()
@@ -136,7 +136,6 @@ public class MusicPersenter implements IObserver {
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			// mIMusicView.updatePlayBtnByStatus(playStatus);
-			initMusicModel();
 		}
 	}
 
