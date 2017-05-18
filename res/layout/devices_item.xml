@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android = "http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_list_item_selected"
+    android:minHeight="@dimen/devices_item_min_height"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/lin_devcies_list_item"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/devices_item_margin_left">
+
+        <TextView
+            android:id="@+id/tv_devicename"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/devices_item_name_text_height"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_20" />
+
+        <TextView
+            android:id="@+id/tv_devicestatus"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/devices_item_summery_text_height"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"
+            android:textSize="@dimen/devices_item_summery_text_size"
+            android:visibility="gone" />
+    </LinearLayout>
+    
+    <LinearLayout 
+        android:id="@+id/btn_unpair_disconnect"
+        android:layout_width="@dimen/devices_item_right_button_width"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:visibility="gone"
+        >
+        <ImageView
+            android:id="@+id/img_upair_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            />
+    </LinearLayout>
+
+</LinearLayout>

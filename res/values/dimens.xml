@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
+    <dimen name="margin_top_height">20dp</dimen>
     <dimen name="music_contents_panding_lift">80dp</dimen>
     <dimen name="music_contents_panding_right">80dp</dimen>
     
@@ -23,7 +24,33 @@
     
     <dimen name="music_title_text_margin_top">80dp</dimen>
     
-    
+    <!-- bluetooth settings -->
+    <dimen name="padding_bottom_main_framelayout">110dp</dimen>
+    <dimen name="text_size_main_bottom_bar">35dp</dimen>
+    <dimen name="bottom_home_width">170dp</dimen>
+    <dimen name="framelayout_left_slide_width">425dp</dimen>
+    <dimen name="devices_discribe_text_pandding_left">20dp</dimen>
+    <dimen name="devices_discribe_progressbar_margin">15dp</dimen>
+    <dimen name="setting_layout_pandding_right">40dp</dimen>
+    <dimen name="setting_title_layout_pandding">10dp</dimen>
+    <dimen name="setting_title_text_margin_left">10dp</dimen>
+    <dimen name="setting_refrash_button_margin_right">10dp</dimen>
+    <dimen name="setting_pair_upair_text_height">58dp</dimen>
     <dimen name="text_size_36">36dp</dimen>
+    
+    <dimen name="text_size_20">20dp</dimen>
+    <dimen name="text_size_22">22dp</dimen>
+    <dimen name="text_size_28">28dp</dimen>
+    <dimen name="text_size_38">38dp</dimen>
+    
+    <!-- devices item -->
+    <dimen name="devices_item_min_height">84dp</dimen>
+    <dimen name="devices_item_right_button_pandding_left">15dp</dimen>
+    <dimen name="devices_item_right_button_pandding_right">15dp</dimen>
+    <dimen name="devices_item_right_button_width">100dp</dimen>
+    <dimen name="devices_item_margin_left">30dp</dimen>
+    <dimen name="devices_item_summery_text_size">14dp</dimen>
+    <dimen name="devices_item_name_text_height">30dp</dimen>
+    <dimen name="devices_item_summery_text_height">20dp</dimen>
     
 </resources>

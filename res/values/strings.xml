@@ -14,4 +14,16 @@
     <string name="music_matedate_unsupport">UnSupport</string>
     <string name="music_bluetooth_disconnect">disconnect</string>
     
+    <!-- bluetooth settings -->
+    <string name="visible_devices">Available devices</string>
+    <string name="pair_devices">Paired devices</string>
+    <string name="search_finish">Search finish</string>
+    <string name="pair_fail">Pair fail</string>
+    <string name="pair_success">Pair success</string>
+    <string name="bluetooth_connect">Bluetooth connect</string>
+    <string name="bluetooth_status_connected">Connected</string>
+    <string name="bluetooth_status_connecting">Connecting...</string>
+    <string name="bluetooth_status_disconnecting">Disconnecting...</string>
+    <string name="bluetooth_status_pairing">Pairing...</string>
+    
 </resources>
