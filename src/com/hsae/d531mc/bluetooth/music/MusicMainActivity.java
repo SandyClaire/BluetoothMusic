@@ -247,11 +247,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updatePlayBtnByStatus(int status) {
 		if (status == MUSIC_PALYING) {
 			isPlaying = true;
-			mBtnPlay.setText("PAUSE");
+			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_play));;
 		} else if (status == MUSIC_PAUSE || status == MUSIC_STOP) {
 			isPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setText("PLAY");
+			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_pause));;
 		}
 	}
 

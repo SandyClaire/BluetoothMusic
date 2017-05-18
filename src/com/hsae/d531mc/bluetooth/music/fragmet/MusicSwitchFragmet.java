@@ -1,16 +1,14 @@
 package com.hsae.d531mc.bluetooth.music.fragmet;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 
 import com.hsae.d531mc.bluetooth.music.R;
 
@@ -20,12 +18,14 @@ import com.hsae.d531mc.bluetooth.music.R;
  *
  */
 @SuppressLint("NewApi")
-public class MusicSwitchFragmet extends Fragment {
+public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 
 	private static final String TAG = "MusicSwitchFragmet";
 	private View mView;
-	private ListView mListSwitch;
-	private SwitchAdapter mAdapter;
+	private LinearLayout mLinAM;
+	private LinearLayout mLinFM;
+	private LinearLayout mLinIpod;
+	private LinearLayout mLinBluetooth;
 	private Context mContext;
 	
 	public MusicSwitchFragmet(android.content.Context context) {
@@ -53,54 +53,41 @@ public class MusicSwitchFragmet extends Fragment {
 	}
 	
 	private void initView(){
-		mListSwitch = (ListView) mView.findViewById(R.id.list_music_switch);
-		mAdapter = new SwitchAdapter();
-		mListSwitch.setAdapter(mAdapter);
+		mLinAM = (LinearLayout) mView.findViewById(R.id.lin_music_am);
+		mLinFM = (LinearLayout) mView.findViewById(R.id.lin_music_fm);
+		mLinIpod = (LinearLayout) mView.findViewById(R.id.lin_music_ipod);
+		mLinBluetooth = (LinearLayout) mView.findViewById(R.id.lin_music_bluetooth);
+		mLinAM.setOnClickListener(this);
+		mLinFM.setOnClickListener(this);
+		mLinIpod.setOnClickListener(this);
+		mLinBluetooth.setOnClickListener(this);
 	}
 	
 	@Override
 	public void onDestroy() {
-		
 		super.onDestroy();
 	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.lin_music_am:
+			
+			break;
+		case R.id.lin_music_fm:
+			
+			break;
+		case R.id.lin_music_ipod:
 	
-	private class SwitchAdapter extends BaseAdapter{
+			break;
+		case R.id.lin_music_bluetooth:
+	
+			break;
 
-		@Override
-		public int getCount() {
-			return 0;
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return null;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return 0;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder mHolder;
-			if (convertView == null) {
-				mHolder = new ViewHolder();
-				convertView = ((Activity) mContext).getLayoutInflater()
-						.inflate(R.layout.list_switch_item, null);
-				mHolder.mLinSwitch = (LinearLayout) convertView.findViewById(R.id.lin_switch_item);
-				convertView.setTag(mHolder);
-			}else {
-				mHolder = (ViewHolder) convertView.getTag();
-			}
-			return convertView;
+		default:
+			break;
 		}
 	}
-	
-	public class ViewHolder{
-		LinearLayout mLinSwitch;
-	}
-	
 	
 	
 }
