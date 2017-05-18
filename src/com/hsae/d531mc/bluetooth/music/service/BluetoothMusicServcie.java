@@ -14,6 +14,11 @@ import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
+/**
+ * 
+ * @author wangda
+ *
+ */
 public class BluetoothMusicServcie extends Service {
 
 	private BluetoothMusicModel mBluetoothMusicModel;
@@ -40,7 +45,7 @@ public class BluetoothMusicServcie extends Service {
 		Log.e("wangda", "---------- service oncreat ------------");
 		super.onCreate();
 	}
-
+	
 	private void registBroadcast() {
 		IntentFilter filter = new IntentFilter();
 		mReceiver = new BTBroadcastReceiver();
@@ -63,7 +68,7 @@ public class BluetoothMusicServcie extends Service {
 		super.onDestroy();
 	}
 
-	private class BTBroadcastReceiver extends BroadcastReceiver {
+	private class BTBroadcastReceiver extends BroadcastReceiver {  
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
 			String strAction = intent.getAction();

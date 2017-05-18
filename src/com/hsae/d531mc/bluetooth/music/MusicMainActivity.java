@@ -32,10 +32,14 @@ import com.hsae.d531mc.bluetooth.music.observer.IObserver;
 import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
-import com.hsae.d531mc.bluetooth.music.service.BluetoothMusicServcie;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
+/**
+ * 
+ * @author wangda
+ *
+ */
 @SuppressLint("NewApi")
 public class MusicMainActivity extends Activity implements ISubject,
 		IMusicView, OnClickListener {
@@ -59,11 +63,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private FrameLayout mFrameLayout;
 	private FragmentManager mFragmentManager;
 	private MusicSwitchFragmet mFragmet;
-	private boolean isPlaying = false;
+	private boolean ismPlaying = false;
 	private boolean isfirst = false;
-	private static final int MUSIC_PALYING = 1;
-	private static final int MUSIC_PAUSE = 2;
-	private static final int MUSIC_STOP = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +90,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
-	private void InitService() {
-		Intent mIntent = new Intent(MusicMainActivity.this,
-				BluetoothMusicServcie.class);
-		this.startService(mIntent);
-	}
+	// private void InitService() {
+	// Intent mIntent = new Intent(MusicMainActivity.this,
+	// BluetoothMusicServcie.class);
+	// this.startService(mIntent);
+	// }
 
 	private void initView() {
 		mBtnMusicSwith = (Button) findViewById(R.id.btn_bt_settings);
@@ -196,7 +197,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			msg.what = MusicActionDefine.ACTION_A2DP_PREV;
 			break;
 		case R.id.btn_play:
-			if (isPlaying) {
+			if (ismPlaying) {
 				msg.what = MusicActionDefine.ACTION_A2DP_PAUSE;
 			} else {
 				msg.what = MusicActionDefine.ACTION_A2DP_PLAY;
@@ -257,12 +258,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updatePlayBtnByStatus(boolean flag) {
 		if (flag) {
-			isPlaying = true;
+			ismPlaying = true;
 			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.btn_music_pause));
 			;
 		} else {
-			isPlaying = false;
+			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.btn_music_play));
@@ -380,12 +381,21 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	@Override
-	public void updateMusicPlayCurrentTime(String currentTime,boolean isPlaying) {
+	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
 		if (isPlaying && (mMusicHandler != null)) {
-			    Log.e("wangda", "sssssssssssssssssss");
-				mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-				mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
+			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
+		}
+		if (isPlaying) {
+			ismPlaying = true;
+			mBtnPlay.setBackground(getResources().getDrawable(
+					R.drawable.btn_music_pause));
+		} else {
+			ismPlaying = false;
+			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+			mBtnPlay.setBackground(getResources().getDrawable(
+					R.drawable.btn_music_play));
 		}
 	}
 

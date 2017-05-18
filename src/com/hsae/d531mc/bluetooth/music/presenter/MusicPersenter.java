@@ -117,8 +117,5 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicModel).detach(this);
 		((ISubject) mIMusicModel).detach(this);
 	}
-	
-	
-
 
 }

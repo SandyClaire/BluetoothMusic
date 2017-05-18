@@ -2,6 +2,11 @@ package com.hsae.d531mc.bluetooth.music.view;
 
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
+/**
+ * 
+ * @author wangda
+ *
+ */
 public interface IMusicView {
 
 	/**

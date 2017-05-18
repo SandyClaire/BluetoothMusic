@@ -12,7 +12,11 @@ import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.ContactsSubjecter;
 import com.hsae.d531mc.bluetooth.music.service.BluetoothMusicModel;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
-
+/**
+ * 
+ * @author wangda
+ *
+ */
 public class MusicModel extends ContactsSubjecter implements IMusicModel{
 
 	private Context mContext;
