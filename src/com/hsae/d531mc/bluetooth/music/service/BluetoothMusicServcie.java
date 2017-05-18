@@ -293,6 +293,7 @@ public class BluetoothMusicServcie extends Service {
 				}
 			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
 				autoConnA2dp();
+				LogUtil.i(TAG, "--------- autoConnA2dp ----------");
 			}
 		}
 	}
@@ -307,9 +308,10 @@ public class BluetoothMusicServcie extends Service {
 			hfpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL, 0);
 			a2dpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 			if (hfpStatus == 1 && a2dpStatus != 1) {
-				LogUtil.i(TAG, "--------- autoConnA2dp if HFP connected = ");
 				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+				mBluetoothMusicModel.getPlayStatus();
+				LogUtil.i(TAG, "--------- autoConnA2dp if HFP connected = " + getConnectedDevice());
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();

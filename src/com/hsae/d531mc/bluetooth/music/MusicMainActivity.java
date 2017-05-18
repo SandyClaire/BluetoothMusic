@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
@@ -20,7 +21,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -85,6 +85,56 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private boolean isFramShow = false;
 	private boolean isSupportPlaybackpos = false;
 	private boolean isSupportMetadata = false;
+	private static final int LONG_CLICK_PREV = 1;
+	private static final int LONG_CLICK_NEXT = 2;
+	private static final int SHORT_CLICK_PREV = 3;
+	private static final int SHORT_CLICK_NEXT = 4;
+	private boolean isNormalPrev = true;
+	private boolean isNormalNext = true;
+	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
+		
+		@Override
+		public boolean handleMessage(Message msg) {
+			switch (msg.what) {
+			case LONG_CLICK_NEXT:
+				isNormalNext = false;
+				Message msgln = Message.obtain();
+				msgln.what = MusicActionDefine.ACTION_A2DP_FASTFORWORD;
+				MusicMainActivity.this.notify(msgln, FLAG_RUN_SYNC);
+				LogUtil.i(TAG, " --- next long press ---");
+				if (!isNormalNext) {
+					mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, 1500);
+				}
+				break;
+			case SHORT_CLICK_NEXT:
+				LogUtil.i(TAG, " --- next short press ---");
+				Message msgn = Message.obtain();
+				msgn.what = MusicActionDefine.ACTION_A2DP_NEXT;
+				MusicMainActivity.this.notify(msgn, FLAG_RUN_MAIN_THREAD);
+				break;
+			case LONG_CLICK_PREV:
+				isNormalPrev = false;
+				Message msglp = Message.obtain();
+				msglp.what = MusicActionDefine.ACTION_A2DP_REWIND;
+				MusicMainActivity.this.notify(msglp, FLAG_RUN_SYNC);
+				LogUtil.i(TAG, " --- prev long press ---");
+				if (!isNormalPrev) {
+					mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV, 1500);
+				}
+				break;
+			case SHORT_CLICK_PREV:
+				LogUtil.i(TAG, " --- prev short press --- ");
+				Message msgp = Message.obtain();
+				msgp.what = MusicActionDefine.ACTION_A2DP_PREV;
+				MusicMainActivity.this.notify(msgp, FLAG_RUN_MAIN_THREAD);
+				break;
+
+			default:
+				break;
+			}
+			return false;
+		}
+	});
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,9 +187,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 				.getInstance(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
-		mBtnPrev.setOnClickListener(this);
+		mBtnPrev.setOnTouchListener(prevListener);
 		mBtnPlay.setOnClickListener(this);
-		mBtnNext.setOnClickListener(this);
+		mBtnNext.setOnTouchListener(nextListener);
 		mBtnRepeat.setOnClickListener(this);
 		mBtnShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
@@ -148,29 +198,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mDrawerLayout.setDrawerListener(mDrawerListener);
 //		mFragmentManager.beginTransaction()
 //		.replace(R.id.bluetooth_music_frame, mFragmet).commit();
-
-		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
-
-			@Override
-			public boolean onLongClick(View v) {
-				Message msg = Message.obtain();
-				msg.what = MusicActionDefine.ACTION_A2DP_FASTFORWORD;
-				MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
-				return false;
-			}
-		});
-
-		mBtnPrev.setOnLongClickListener(new OnLongClickListener() {
-
-			@Override
-			public boolean onLongClick(View v) {
-				Message msg = Message.obtain();
-				msg.what = MusicActionDefine.ACTION_A2DP_REWIND;
-				MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
-				return false;
-			}
-		});
-		initBackground();
+		
 	}
 	
 	DrawerListener mDrawerListener = new DrawerListener() {
@@ -219,6 +247,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	}
 	
+	
 	public void initBackground() {
 		LogUtil.i(TAG, "initBackground");
 		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI,
@@ -248,6 +277,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onResume() {
+		initBackground();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -323,11 +353,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		case R.id.btn_bt_settings:
 			showFram(false);
 			break;
-		case R.id.btn_prev:
-			Message msgp = Message.obtain();
-			msgp.what = MusicActionDefine.ACTION_A2DP_PREV;
-			this.notify(msgp, FLAG_RUN_MAIN_THREAD);
-			break;
 		case R.id.btn_play:
 			Message msgl = Message.obtain();
 			if (ismPlaying) {
@@ -336,11 +361,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 				msgl.what = MusicActionDefine.ACTION_A2DP_PLAY;
 			}
 			this.notify(msgl, FLAG_RUN_MAIN_THREAD);
-			break;
-		case R.id.btn_next:
-			Message msgn = Message.obtain();
-			msgn.what = MusicActionDefine.ACTION_A2DP_NEXT;
-			this.notify(msgn, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_repeat:
 			Message msgr = Message.obtain();
@@ -760,6 +780,91 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mSeekTail.postInvalidate();
 	}
 	
+	private View.OnTouchListener prevListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				prevDown();
+				LogUtil.i(TAG, "prevListener -- down");
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				prevUp();
+				LogUtil.i(TAG, "prevListener -- up");
+				break;
+
+			default:
+				break;
+			}
+			return false;
+		}
+	};
+	
+	/**
+	 * 上一首按下
+	 */
+	private void prevDown(){
+		LogUtil.i(TAG, " --- prevDown ");
+		mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV,1500);
+	}
+	
+	/**
+	 * 上一首抬起
+	 */
+	private void prevUp(){
+		if (mHandler.hasMessages(LONG_CLICK_PREV)) {
+			mHandler.removeMessages(LONG_CLICK_PREV);
+		}
+		if (isNormalPrev) {
+			LogUtil.i(TAG, " --- prevup ");
+			mHandler.sendEmptyMessage(SHORT_CLICK_PREV);
+		}
+		isNormalPrev = true;
+	}
+	
+	private View.OnTouchListener nextListener = new View.OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			switch (event.getAction()) {
+			case MotionEvent.ACTION_DOWN:
+				nextDown();
+				break;
+			case MotionEvent.ACTION_UP:
+			case MotionEvent.ACTION_CANCEL:
+				nextUp();
+				break;
+
+			default:
+				break;
+			}
+			return false;
+		}
+	};
+	
+	/**
+	 * 下一曲按下
+	 */
+	private void nextDown(){
+		LogUtil.i(TAG, " --- nextDown ");
+		mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, 1500);
+	}
+	
+	/**
+	 * 下一曲抬起
+	 */
+	private void nextUp(){
+		if (mHandler.hasMessages(LONG_CLICK_NEXT)) {
+			mHandler.removeMessages(LONG_CLICK_NEXT);
+		}
+		if (isNormalNext) {
+			LogUtil.i(TAG, " --- nextUp ");
+			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
+		}
+		isNormalNext = true;
+	}
 	
 
 }

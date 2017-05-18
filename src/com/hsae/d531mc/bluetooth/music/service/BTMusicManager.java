@@ -109,8 +109,8 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	public void onHmiChanged(int hmiIndex, boolean down) {
 		LogUtil.i("onHmiChanged", "down == " + down + ", hmiIndex == "
 				+ hmiIndex);
-		if (hmiIndex == HmiConst.HMI.SEEKDOWN.ordinal()
-				|| hmiIndex == HmiConst.HMI.SEEKUP.ordinal()) {
+		if (hmiIndex == HmiConst.HMI.SEEKUP.ordinal()
+				|| hmiIndex == HmiConst.HMI.SEEKDOWN.ordinal()) {
 
 			if (down) {
 				downTime = isFrist ? System.currentTimeMillis()
@@ -134,7 +134,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private void seek(int index, boolean isLong) {
 		LogUtil.i("seek", "isLong == " + isLong + ", index == " + index);
 		if (!isLong) {
-			if (index == HmiConst.HMI.SEEKUP.ordinal()) {
+			if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
 				try {
 					mBluetoothMusicModel
 							.AVRCPControl(AudioControl.CONTROL_FORWARD);
@@ -142,7 +142,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 					e.printStackTrace();
 				}
 				LogUtil.i(TAG, "------------- SEEKUP_NEXT ");
-			} else if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
+			} else if (index == HmiConst.HMI.SEEKUP.ordinal()) {
 				try {
 					mBluetoothMusicModel
 							.AVRCPControl(AudioControl.CONTROL_BACKWARD);
@@ -211,10 +211,10 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void show() throws RemoteException {
 		Intent intent = new Intent();
-		intent.setAction(Intent.ACTION_MAIN);
-		intent.addCategory(Intent.CATEGORY_LAUNCHER);
+//		intent.setAction(Intent.ACTION_MAIN);
+//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 		intent.setPackage("com.hsae.d531mc.bluetooth.music");
 		intent.setClassName(mContext,
 				"com.hsae.d531mc.bluetooth.music.MusicMainActivity");

@@ -869,7 +869,6 @@ public class BluetoothMusicModel {
 	public void updatePlayStatus(boolean flag) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updatePlayOrPauseStatus(flag);
-			LogUtil.i("wangda", "updatePlayStatus -- flag = " + flag);
 		}
 	}
 
@@ -920,7 +919,7 @@ public class BluetoothMusicModel {
 			mIMusicModel.updateAttributeShuffle(AllowList);
 		}
 	}
-
+	
 	/**
 	 * 切换模式后更新当前模式
 	 * 
@@ -1024,6 +1023,9 @@ public class BluetoothMusicModel {
 							+ "BluetoothMusicModel获取音频焦点成功");
 			isAudioFocused = true;
 			mainAudioChanged(flag);
+			if (mIMusicModel != null) {
+				mIMusicModel.autoConnectA2DP();
+			}
 		} else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
 			LogUtil.i(TAG, "requestAudioFocus---"
 					+ "BluetoothMusicModel获取音频焦点失败");
