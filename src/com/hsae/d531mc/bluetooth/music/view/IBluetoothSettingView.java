@@ -66,5 +66,7 @@ public interface IBluetoothSettingView {
 	 */
 	public void updateTextTipShow(int i);
 
+	public void isSearching(boolean currentInquring);
+
 
 }

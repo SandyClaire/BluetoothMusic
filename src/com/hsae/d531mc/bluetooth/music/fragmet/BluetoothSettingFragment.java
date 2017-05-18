@@ -53,6 +53,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	private BluetoothSettingPresenter mPresenter;
 	private boolean isSearching = false;
 	private boolean isPairing = false;
+	private boolean isStop = true;
 	private LayoutInflater mInflater;
 	private ProgressBar mProSearch;
 	private TextView mTextLocalName;
@@ -158,17 +159,17 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 //		getCaplayStatus();
 	}
 
-	private void getCaplayStatus() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);
-	}
-
-	private void getCarlifeStatus() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);
-	}
+//	private void getCaplayStatus() {
+//		Message msg = Message.obtain();
+//		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
+//		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+//	}
+//
+//	private void getCarlifeStatus() {
+//		Message msg = Message.obtain();
+//		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
+//		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+//	}
 
 	@Override
 	public void onDetach() {
@@ -179,10 +180,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_search:
-			if (isPairing) {
+			if (isPairing || !isStop) {
 				return;
 			}
+			isSearching();
 			if (isSearching) {
+				isStop = false;
 				stopDeviceSearching();
 			} else {
 				searchDevices();
@@ -197,6 +200,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 		default:
 			break;
 		}
+	}
+	
+	private void isSearching() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_ISBTSEARCHING;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
 	@Override
@@ -221,6 +230,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 	@Override
 	public void inquiryFinish() {
+		this.isStop = true;
 		updateSearchBtnShow(false);
 	}
 
@@ -683,6 +693,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 		} else if (conn == -2) {
 			mTextEnable.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
 		}
+	}
+
+	@Override
+	public void isSearching(boolean currentInquring) {
+		updateSearchBtnShow(currentInquring);
 	}
 
 }

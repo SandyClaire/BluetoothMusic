@@ -12,8 +12,11 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 import android.util.Log;
@@ -864,22 +867,55 @@ public class BluetoothMusicModel {
 	 * 搜索蓝牙设备主调
 	 */
 	public void getBluetoothVisibleDevices() {
-
-		Thread inquiryThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					mListDevices.clear();
-					inquiryBtDevices(InquiryCallBack);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
-		}, "inquiryThread");
-		inquiryThread.start();
+		new InitStatusTask().execute();
 		LogUtil.i(TAG, "--- inquiryThread.star");
 	}
+	
+	
+	
+	class InitStatusTask extends AsyncTask<Void, Void, Integer> {
+
+		@Override
+		protected Integer doInBackground(Void... params) {
+			try {
+				mListDevices.clear();
+				return inquiryBtDevices(InquiryCallBack);
+			} catch (RemoteException e) {
+			}
+			return 0;
+		}
+
+		@SuppressLint("NewApi")
+		@Override
+		protected void onPostExecute(Integer result) {
+			LogUtil.i(TAG, "getBluetoothVisibleDevices : code = "+result);
+			//根据供应商反馈搜索结果为647时、执行一次stop的动作、且1S内不能执行搜索
+			if (result == 647) {
+				Bundle bundle = new Bundle();
+				bundle.putInt("result", result);
+				Message msg = Message.obtain();
+				msg.setData(bundle);
+				handler.sendMessageDelayed(msg, 1000);
+			}else{
+				mIBluetoothSettingModel.onInquiryCallBack(result);
+			}
+		}
+	}
+
+	Handler handler = new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			LogUtil.i(TAG, "stopInquiry = ");
+			mIBluetoothSettingModel.stopInquiry();
+			mIBluetoothSettingModel.onInquiryCallBack(msg.getData().getInt("result"));
+		};
+	};
+	
+	
+	
+	
+	
+	
+	
 
 	/**
 	 * 搜索设备回调
@@ -1201,7 +1237,6 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	Handler handler = new Handler();
 
 	public boolean isAudioFocused = false;
 	int playtimes = 0;
@@ -1274,17 +1309,6 @@ public class BluetoothMusicModel {
 			}
 		}
 	}
-
-	// public void audioStreamEnable() {
-	// mHandler.post(new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	//
-	// }
-	// });
-	// LogUtil.i(TAG, "audioStreamEnable --- play");
-	// }
 
 	private Handler mHandler = new Handler();
 

@@ -85,7 +85,13 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_STOP_INQUIRY:
 			mBluetoothSettingModel.stopInquiry();
 			break;
-
+			
+		case MusicActionDefine.ACTION_ISBTSEARCHING:
+			mIBluetoothSettingView.isSearching(mBluetoothSettingModel.isCurrentInquring());
+			break;
+		case MusicActionDefine.ACTION_SEACH_CALLBACK:
+			mIBluetoothSettingView.isSearching(inMessage.getData().getInt("code") == 1);
+			break;
 		case MusicActionDefine.ACTION_SETTING_PAIR:
 			String address = inMessage.getData().getString("address");
 			String strCOD = inMessage.getData().getString("strcod");

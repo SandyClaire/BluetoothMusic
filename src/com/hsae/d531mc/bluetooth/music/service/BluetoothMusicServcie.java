@@ -209,13 +209,14 @@ public class BluetoothMusicServcie extends Service {
 
 						if (mBluetoothMusicModel.isCarlifeConnected()) {
 							// 通知界面不显示
-//							mBluetoothMusicModel.updateCLConnectStatus();
+							// mBluetoothMusicModel.updateCLConnectStatus();
 							return;
 						}
 
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
 						// getPlayStatus(a2dpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
 						mBluetoothMusicModel.avrcpStatus = mBundle.getInt("Value");
 						LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
@@ -308,6 +309,8 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
 						LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = " + mTimePosition);
 					}
+					// TODO
+
 				}
 				/* 蓝牙音乐播放音乐流 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
@@ -384,7 +387,7 @@ public class BluetoothMusicServcie extends Service {
 			try {
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();
@@ -616,8 +619,8 @@ public class BluetoothMusicServcie extends Service {
 				usbType = USB_CONNECTED_CARLIFE;
 				mBluetoothMusicModel.isCarLifeConnected = true;
 				mBluetoothMusicModel.isCarPlayConnected = false;
+				// mBluetoothMusicModel.notifyAutroMusicInfo(null);
 				mBluetoothMusicModel.updateCLConnectStatus();
-
 				break;
 			case USB_CONNECTED_CARPLAY:
 

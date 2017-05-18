@@ -2,10 +2,8 @@ package com.hsae.d531mc.bluetooth.music.presenter;
 
 import java.util.ArrayList;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Message;
 
 import com.anwsdk.service.AudioControl;

@@ -398,4 +398,14 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
+	@Override
+	public void onInquiryCallBack(Integer result) {
+		Bundle data = new Bundle();
+		Message msg = Message.obtain();
+		data.putInt("code", result);
+		msg.setData(data);
+		msg.what = MusicActionDefine.ACTION_SEACH_CALLBACK;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
 }

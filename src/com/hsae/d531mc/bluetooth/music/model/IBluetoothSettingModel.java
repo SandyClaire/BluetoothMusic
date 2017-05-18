@@ -142,5 +142,7 @@ public interface IBluetoothSettingModel {
 
 	public void updateCarlifeConnectStatus();
 
+	public void onInquiryCallBack(Integer result);
+
 	
 }
