@@ -210,6 +210,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
+		mDrawerLayout.setScrimColor(this.getResources().getColor(R.color.transparent));
 		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
 		mBtnHome = (ImageView) findViewById(R.id.btn_home);
 		mImageShuffle = (ImageView) findViewById(R.id.btn_shuffle);
@@ -316,20 +317,21 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	@Override
 	protected void onResume() {
 		ivBT.setSelected(true);
-		boolean isUsb = isUsbConnected() || !isIpodConnected();
-		ivUSB.setImageResource(isUsb?R.drawable.selector_source_usb:R.drawable.selector_source_ipod);
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
+		
+		boolean isUsb = isUsbConnected() || !isIpodConnected();
+		ivUSB.setImageResource(isUsb?R.drawable.selector_source_usb:R.drawable.selector_source_ipod);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		pauseAnim();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
+		pauseAnim();
 		getCarlifeStatus();
 		super.onPause();
 	}

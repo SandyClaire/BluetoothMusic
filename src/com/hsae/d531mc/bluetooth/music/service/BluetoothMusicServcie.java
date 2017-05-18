@@ -710,7 +710,6 @@ public class BluetoothMusicServcie extends Service {
 				}
 			} else {
 				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
-				
 				try {
 					mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				} catch (RemoteException e) {
