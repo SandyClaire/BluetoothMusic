@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.os.Message;
-import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.IObserver;
@@ -17,13 +17,11 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 public class MusicPersenter implements IObserver {
 
 	private static final String TAG = "MusicPersenter";
-	private Context mContext;
 	private IMusicModel mIMusicModel;
 	private IMusicView mIMusicView;
 
 	public MusicPersenter(Context mContext, IMusicModel mIMusicModel) {
 		super();
-		this.mContext = mContext;
 		this.mIMusicModel = mIMusicModel;
 		this.mIMusicView = (IMusicView) mContext;
 	}
@@ -42,9 +40,6 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
-			// if (conStatus == 1) {
-			// mIMusicModel.playStatus();
-			// }
 			mIMusicView.updateViewByConnectStatus(conStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
@@ -73,13 +68,13 @@ public class MusicPersenter implements IObserver {
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			MusicBean bean = (MusicBean) inMessage.getData().getSerializable(
 					"musicBean");
-			Log.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
+			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:
 			String currentTime = inMessage.getData().getString("currentTime");
 			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
-			Log.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
+			LogUtil.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
@@ -129,7 +124,7 @@ public class MusicPersenter implements IObserver {
 		mIMusicView.updateViewByConnectStatus(status);
 		if (status == 1) {
 			int playStatus = mIMusicModel.playStatus();
-			Log.e("wangda", "init ---- playStatus = " + playStatus);
+			LogUtil.i(TAG, "init ---- playStatus = " + playStatus);
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			String title = mIMusicModel
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);

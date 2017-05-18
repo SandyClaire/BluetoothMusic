@@ -14,19 +14,19 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anwsdk.service.AudioControl;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.fragmet.BluetoothSettingFragment;
 import com.hsae.d531mc.bluetooth.music.fragmet.MusicSwitchFragmet;
@@ -69,7 +69,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private FragmentManager mFragmentManager;
 	private MusicSwitchFragmet mFragmet;
 	private boolean ismPlaying = false;
-	private boolean isfirst = false;
 	private ImageView mImageShuffle;
 	private ImageView mImageRepeat;
 	private BluetoothSettingFragment mSettingFragment;
@@ -148,11 +147,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 				return false;
 			}
 		});
-		isfirst = true;
 	}
 	
 	private OnTouchListener touchListener = new OnTouchListener() {
 		
+		@SuppressLint("ClickableViewAccessibility")
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			// TODO Auto-generated method stub
@@ -295,13 +294,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateViewByConnectStatus(int status) {
 		if (status == 0) {
-			Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
-					.show();
+//			Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
+//					.show();
 			updateViewShow(false);
 			mTextTitle.setText(getResources().getString(
 					R.string.music_bluetooth_disconnect));
 			mTextArtist.setText(getResources().getString(
-					R.string.music_bluetooth_disconnect));
+					R.string.music_bluetooth_disconnect_summery));
 			mTextAlbum.setText(getResources().getString(
 					R.string.music_bluetooth_disconnect));
 			mTextTotalTime.setText("00:00");
@@ -311,9 +310,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,AudioControl.PLAYER_SHUFFLE_OFF);
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
+			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 		} else if (status == 1) {
-			Toast.makeText(this, "connected A2DP", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(this, "connected A2DP", Toast.LENGTH_SHORT).show();
 			updateViewShow(true);
+			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
 	}
 
@@ -334,6 +335,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void updatePlayBtnByStatus(boolean flag) {
+		LogUtil.i(TAG, "Bluetooth A2DP updatePlayBtnByStatus -- flag = " + flag);
 		if (flag) {
 			ismPlaying = true;
 			mBtnPlay.setBackground(getResources().getDrawable(
@@ -349,6 +351,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateMusicDataInfo(MusicBean bean, boolean isSupport) {
 		isSupportMetadata = isSupport;
+		LogUtil.i(TAG, "Bluetooth A2DP updateMusicDataInfo -- isSupport = " + isSupport);
 		if (isSupport && null != bean) {
 			mTextTitle.setText(bean.getTitle());
 			mTextArtist.setText(bean.getAtrist());
@@ -481,7 +484,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateRepeatAllowList(ArrayList<Integer> allowList) {
 		mRepeatAllowedlist.clear();
 		mRepeatAllowedlist.addAll(allowList);
-		Log.i("wangda", "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
+		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
 			mBtnRepeat.setVisibility(View.GONE);;
 		}else {
@@ -493,7 +496,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateShuffleAllowList(ArrayList<Integer> allowList) {
 		mShuffleAllowedlist.clear();
 		mShuffleAllowedlist.addAll(allowList);
-		Log.i("wangda", "mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
+		LogUtil.i(TAG, "mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
 			mBtnShuffle.setVisibility(View.GONE);
 		}else {

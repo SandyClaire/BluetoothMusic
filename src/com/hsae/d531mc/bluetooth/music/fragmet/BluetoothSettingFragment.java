@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.R;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
@@ -88,6 +89,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		super.onActivityCreated(savedInstanceState);
 	}
 
+	@SuppressLint("InflateParams")
 	private void initView() {
 		mInflater = LayoutInflater.from(mContext);
 		View headerView = mInflater.inflate(R.layout.devices_list_header_view,
@@ -115,6 +117,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	private void initMVP() {
+		LogUtil.i(TAG, "BluetoothSettingFragment initMVP");
 		BluetoothSettingModel btModel = new BluetoothSettingModel(mContext);
 		mPresenter = new BluetoothSettingPresenter(btModel, this, mContext);
 		this.attach(mPresenter);
@@ -226,7 +229,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			return 0;
 		}
 
-		@SuppressLint("NewApi")
+		@SuppressLint({ "NewApi", "InflateParams" })
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			ViewHolder holder;
@@ -361,6 +364,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void showPairedDevices(List<BluetoothDevice> mList) {
+		LogUtil.i(TAG, "showPairedDevices--SIZE = " + mList.size());
 		if (null != mList && mList.size() != 0) {
 			mListPairedDevices = mList;
 			moveConnectedDeviceToFirst(mListPairedDevices);
@@ -382,7 +386,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void updateUnpairListByStatus(int status, String address) {
-//		Log.e("wangda", "--- status = " + status + "name" + address);
+		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
+				+ "-- address = " + address);
 		if (status == 1) {
 			for (int i = 0; i < mListVisibleDevices.size(); i++) {
 				if (mListVisibleDevices.get(i).getAddress().equals(address)) {
@@ -454,6 +459,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			notifyDataSetChanged();
 		}
 
+		@SuppressLint("InflateParams")
 		@Override
 		public View getView(final int position, View convertView,
 				ViewGroup parent) {

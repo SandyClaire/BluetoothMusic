@@ -11,7 +11,6 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
@@ -20,10 +19,10 @@ import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
-import com.hsae.d531mc.bluetooth.music.util.ShowLog;
 
 /**
  * 
@@ -37,7 +36,6 @@ public class BluetoothMusicModel {
 	private static Context mContext;
 	private IAnwPhoneLink mIAnwPhoneLink;
 	private BluetoothConnection mConnection = new BluetoothConnection();
-	private static ShowLog mLog;
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel nIBluetoothSettingModel;
@@ -48,7 +46,6 @@ public class BluetoothMusicModel {
 		if (null == mInstance) {
 			mInstance = new BluetoothMusicModel();
 		}
-		mLog = new ShowLog();
 		
 		return mInstance;
 	}
@@ -67,7 +64,7 @@ public class BluetoothMusicModel {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			mLog.showIlog(TAG, "---------- onServiceConnected ------------");
+			LogUtil.i(TAG, "---------- onServiceConnected ------------");
 			mIAnwPhoneLink = IAnwPhoneLink.Stub.asInterface(service);
 			if(mIAnwPhoneLink==null){
 				return;
@@ -88,7 +85,7 @@ public class BluetoothMusicModel {
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			mLog.showIlog(TAG, "---------- onServiceDisconnected ------------");
+			LogUtil.i(TAG, "---------- onServiceDisconnected ------------");
 			mIAnwPhoneLink = null;
 		}
 	}
@@ -879,6 +876,7 @@ public class BluetoothMusicModel {
 	/**
 	 * 判断电话界面时候在最前面
 	 */
+	@SuppressWarnings("deprecation")
 	public boolean isCallActivityShow() {
 		ActivityManager am = (ActivityManager) mContext
 				.getSystemService(Context.ACTIVITY_SERVICE);
@@ -897,7 +895,7 @@ public class BluetoothMusicModel {
      public void mainAudioChanged(boolean isChanged) {
     	Source source = new Source();
     	source.mainAudioChanged(App.BT_MUSIC, isChanged);
-        Log.i(TAG, "requestAudioSource == " + isChanged);
+        LogUtil.i(TAG, "requestAudioSource == " + isChanged);
         if (source.getCurrentSource() == App.BT_MUSIC) {
 			try {
 				audioSetStreamMode(0);
@@ -912,22 +910,22 @@ public class BluetoothMusicModel {
     
     /** 获取Android音频焦点 */
     public void requestAudioFocus(boolean flag) {
-        Log.i(TAG, "requestAudioFocus---request audio focus");
+        LogUtil.i(TAG, "requestAudioFocus---request audio focus");
         audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); //STREAM_MUSIC
         int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         Source source = new Source();
-        Log.i(TAG, "-------------- BT getCurrentSource" + source.getCurrentSource());
+        LogUtil.i(TAG, "-------------- BT getCurrentSource" + source.getCurrentSource());
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
+            LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;
             mainAudioChanged(flag);
             notifyLauncherInfo();
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-            Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
+            LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
             isAudioFocused = false;
         } else {
         	isAudioFocused = false;
-            Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
+            LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
         }
         if (isAudioFocused) {
 			try {
@@ -989,34 +987,34 @@ public class BluetoothMusicModel {
             	isAudioFocused = true;
             	mainAudioChanged(isCallActivityShow());
             	notifyLauncherInfo();
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             	isAudioFocused = true;
             	mainAudioChanged(isCallActivityShow());
             	notifyLauncherInfo();
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
             	isAudioFocused = true;
             	mainAudioChanged(isCallActivityShow());
             	notifyLauncherInfo();
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
             	isAudioFocused = false;
             	notifyAutroMusicInfo(null);
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
             	isAudioFocused = false;
             	notifyAutroMusicInfo(null);
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
             	isAudioFocused = false;
             	notifyAutroMusicInfo(null);
-                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                 break;
             }
 		    if (isAudioFocused) {

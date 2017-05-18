@@ -13,6 +13,7 @@ import android.util.Log;
 import com.anwsdk.service.BT_ADV_DATA;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.observer.ContactsSubjecter;
@@ -44,6 +45,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	}
 
 	private void init() {
+		LogUtil.i(TAG, "--- init +++");
 		mBluetoothModel = BluetoothMusicModel.getInstance(mContext);
 		mBluetoothModel
 				.registBluetoothSettingListener((IBluetoothSettingModel) this);
@@ -51,7 +53,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 
 	@Override
 	public void releaseModel() {
-		Log.i(TAG, "--- releaseModel +++");
+		LogUtil.i(TAG, "--- releaseModel +++");
 		mBluetoothModel.unregistBluetoothSettingListener();
 	}
 
@@ -72,7 +74,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			}
 		}, "inquiryThread");
 		inquiryThread.start();
-		Log.i(TAG, "--- inquiryThread.star");
+		LogUtil.i(TAG, "--- inquiryThread.star");
 		return backcode;
 	}
 
@@ -150,8 +152,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		try {
 			backcode = mBluetoothModel.inquiryBtStop();
 		} catch (RemoteException e) {
-			Log.e(TAG,
-					"--- stopInquiry --- RemoteException " + e.toString());
+			e.printStackTrace();
 		}
 		return backcode;
 	}
@@ -168,10 +169,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				} catch (RemoteException e) {
-					Log.e(
-							TAG,
-							"--- pairThread --- RemoteException "
-									+ e.toString());
+					e.printStackTrace();
 				}
 			}
 		}, "pairthread");

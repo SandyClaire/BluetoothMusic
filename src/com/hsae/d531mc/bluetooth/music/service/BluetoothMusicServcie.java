@@ -10,13 +10,13 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -54,7 +54,7 @@ public class BluetoothMusicServcie extends Service {
 		mBluetoothMusicModel.bindService();
 		registBroadcast();
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
-		Log.i(TAG, "---------- service oncreat ------------");
+		LogUtil.i(TAG, "---------- service oncreat ------------");
 		super.onCreate();
 	}
 
@@ -77,7 +77,7 @@ public class BluetoothMusicServcie extends Service {
 	@Override
 	public void onDestroy() {
 		mContext.unregisterReceiver(mReceiver);
-		Log.i(TAG, "---------- service onDestroy ------------");
+		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
 	}
 
@@ -106,10 +106,10 @@ public class BluetoothMusicServcie extends Service {
 						mConnectStatus = mBundle.getInt("Value");
 						mBluetoothMusicModel
 								.updateHFPConnectStatus(mConnectStatus);
-						Log.i(TAG, "PROFILE_HF_CHANNEL = mConnectStatus");
+						LogUtil.i(TAG, "PROFILE_HF_CHANNEL = mConnectStatus");
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
-						Log.i(TAG,
+						LogUtil.i(TAG,
 								"PROFILE_AUDIO_STREAM_CHANNEL --- mConnectStatus = "
 										+ mConnectStatus);
 						mBluetoothMusicModel
@@ -127,8 +127,9 @@ public class BluetoothMusicServcie extends Service {
 					boolean bSupport_PlayStatus = mBundle
 							.getBoolean("PlayStatus");
 
-					Log.i(TAG, "-- bSupport_Metadata = " + bSupport_Metadata
-							+ "-- bSupport_PlayStatus = " + bSupport_PlayStatus);
+					LogUtil.i(TAG, "-- bSupport_Metadata = "
+							+ bSupport_Metadata + "-- bSupport_PlayStatus = "
+							+ bSupport_PlayStatus);
 				}
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_A2DP_METADATA)) {
@@ -151,10 +152,10 @@ public class BluetoothMusicServcie extends Service {
 						case AudioControl.MEDIA_ATTR_ALBUM_NAME:
 							mAlbum = strMetadata;
 							break;
-//						case AudioControl.MEDIA_ATTR_TRACK_NUM_IN_ALBUM:
-//							break;
-//						case AudioControl.MEDIA_ATTR_TOTAL_NUM_IN_ALBUM:
-//							break;
+						// case AudioControl.MEDIA_ATTR_TRACK_NUM_IN_ALBUM:
+						// break;
+						// case AudioControl.MEDIA_ATTR_TOTAL_NUM_IN_ALBUM:
+						// break;
 						case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
 							mTotalTIme = strMetadata;
 							break;
@@ -170,7 +171,7 @@ public class BluetoothMusicServcie extends Service {
 								bean.getAtrist(), bean.getAlbum(), null);
 						mBluetoothMusicModel.notifyAutroMusicInfo(info);
 
-						Log.i(TAG, "-- nPlayStatus = " + nPlayStatus
+						LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus
 								+ " --- mTitle = " + mTitle + " --- mAtrist = "
 								+ mAtrist + " --- mTotalTIme = " + mTotalTIme);
 					}
@@ -185,7 +186,7 @@ public class BluetoothMusicServcie extends Service {
 						if (!mTimePosition.equals("-1")) {
 							mBluetoothMusicModel.updateCurrentPlayTime(
 									mTimePosition, isplaying);
-							Log.i(TAG,
+							LogUtil.i(TAG,
 									"MSG_ACTION_A2DP_PLAYSTATUS -- mPosition = "
 											+ mTimePosition);
 						}
@@ -194,8 +195,7 @@ public class BluetoothMusicServcie extends Service {
 					}
 					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					getAudioSource();
-					Log.i(TAG,
-							"-------MSG_ACTION_A2DP_PLAYSTATUS-------- nPlayStatus = "
+					LogUtil.i(TAG,"--MSG_ACTION_A2DP_PLAYSTATUS--nPlayStatus = "
 									+ nPlayStatus);
 				}
 			} else if (strAction
@@ -205,15 +205,16 @@ public class BluetoothMusicServcie extends Service {
 					if (!mTimePosition.equals("-1")) {
 						mBluetoothMusicModel.updateCurrentPlayTime(
 								mTimePosition, isplaying);
-						Log.i(TAG, "MSG_ACTION_A2DP_PLAYBACKPOS -- strPos = "
-								+ mTimePosition);
+						LogUtil.i(TAG,
+								"MSG_ACTION_A2DP_PLAYBACKPOS -- strPos = "
+										+ mTimePosition);
 					}
 				}
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("StreamStatus");
-					Log.i(TAG,
+					LogUtil.i(TAG,
 							"MSG_ACTION_A2DP_STREAMSTATUS -- nPlayStatus = "
 									+ nPlayStatus);
 					switch (nPlayStatus) {
@@ -241,14 +242,14 @@ public class BluetoothMusicServcie extends Service {
 					switch (nAttrID) {
 					case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
 						mBluetoothMusicModel.updateRepeatModel(AllowList);
-						Log.i("wangda",
+						LogUtil.i("wangda",
 								"PLAYER_ATTRIBUTE_REPEAT AllowList size = "
 										+ AllowList.size());
 
 						break;
 					case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
 						mBluetoothMusicModel.updateShuffleModel(AllowList);
-						Log.i("wangda",
+						LogUtil.i("wangda",
 								"PLAYER_ATTRIBUTE_SHUFFLE AllowList size = "
 										+ AllowList.size());
 						break;
@@ -260,7 +261,7 @@ public class BluetoothMusicServcie extends Service {
 					String mAddress = mBundle.getString("Address");
 					int mStatus = mBundle.getInt("Status");
 					mBluetoothMusicModel.updatePairRequest(mAddress, mStatus);
-					Log.i(TAG, "--------- pair status = " + mStatus);
+					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
 			}
 		}
@@ -271,7 +272,7 @@ public class BluetoothMusicServcie extends Service {
 		try {
 			if (source.getCurrentSource() != App.BT_MUSIC) {
 				mBluetoothMusicModel.audioSetStreamMode(1);
-			} 
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

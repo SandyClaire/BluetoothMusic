@@ -1,18 +1,18 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
-import android.util.Log;
-
 import com.anwsdk.service.AudioControl;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
 import com.hsae.autosdk.hmi.HmiConst;
+import com.hsae.autosdk.util.LogUtil;
 
 
 
@@ -29,7 +29,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 		super();
 		this.mContext = mContext;
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
-		Log.e(TAG , "------------------ INIT");
+		LogUtil.e(TAG , "------------------ INIT");
 	}
 	
 	public static BTMusicManager getInstance(Context context) {
@@ -92,7 +92,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 //		Intent intent = new Intent();
 //		intent.setAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
 //		mContext.sendBroadcast(intent);
-		Log.e(TAG , "------------------ hide");
+		LogUtil.e(TAG , "------------------ hide");
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 			int hmiIndex = keyEventDispatcher(arg0);
 			msg.what = hmiIndex;
 			mHandler.sendMessage(msg);
-			Log.i(TAG, "------------- KEY UP info = " + msg.what);
+			LogUtil.i(TAG, "------------- KEY UP info = " + msg.what);
 		}
 	}
 	
@@ -162,6 +162,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	private boolean mIsLongPress = false;
 	
 	
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler =  new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
@@ -171,7 +172,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				Log.i(TAG, "------------- SEEKUP_NEXT = " + msg.what);
+				LogUtil.i(TAG, "------------- SEEKUP_NEXT = " + msg.what);
 				break;
 			case SEEKDOWN_PREV:
 				try {
@@ -179,7 +180,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				Log.i(TAG, "------------- SEEKDOWN_PREV = " + msg.what);
+				LogUtil.i(TAG, "------------- SEEKDOWN_PREV = " + msg.what);
 				break;
 			case SEEKUP_FORWARD:
 				try {
@@ -187,7 +188,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				Log.i(TAG, "------------- SEEKUP_FORWARD = " + msg.what);
+				LogUtil.i(TAG, "------------- SEEKUP_FORWARD = " + msg.what);
 				break;
 			case SEEKDOWN_BACKWARD:
 				try {
@@ -195,7 +196,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				Log.i(TAG, "------------- SEEKDOWN_BACKWARD = " + msg.what);
+				LogUtil.i(TAG, "------------- SEEKDOWN_BACKWARD = " + msg.what);
 				break;
 			case KEY_DOWN:
 				mIsLongPress = true;
@@ -209,7 +210,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		Log.i(TAG, "------------- PAUSE " );
+		LogUtil.i(TAG, "------------- PAUSE " );
 	}
 
 	@Override
@@ -217,7 +218,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 		mBluetoothMusicModel.tryToSwitchSource();
 		mBluetoothMusicModel.requestAudioFocus(false);
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
-		Log.i(TAG, "------------- PLAY " );
+		LogUtil.i(TAG, "------------- PLAY " );
 	}
 
 	@Override
@@ -242,7 +243,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	public void registerBTMusicListener(IBTMusicListener arg0)
 			throws RemoteException {
 		mListener = arg0;
-		Log.e(TAG, " ----------- mListener" + mListener);
+		LogUtil.e(TAG, " ----------- mListener" + mListener);
 	}
 
 	@Override
@@ -267,6 +268,8 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	        intent.setPackage("com.hsae.d531mc.bluetooth.music");
 	        intent.setClassName(mContext, "com.hsae.d531mc.bluetooth.music.MusicMainActivity");
 	        mContext.startActivity(intent);
+	        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+			LogUtil.i(TAG, "------------- show " );
 	}
 
 	@Override

@@ -21,6 +21,7 @@ import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.R;
 
@@ -95,6 +96,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	}
 
 	private void initView() {
+		LogUtil.i(TAG, "initView");
 		mLinAM = (LinearLayout) mView.findViewById(R.id.lin_music_am);
 		mLinFM = (LinearLayout) mView.findViewById(R.id.lin_music_fm);
 		mLinIpod = (LinearLayout) mView.findViewById(R.id.lin_music_ipod);
@@ -142,9 +144,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
 			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
 			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
-			// Log.i("wangda", "isUsb == " + isUsb + ", isUsbConnected == " +
-			// isUsbConnected() + " ,  !isIpodConnected == " +
-			// !isIpodConnected());
+			LogUtil.i(TAG, "isUsb == " + isUsb + ", isUsbConnected == "
+					+ isUsbConnected() + " ,  !isIpodConnected == "
+					+ !isIpodConnected());
 			startOtherAPP(app, strPackage, strClass, bundle);
 			break;
 		case R.id.lin_music_bluetooth:
@@ -261,10 +263,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	 */
 	public void startOtherAPP(App app, String appId, String activityName,
 			Bundle bundle) {
-		// Log.i("wangda", "tryToSwitchSource -------------------------- ");
 		Source source = new Source();
 		boolean tryToSwitchSource = source.tryToSwitchSource(app);
-		// Log.i("wangda", "tryToSwitchSource == " + tryToSwitchSource);
+		LogUtil.i(TAG, "tryToSwitchSource == " + tryToSwitchSource);
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getActivity(), appId)) {
@@ -281,7 +282,6 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 					intent.putExtras(bundle);
 				}
 
-				// Log.i("wangda", "activityName == " + activityName);
 				getActivity().startActivity(intent);
 				getActivity().finish();
 			}

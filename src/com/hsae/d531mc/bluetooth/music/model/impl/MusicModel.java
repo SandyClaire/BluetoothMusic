@@ -9,6 +9,7 @@ import android.os.Message;
 import android.os.RemoteException;
 
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.ContactsSubjecter;
@@ -22,6 +23,7 @@ import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
  */
 public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
+	private static final String TAG = "MusicModel";
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Handler mHandler = new Handler();
@@ -34,12 +36,14 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	}
 
 	private void init() {
+		LogUtil.i(TAG, "--- init +++");
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
 		mBluetoothMusicModel.registMusicListener((IMusicModel) this);
 	}
 
 	@Override
 	public void releaseModel() {
+		LogUtil.i(TAG, "--- releaseModel +++");
 		mBluetoothMusicModel.unregistMusicListener();
 	}
 
@@ -52,6 +56,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		LogUtil.i(TAG, "--- getA2DPConnectStatus = " + backCode);
 		return backCode;
 	}
 
@@ -63,6 +68,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putInt("connectStatus", status);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "--- updateConnectStatusMsg = " + status);
 	}
 
 	@Override
@@ -83,6 +89,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", flag);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "--- updatePlayOrPauseStatus = " + flag);
 	}
 
 	@Override
@@ -109,6 +116,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		LogUtil.i(TAG, "--- A2DPSupportMetadata = " + isSupport);
 		return isSupport;
 	}
 
@@ -118,7 +126,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		try {
 			attributes = mBluetoothMusicModel.A2DPGetCurrentAttributes(type);
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return attributes;

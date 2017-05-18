@@ -1,13 +1,12 @@
 package com.hsae.d531mc.bluetooth.music.presenter;
 
 import java.util.List;
-
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
-
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.observer.IObserver;
@@ -26,14 +25,12 @@ public class BluetoothSettingPresenter implements IObserver {
 	private IBluetoothSettingModel mBluetoothSettingModel;
 	private IBluetoothSettingView mIBluetoothSettingView;
 	private int backcode = 0;
-	private Context mContext;
 
 	public BluetoothSettingPresenter(IBluetoothSettingModel btModel,
 			IBluetoothSettingView btSettingsView, Context mContext) {
 		super();
 		this.mBluetoothSettingModel = btModel;
 		this.mIBluetoothSettingView = btSettingsView;
-		this.mContext = mContext;
 	}
 
 	@Override
@@ -64,7 +61,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			String address = inMessage.getData().getString("address");
 			String strCOD = inMessage.getData().getString("strcod");
 			backcode = mBluetoothSettingModel.devicePair(address, strCOD);
-			Log.i(TAG, "--- pair  -  backcode = " + backcode
+			LogUtil.i(TAG, "--- pair  -  backcode = " + backcode
 					+ " --- strCOD = " + strCOD + "address" + address);
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY_DEVICES:
@@ -129,6 +126,7 @@ public class BluetoothSettingPresenter implements IObserver {
 
 	private String connAddress = "";
 
+	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 
 		@Override
@@ -159,6 +157,7 @@ public class BluetoothSettingPresenter implements IObserver {
 	}
 
 	private void init() {
+		LogUtil.i(TAG, "--- init +++");
 		((ISubject) mBluetoothSettingModel).attach(this);
 		((ISubject) mIBluetoothSettingView).attach(this);
 		String name = mBluetoothSettingModel.getLocalName();
@@ -173,7 +172,7 @@ public class BluetoothSettingPresenter implements IObserver {
 	}
 
 	private void exit() {
-		Log.i(TAG, "--- exit");
+		LogUtil.i(TAG, "--- exit +++");
 		mBluetoothSettingModel.releaseModel();
 		((ISubject) mBluetoothSettingModel).detach(this);
 		((ISubject) mIBluetoothSettingView).detach(this);
