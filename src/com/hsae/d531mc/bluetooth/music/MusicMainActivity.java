@@ -47,6 +47,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private Button mBtnNext;
 	private Button mBtnRepeat;
 	private Button mBtnShuffle;
+	private Button mBtnHome;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
 	private TextView mTextAlbum;
@@ -102,6 +103,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
 		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
+		mBtnHome = (Button) findViewById(R.id.btn_home);
 		mFragmet = new MusicSwitchFragmet(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
@@ -110,6 +112,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnNext.setOnClickListener(this);
 		mBtnRepeat.setOnClickListener(this);
 		mBtnShuffle.setOnClickListener(this);
+		mBtnHome.setOnClickListener(this);
 
 		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
 
@@ -203,6 +206,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 		case R.id.btn_shuffle:
 			showShufflePopUp(playModeListener);
 			break;
+		case R.id.btn_home:
+			Intent intent = new Intent(Intent.ACTION_MAIN);  
+	        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);  
+	        intent.addCategory(Intent.CATEGORY_HOME);  
+	        startActivity(intent);
+	        this.finish();
+			break;
 		default:
 			break;
 		}
@@ -247,11 +257,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updatePlayBtnByStatus(int status) {
 		if (status == MUSIC_PALYING) {
 			isPlaying = true;
-			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_play));;
+			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_pause));;
 		} else if (status == MUSIC_PAUSE || status == MUSIC_STOP) {
 			isPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_pause));;
+			mBtnPlay.setBackground(getResources().getDrawable(R.drawable.btn_music_play));;
 		}
 	}
 
@@ -410,7 +420,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		repeatWindow.setFocusable(true);
 		repeatWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_repeat),
-				Gravity.BOTTOM | Gravity.RIGHT, 165, 80);
+				Gravity.BOTTOM | Gravity.RIGHT, 165, 110);
 	}
 
 	private View mShuffleView;
@@ -437,7 +447,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		shuffleWindow.setFocusable(true);
 		shuffleWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_shuffle),
-				Gravity.BOTTOM | Gravity.RIGHT, 0, 80);
+				Gravity.BOTTOM | Gravity.RIGHT, 0, 110);
 	}
 
 	private OnClickListener playModeListener = new OnClickListener() {
