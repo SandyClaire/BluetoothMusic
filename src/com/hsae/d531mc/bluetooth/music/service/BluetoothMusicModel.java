@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import java.util.ArrayList;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -539,6 +541,24 @@ public class BluetoothMusicModel {
 	public void updateCurrentPlayTime(String position , boolean isPlaying) {
 		if (null != mIMusicModel) {
 			mIMusicModel.getCurrentMusicPlayPosition(position,isPlaying);
+		}
+	}
+	
+	public void updateRepeatModel(ArrayList<Integer> AllowList){
+		if (null != mIMusicModel) {
+			mIMusicModel.updateAttributeRepeat(AllowList);
+		}
+	}
+	
+	public void updateShuffleModel(ArrayList<Integer> AllowList){
+		if (null != mIMusicModel) {
+			mIMusicModel.updateAttributeShuffle(AllowList);
+		}
+	}
+	
+	public void updatePlayerModelSetting(int nAttrID , int nAttrValue){
+		if (null != mIMusicModel) {
+			mIMusicModel.updataPlayerModel(nAttrID, nAttrValue);
 		}
 	}
 	

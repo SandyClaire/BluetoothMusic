@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.view;
 
+import java.util.ArrayList;
+
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -34,5 +36,36 @@ public interface IMusicView {
 	 * @param currentTime
 	 */
 	public void updateMusicPlayCurrentTime(String currentTime , boolean isPlaying);
+	
+	/**
+	 * 更新顺序播放模式
+	 * @param allowList
+	 */
+	public void updateRepeatAllowList(ArrayList<Integer> allowList);
+	
+	/**
+	 * 更新随机播放模式
+	 * @param allowList
+	 */
+	public void updateShuffleAllowList(ArrayList<Integer> allowList);
+	
+	/**
+	 * 跟新播放模式状态
+	 * @param nAttrID
+	 * @param nAttrValue
+	 */
+	public void UpdatePlayerModeSetting(int nAttrID,int nAttrValue); 
+	
+	/**
+	 * 更新随机播放模式
+	 * @param allowList
+	 */
+	public void updateShuffleAllowArray(int[] AllowArray , int num);
+	
+	/**
+	 * 更新顺序播放模式
+	 * @param allowList
+	 */
+	public void updateRepeatAllowArray(int[] AllowArray , int num);
 
 }

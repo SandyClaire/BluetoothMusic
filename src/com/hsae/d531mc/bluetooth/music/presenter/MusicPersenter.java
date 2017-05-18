@@ -1,7 +1,10 @@
 package com.hsae.d531mc.bluetooth.music.presenter;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.os.Message;
+import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
@@ -17,12 +20,12 @@ public class MusicPersenter implements IObserver {
 	private Context mContext;
 	private IMusicModel mIMusicModel;
 	private IMusicView mIMusicView;
-	
+
 	public MusicPersenter(Context mContext, IMusicModel mIMusicModel) {
 		super();
 		this.mContext = mContext;
 		this.mIMusicModel = mIMusicModel;
-		this.mIMusicView = (IMusicView)mContext;
+		this.mIMusicView = (IMusicView) mContext;
 	}
 
 	@Override
@@ -36,9 +39,9 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
-//			if (conStatus == 1) {
-//				mIMusicModel.playStatus();
-//			}
+			// if (conStatus == 1) {
+			// mIMusicModel.playStatus();
+			// }
 			mIMusicView.updateViewByConnectStatus(conStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
@@ -65,32 +68,49 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE:
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
-			MusicBean bean = (MusicBean) inMessage.getData().getSerializable("musicBean");
-			mIMusicView.updateMusicDataInfo(bean , isSupport);
+			MusicBean bean = (MusicBean) inMessage.getData().getSerializable(
+					"musicBean");
+			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:
 			String currentTime = inMessage.getData().getString("currentTime");
 			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
-			mIMusicView.updateMusicPlayCurrentTime(currentTime,isPlaying);
-			break;
-		case MusicActionDefine.ACTION_A2DP_REPEAT_ALL:
-			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 4);
-			break;
-		case MusicActionDefine.ACTION_A2DP_REPEAT_ORDER:
-			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 3);
-			break;
-		case MusicActionDefine.ACTION_A2DP_REPEAT_SINGLE:
-			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 2);
-			break;
-		case MusicActionDefine.ACTION_A2DP_SHUFFLE_OPEN:
-			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, 1);
-			break;
-		case MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE:
-			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, 2);
+			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
 			mIMusicModel.requestAudioFoucs();
 			break;
+		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
+			ArrayList<Integer> allowRepeatList = inMessage.getData()
+					.getIntegerArrayList("repeatList");
+			mIMusicView.updateRepeatAllowList(allowRepeatList);
+			break;
+		case MusicActionDefine.ACTION_A2DP_SHUFFLE_ATTRIBUTE:
+			ArrayList<Integer> allowShuffleList = inMessage.getData()
+					.getIntegerArrayList("shuffleList");
+			mIMusicView.updateShuffleAllowList(allowShuffleList);
+			break;
+		case MusicActionDefine.ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT:
+			int nAttrID = inMessage.getData().getInt("nAttrID");
+			int nAttrValue = inMessage.getData().getInt("nAttrValue");
+			mIMusicView.UpdatePlayerModeSetting(nAttrID, nAttrValue);
+			break;
+		case MusicActionDefine.ACTION_A2DP_REPEAT_MODEL:
+			int nCurrentMode = inMessage.getData().getInt("currentRepeatModel");
+			ArrayList<Integer> allowlist = inMessage.getData()
+					.getIntegerArrayList("repeatList");
+			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT, allowlist,
+					nCurrentMode);
+			break;
+		case MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL:
+			int sCurrentMode = inMessage.getData()
+					.getInt("currentShuffleModel");
+			ArrayList<Integer> sallowlist = inMessage.getData()
+					.getIntegerArrayList("shuffleList");
+			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, sallowlist,
+					sCurrentMode);
+			break;
+
 		default:
 			break;
 		}
@@ -105,13 +125,18 @@ public class MusicPersenter implements IObserver {
 			int playStatus = mIMusicModel.playStatus();
 			Log.e("wangda", "init ---- playStatus = " + playStatus);
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
-			String title = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);
-			String atrist = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_ARTIST_NAME);
-			String album = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_ALBUM_NAME);
-			String totalTime = mIMusicModel.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
+			String title = mIMusicModel
+					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);
+			String atrist = mIMusicModel
+					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_ARTIST_NAME);
+			String album = mIMusicModel
+					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_ALBUM_NAME);
+			String totalTime = mIMusicModel
+					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
-			mIMusicView.updateMusicDataInfo(bean , isSupport);
-//			mIMusicView.updatePlayBtnByStatus(playStatus);
+			mIMusicView.updateMusicDataInfo(bean, isSupport);
+			// mIMusicView.updatePlayBtnByStatus(playStatus);
+			initMusicModel();
 		}
 	}
 
@@ -119,6 +144,55 @@ public class MusicPersenter implements IObserver {
 		mIMusicModel.releaseModel();
 		((ISubject) mIMusicModel).detach(this);
 		((ISubject) mIMusicModel).detach(this);
+	}
+
+	private void initMusicModel() {
+		int[] AllowArray = new int[10];
+		int repeatNum = mIMusicModel.retrieveCurrentPlayerAPSupported(
+				AudioControl.PLAYER_ATTRIBUTE_REPEAT, AllowArray, 10);
+		mIMusicView.updateRepeatAllowArray(AllowArray, repeatNum);
+		int shuffleNum = mIMusicModel.retrieveCurrentPlayerAPSupported(
+				AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, AllowArray, 10);
+		mIMusicView.updateShuffleAllowArray(AllowArray, shuffleNum);
+
+		mIMusicView
+				.UpdatePlayerModeSetting(
+						AudioControl.PLAYER_ATTRIBUTE_REPEAT,
+						mIMusicModel
+								.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT));
+		mIMusicView
+				.UpdatePlayerModeSetting(
+						AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
+						mIMusicModel
+								.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE));
+	}
+
+	private void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
+			int nCurrentMode) {
+		int nSupportSize = 0;
+		if (AllowedList != null) {
+			nSupportSize = AllowedList.size();
+			if (nSupportSize > 0) {
+				int i = 0;
+				int nValue = 0;
+				int nNextMode = -1;
+				for (i = 0; i < nSupportSize; i++) {
+					nValue = AllowedList.get(i);
+					if (nValue == nCurrentMode) {
+						int j = i + 1;
+						if (j >= nSupportSize)
+							j = 0;
+						nNextMode = AllowedList.get(j);
+						break;
+					}
+				}
+				if (nNextMode >= 0) {
+					mIMusicModel
+							.setCurrentPlayerAPSettings(nAttriID, nNextMode);
+				}
+			}
+
+		}
 	}
 
 }

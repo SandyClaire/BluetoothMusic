@@ -213,6 +213,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 
 	@Override
 	public void play() throws RemoteException {
+		mBluetoothMusicModel.tryToSwitchSource();
 		mBluetoothMusicModel.requestAudioFocus();
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 		Log.i(TAG, "------------- PLAY " );

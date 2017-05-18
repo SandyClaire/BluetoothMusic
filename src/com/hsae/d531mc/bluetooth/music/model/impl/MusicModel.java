@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.model.impl;
 
+import java.util.ArrayList;
+
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,12 +14,13 @@ import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.ContactsSubjecter;
 import com.hsae.d531mc.bluetooth.music.service.BluetoothMusicModel;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
+
 /**
  * 
  * @author wangda
  *
  */
-public class MusicModel extends ContactsSubjecter implements IMusicModel{
+public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothMusicModel;
@@ -29,10 +32,10 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 		this.mContext = mContext;
 		init();
 	}
-	
-	private void init(){
+
+	private void init() {
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
-		mBluetoothMusicModel.registMusicListener((IMusicModel)this);
+		mBluetoothMusicModel.registMusicListener((IMusicModel) this);
 	}
 
 	@Override
@@ -44,7 +47,8 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	public int getA2DPConnectStatus() {
 		int backCode = -1;
 		try {
-			backCode = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+			backCode = mBluetoothMusicModel.getConnectStatus(
+					MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -84,7 +88,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	@Override
 	public int playStatus() {
 		mHandler.postDelayed(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				try {
@@ -129,9 +133,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
-	
+
 	@Override
-	public void getCurrentMusicPlayPosition(String position , Boolean isPlaying) {
+	public void getCurrentMusicPlayPosition(String position, Boolean isPlaying) {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE;
 		Bundle mBundle = new Bundle();
@@ -153,8 +157,64 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 	@Override
 	public void requestAudioFoucs() {
 		mBluetoothMusicModel.requestAudioFocus();
-	}	
-	
-	
-	
+	}
+
+	@Override
+	public void updateAttributeRepeat(ArrayList<Integer> AllowList) {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE;
+		Bundle mBundle = new Bundle();
+		mBundle.putIntegerArrayList("repeatList", AllowList);
+		msg.setData(mBundle);
+		this.notify(msg, FLAG_RUN_SYNC);
+
+	}
+
+	@Override
+	public void updateAttributeShuffle(ArrayList<Integer> AllowList) {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_ATTRIBUTE;
+		Bundle mBundle = new Bundle();
+		mBundle.putIntegerArrayList("shuffleList", AllowList);
+		msg.setData(mBundle);
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
+
+	@Override
+	public void updataPlayerModel(int nAttrID, int nAttrValue) {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT;
+		Bundle mBundle = new Bundle();
+		mBundle.putInt("nAttrID", nAttrID);
+		mBundle.putInt("nAttrValue", nAttrValue);
+		msg.setData(mBundle);
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
+
+	@Override
+	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
+			int nArraySize) {
+		int nWriteSize = 0;
+		try {
+			nWriteSize = mBluetoothMusicModel.retrieveCurrentPlayerAPSupported(
+					nAttrID, nAllowArray, nArraySize);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return nWriteSize;
+	}
+
+	@Override
+	public int retrieveCurrentPlayerAPSetting(int nAttrID) {
+		int attrID = 0;
+		try {
+			attrID = mBluetoothMusicModel
+					.retrieveCurrentPlayerAPSetting(nAttrID);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
+		return attrID;
+	}
+
 }

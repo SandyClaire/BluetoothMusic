@@ -27,13 +27,14 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_FASTFORWORD = 24;
     static public final int ACTION_A2DP_REWIND = 25;
     
-    static public final int ACTION_A2DP_REPEAT_ALL = 30;
-    static public final int ACTION_A2DP_REPEAT_SINGLE = 31;
-    static public final int ACTION_A2DP_REPEAT_ORDER = 32;
-    static public final int ACTION_A2DP_SHUFFLE_OPEN = 33;
-    static public final int ACTION_A2DP_SHUFFLE_CLOSE = 34;
-    
+    static public final int ACTION_A2DP_REPEAT_MODEL = 30;
+    static public final int ACTION_A2DP_SHUFFLE_MODEL = 31;
+        
     static public final int ACTION_A2DP_REQUEST_AUDIO_FOCUSE = 40;
+    
+    static public final int ACTION_A2DP_SHUFFLE_ATTRIBUTE = 50;
+    static public final int ACTION_A2DP_REPEAT_ATTRIBUTE = 51;
+    static public final int ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT = 52;
     
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";

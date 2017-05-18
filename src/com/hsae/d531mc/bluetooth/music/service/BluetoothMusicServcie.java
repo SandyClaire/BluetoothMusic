@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import java.util.ArrayList;
+
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -211,19 +213,31 @@ public class BluetoothMusicServcie extends Service {
 				}
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT)) {
-				if (mBundle != null) {
-					// int nPlayStatus = mBundle.getInt("PlayStatus");
-					// Log.i(TAG,
-					// "MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT -- nPlayStatus = "
-					// + nPlayStatus);
-				}
+				if(mBundle != null)
+	    		{
+	    			int nAttrID = mBundle.getInt("AttributeID");
+	    			int nAttrValue = mBundle.getInt("Value");
+
+	    			mBluetoothMusicModel.updatePlayerModelSetting(nAttrID, nAttrValue);
+	    		}
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT)) {
 				if (mBundle != null) {
-					// int nPlayStatus = mBundle.getInt("PlayStatus");
-					// Log.i(TAG,
-					// "MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT -- nPlayStatus = "
-					// + nPlayStatus);
+					int nAttrID = mBundle.getInt("AttributeID");
+					ArrayList<Integer> AllowList = mBundle
+							.getIntegerArrayList("Allowed");
+					switch (nAttrID) {
+					case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
+						mBluetoothMusicModel.updateRepeatModel(AllowList);
+						Log.i("wangda", "PLAYER_ATTRIBUTE_REPEAT AllowList size = " + AllowList.size());
+						
+						break;
+					case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
+						mBluetoothMusicModel.updateShuffleModel(AllowList);
+						Log.i("wangda", "PLAYER_ATTRIBUTE_SHUFFLE AllowList size = " + AllowList.size());
+						break;
+
+					}
 				}
 			}
 		}

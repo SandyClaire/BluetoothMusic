@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.model;
 
+import java.util.ArrayList;
+
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -74,6 +76,33 @@ public interface IMusicModel {
 	 */
 	public void setCurrentPlayerAPSettings(int nAttrID , int nAttrValue);
 	
+	/**
+	 * 抢占音源焦点
+	 */
 	public void requestAudioFoucs();
+	
+	/**
+	 * 更新顺序播放模式
+	 * @param AllowList
+	 */
+	public void updateAttributeRepeat(ArrayList<Integer> AllowList);
+	
+	/**
+	 * 更新随机播放模式
+	 * @param AllowList
+	 */
+	public void updateAttributeShuffle(ArrayList<Integer> AllowList);
+	
+	/**
+	 * 跟新播放模式状态
+	 * @param nAttrID
+	 * @param nAttrValue
+	 */
+	public void updataPlayerModel(int nAttrID , int nAttrValue);
+	
+	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
+			int nArraySize);
+	
+	public int retrieveCurrentPlayerAPSetting(int nAttrID);
 	
 }

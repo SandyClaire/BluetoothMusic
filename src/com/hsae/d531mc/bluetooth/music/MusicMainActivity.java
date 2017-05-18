@@ -1,33 +1,27 @@
 package com.hsae.d531mc.bluetooth.music;
 
+import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anwsdk.service.AudioControl;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.fragmet.MusicSwitchFragmet;
 import com.hsae.d531mc.bluetooth.music.model.impl.MusicModel;
@@ -47,6 +41,7 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 public class MusicMainActivity extends Activity implements ISubject,
 		IMusicView, OnClickListener {
 
+	private static final String TAG = "MusicMainActivity";
 	private MusicPersenter mPresenter;
 
 	private Button mBtnMusicSwith;
@@ -142,7 +137,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-		registBroadcast();
 		super.onResume();
 	}
 
@@ -213,10 +207,22 @@ public class MusicMainActivity extends Activity implements ISubject,
 			this.notify(msgn, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_repeat:
-			showRepeatPopUp(playModeListener);
+			Message msgr = Message.obtain();
+			msgr.what = MusicActionDefine.ACTION_A2DP_REPEAT_MODEL;
+			Bundle rBundle = new Bundle();
+			rBundle.putInt("currentRepeatModel", m_RepeatMode);
+			rBundle.putIntegerArrayList("repeatList", mRepeatAllowedlist);
+			msgr.setData(rBundle);
+			this.notify(msgr, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_shuffle:
-			showShufflePopUp(playModeListener);
+			Message msgs = Message.obtain();
+			msgs.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL;
+			Bundle sBundle = new Bundle();
+			sBundle.putInt("currentShuffleModel", m_ShuffleMode);
+			sBundle.putIntegerArrayList("shuffleList", mShuffleAllowedlist);
+			msgs.setData(sBundle);
+			this.notify(msgs, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_home:
 			Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -244,6 +250,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
+			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,AudioControl.PLAYER_REPEAT_MODE_OFF);
+			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,AudioControl.PLAYER_SHUFFLE_OFF);
+			mRepeatAllowedlist.clear();
+			mShuffleAllowedlist.clear();
 		} else if (status == 1) {
 			Toast.makeText(this, "connected A2DP", Toast.LENGTH_SHORT).show();
 			updateViewShow(true);
@@ -405,131 +415,128 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 	}
 
-	private View mRepeatView;
+	
+	private ArrayList<Integer> mRepeatAllowedlist= new ArrayList<Integer>(); 
+	private ArrayList<Integer> mShuffleAllowedlist= new ArrayList<Integer>(); 
 
-	private PopupWindow repeatWindow;
-
-	@SuppressLint("InlinedApi")
-	private void showRepeatPopUp(OnClickListener clickListener) {
-		LayoutInflater inflater = (LayoutInflater) MusicMainActivity.this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mRepeatView = inflater.inflate(R.layout.pop_repeat, null);
-
-		LinearLayout btnRepeatAll = (LinearLayout) mRepeatView
-				.findViewById(R.id.btn_repeat_all);
-		LinearLayout btnRepeatSingle = (LinearLayout) mRepeatView
-				.findViewById(R.id.btn_repeat_single);
-		LinearLayout btnRepeatOrder = (LinearLayout) mRepeatView
-				.findViewById(R.id.btn_repeat_order);
-		btnRepeatAll.setOnClickListener(clickListener);
-		btnRepeatSingle.setOnClickListener(clickListener);
-		btnRepeatOrder.setOnClickListener(clickListener);
-
-		repeatWindow = new PopupWindow(MusicMainActivity.this);
-		repeatWindow.setContentView(mRepeatView);
-		repeatWindow.setWidth(LayoutParams.WRAP_CONTENT);
-		repeatWindow.setHeight(LayoutParams.WRAP_CONTENT);
-		repeatWindow.setFocusable(true);
-		repeatWindow.showAtLocation(
-				MusicMainActivity.this.findViewById(R.id.btn_repeat),
-				Gravity.BOTTOM | Gravity.RIGHT, 172, 0);
+	@Override
+	public void updateRepeatAllowList(ArrayList<Integer> allowList) {
+		mRepeatAllowedlist.clear();
+		mRepeatAllowedlist.addAll(allowList);
+		Log.i("wangda", "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
+		if (mRepeatAllowedlist.size() <= 0) {
+			mBtnRepeat.setEnabled(false);
+		}else {
+			mBtnRepeat.setEnabled(true);
+		}
 	}
 
-	private View mShuffleView;
-
-	private PopupWindow shuffleWindow;
-
-	@SuppressLint("InlinedApi")
-	private void showShufflePopUp(OnClickListener clickListener) {
-		LayoutInflater inflater = (LayoutInflater) MusicMainActivity.this
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		mShuffleView = inflater.inflate(R.layout.pop_shuffle, null);
-
-		LinearLayout btnOpen = (LinearLayout) mShuffleView
-				.findViewById(R.id.btn_shuffle_open);
-		LinearLayout btnClose = (LinearLayout) mShuffleView
-				.findViewById(R.id.btn_shuffle_close);
-		btnOpen.setOnClickListener(clickListener);
-		btnClose.setOnClickListener(clickListener);
-
-		shuffleWindow = new PopupWindow(MusicMainActivity.this);
-		shuffleWindow.setContentView(mShuffleView);
-		shuffleWindow.setWidth(LayoutParams.WRAP_CONTENT);
-		shuffleWindow.setHeight(LayoutParams.WRAP_CONTENT);
-		shuffleWindow.setFocusable(true);
-		shuffleWindow.showAtLocation(
-				MusicMainActivity.this.findViewById(R.id.btn_shuffle),
-				Gravity.BOTTOM | Gravity.RIGHT, 0, 0);
+	@Override
+	public void updateShuffleAllowList(ArrayList<Integer> allowList) {
+		mShuffleAllowedlist.clear();
+		mShuffleAllowedlist.addAll(allowList);
+		Log.i("wangda", "mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
+		if (mShuffleAllowedlist.size() <= 0) {
+			mBtnShuffle.setEnabled(false);
+		}else {
+			mBtnShuffle.setEnabled(true);
+		}
 	}
+	
+	int m_ShuffleMode =AudioControl.PLAYER_SHUFFLE_OFF;
+	int m_RepeatMode =AudioControl.PLAYER_REPEAT_MODE_OFF;
 
-	private OnClickListener playModeListener = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			Message msg = Message.obtain();
-			switch (v.getId()) {
-			case R.id.btn_repeat_all:
-				if (repeatWindow != null) {
-					repeatWindow.dismiss();
-					repeatWindow = null;
-				}
-				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ALL;
-				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
-				break;
-			case R.id.btn_repeat_order:
-				if (repeatWindow != null) {
-					repeatWindow.dismiss();
-					repeatWindow = null;
-				}
-				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ORDER;
-				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
-				break;
-			case R.id.btn_repeat_single:
-				if (repeatWindow != null) {
-					repeatWindow.dismiss();
-					repeatWindow = null;
-				}
-				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_SINGLE;
-				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
-				break;
-			case R.id.btn_shuffle_open:
-				if (shuffleWindow != null) {
-					shuffleWindow.dismiss();
-					shuffleWindow = null;
-				}
-				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_OPEN;
-				mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
-				break;
-			case R.id.btn_shuffle_close:
-				if (shuffleWindow != null) {
-					shuffleWindow.dismiss();
-					shuffleWindow = null;
-				}
-				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE;
-				mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
-				break;
-			default:
-
-				break;
+	@Override
+	public void UpdatePlayerModeSetting(int nAttrID, int nAttrValue) {
+		switch(nAttrID)
+		{
+	
+		case AudioControl.PLAYER_ATTRIBUTE_REPEAT://2
+			if(m_RepeatMode != nAttrValue)
+			{
+				m_RepeatMode = nAttrValue ;
+				switch(nAttrValue)
+				{
+				case AudioControl.PLAYER_REPEAT_MODE_OFF:
+					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
+					break;
+				case AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK:
+					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
+					break;
+				case AudioControl.PLAYER_REPEAT_MODE_ALL_TRACK:
+					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					break;
+				case AudioControl.PLAYER_REPEAT_MODE_GROUP:
+					mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					break;				
+				}			
 			}
-			MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
-		}
-	};
-	
-	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+			break;
+		case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE://3
+			
+			if(m_ShuffleMode != nAttrValue)
+			{
+				m_ShuffleMode = nAttrValue;
+				switch(nAttrValue)
+				{
+				case AudioControl.PLAYER_SHUFFLE_OFF:
+					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
+					break;
+				case AudioControl.PLAYER_SHUFFLE_ALL_TRACK:
+					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					break;
+				case AudioControl.PLAYER_SHUFFLE_GROUP:
+					mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					break;
 		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			MusicMainActivity.this.unregisterReceiver(mReceiver);
-			MusicMainActivity.this.finish();
-			Log.e("wangda", "finish");
+				}	
+			}
+			break;
 		}
-	};
-	
-	private void registBroadcast(){
-		IntentFilter intent = new IntentFilter();
-		intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
-		this.registerReceiver(mReceiver, intent);
 	}
+
+	@Override
+	public void updateShuffleAllowArray(int[] AllowArray , int num) {
+		mShuffleAllowedlist.clear();
+		for (int i = 0; i < num; i++) {
+			mShuffleAllowedlist.add(AllowArray[i]);
+		}
+		Log.i("wangda", "mShuffleAllowedlist 11111111111 size = " + mShuffleAllowedlist.size());
+		if (mShuffleAllowedlist.size() <= 0) {
+			mBtnShuffle.setEnabled(false);
+		}else {
+			mBtnShuffle.setEnabled(true);
+		}
+	}
+
+	@Override
+	public void updateRepeatAllowArray(int[] AllowArray , int num) {
+		mRepeatAllowedlist.clear();
+		for (int i = 0; i < num; i++) {
+			mRepeatAllowedlist.add(AllowArray[i]);
+		}
+		Log.i("wangda", "mRepeatAllowedlist 11111111111 size = " + mRepeatAllowedlist.size());
+		if (mRepeatAllowedlist.size() <= 0) {
+			mBtnRepeat.setEnabled(false);
+		}else {
+			mBtnRepeat.setEnabled(true);
+		}
+	}
+	
+//	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+//		
+//		@Override
+//		public void onReceive(Context context, Intent intent) {
+//			MusicMainActivity.this.unregisterReceiver(mReceiver);
+//			MusicMainActivity.this.finish();
+//			Log.e("wangda", "finish");
+//		}
+//	};
+	
+//	private void registBroadcast(){
+//		IntentFilter intent = new IntentFilter();
+//		intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
+//		this.registerReceiver(mReceiver, intent);
+//	}
 
 }
