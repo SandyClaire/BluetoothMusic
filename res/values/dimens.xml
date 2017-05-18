@@ -37,6 +37,7 @@
     <dimen name="text_size_20">20dp</dimen>
     <dimen name="text_size_22">22dp</dimen>
     <dimen name="text_size_24">24dp</dimen>
+    <dimen name="text_size_26">26dp</dimen>
     <dimen name="text_size_28">28dp</dimen>
     <dimen name="text_size_38">38dp</dimen>
 
@@ -46,10 +47,9 @@
     <dimen name="devices_item_right_button_pandding_right">15dp</dimen>
     <dimen name="devices_item_right_button_width">100dp</dimen>
     <dimen name="devices_item_margin_left">30dp</dimen>
-    <dimen name="devices_item_summery_text_size">14dp</dimen>
+    <dimen name="devices_item_summery_text_size">18dp</dimen>
     <dimen name="devices_item_name_text_height">30dp</dimen>
-    <dimen name="devices_item_summery_text_height">20dp</dimen>
-    
+    <dimen name="devices_item_summery_text_height">25dp</dimen>
     <dimen name="left_title_padding_left">60dp</dimen>
     <dimen name="left_text_size">28dp</dimen>
     <dimen name="left_source_padding_left">30dp</dimen>
