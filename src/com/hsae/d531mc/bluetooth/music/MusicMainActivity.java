@@ -473,7 +473,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);
 			startActivity(intent);
-			finishActivity();
 			break;
 		default:
 			break;
@@ -496,7 +495,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			bundle.putInt("band", 0x01);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
 			closeMusicSwitch();
-			finishActivity();
 		} else if (source.equals(Media.fm)) {
 			ivAM.setSelected(false);
 			ivFM.setSelected(true);
@@ -505,7 +503,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			bundle.putInt("band", 0x03);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
 			closeMusicSwitch();
-			finishActivity();
 		} else if (source.equals(Media.usb)) {
 			ivAM.setSelected(false);
 			ivFM.setSelected(false);
@@ -518,7 +515,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
 			startOtherAPP(app, strPackage, strClass, bundle);
 			closeMusicSwitch();
-			finishActivity();
 		} else if (source.equals(Media.bt)) {
 			ivAM.setSelected(false);
 			ivFM.setSelected(false);

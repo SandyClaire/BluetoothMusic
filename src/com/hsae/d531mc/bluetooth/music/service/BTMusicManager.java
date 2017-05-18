@@ -179,12 +179,16 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void prev() throws RemoteException {
-		// mBluetoothMusicModel.setPrevClicked();
+		mBluetoothMusicModel.isHandPuse = false;
+		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
+		LogUtil.i(TAG, "------------- PREV ");
 	}
 
 	@Override
 	public void next() throws RemoteException {
-		// mBluetoothMusicModel.setNextClicked();
+		mBluetoothMusicModel.isHandPuse = false;
+		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
+		LogUtil.i(TAG, "------------- NEXT ");
 	}
 
 	@Override
