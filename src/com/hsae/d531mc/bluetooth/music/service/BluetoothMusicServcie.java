@@ -228,7 +228,7 @@ public class BluetoothMusicServcie extends Service {
 						isplaying = true;
 						mBluetoothMusicModel.updatePlayStatus(true);
 						mBluetoothMusicModel.updateCurrentPlayTime(
-								mTimePosition, isplaying);
+								mTimePosition, true);
 						break;
 					}
 				}
@@ -261,7 +261,6 @@ public class BluetoothMusicServcie extends Service {
 								"PLAYER_ATTRIBUTE_SHUFFLE AllowList size = "
 										+ AllowList.size());
 						break;
-
 					}
 				}
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_PAIR_STATUS)) {

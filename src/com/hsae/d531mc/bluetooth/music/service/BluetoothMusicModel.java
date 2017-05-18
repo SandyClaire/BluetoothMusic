@@ -46,7 +46,6 @@ public class BluetoothMusicModel {
 		if (null == mInstance) {
 			mInstance = new BluetoothMusicModel();
 		}
-		
 		return mInstance;
 	}
 
@@ -934,7 +933,7 @@ public class BluetoothMusicModel {
     /** 获取Android音频焦点 */
     public void requestAudioFocus(boolean flag) {
     	Source source = new Source();
-    	LogUtil.i(TAG, "-------------- BT getCurrentSource" + source.getCurrentSource());
+    	LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
     	if (source.getCurrentSource() == App.BT_MUSIC) {
     		try {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
