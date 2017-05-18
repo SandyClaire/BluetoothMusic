@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -264,6 +265,19 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		Intent intent = new Intent(
 				MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
 		mContext.sendBroadcast(intent);
+	}
+
+	@Override
+	public Bitmap getBg() {
+		LogUtil.i(TAG, "getBg");
+		return mBluetoothMusicModel.getWallPaperBitmap();
+	}
+
+	@Override
+	public void updateBg() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_UPDATE_BG;
+		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
 }

@@ -1,17 +1,18 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.IBinder;
 import android.os.RemoteException;
-
+import android.support.v4.util.LruCache;
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
@@ -23,6 +24,7 @@ import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
+import com.hsae.d531mc.bluetooth.music.util.Util;
 
 /**
  * 
@@ -1151,5 +1153,50 @@ public class BluetoothMusicModel {
 			}
 		}
 	};
+	
+	
+	public void deleteWallpaperCache(){
+		mMemoryCache = getCache();
+		if(getWallPaperBitmap() != null){
+			mMemoryCache.remove(Util.MC_WALLPAPER);
+			LogUtil.i(TAG, "deleteWallpaperCache");
+		}
+	}
+	
+	private LruCache<String, Bitmap> mMemoryCache;
+	
+	public void addWallPaperToCache(Bitmap bitmap) {
+		mMemoryCache = getCache();
+		
+		if (getWallPaperBitmap() == null) {
+			mMemoryCache.put(Util.MC_WALLPAPER, bitmap);
+			LogUtil.i(TAG, "addWallPaperToCache");
+		}
+		if (mIMusicModel != null) {
+			mIMusicModel.updateBg();
+		}
+	}
+
+	public Bitmap getWallPaperBitmap() {
+		mMemoryCache = getCache();
+		return mMemoryCache.get(Util.MC_WALLPAPER);
+	}
+	
+	// 获取应用程序最大可用内存
+	int cacheSize = (int) Runtime.getRuntime().maxMemory() / 8;
+		
+	public LruCache<String, Bitmap> getCache(){
+		if(mMemoryCache == null){
+			mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
+				@SuppressLint("NewApi")
+				@Override
+				protected int sizeOf(String key, Bitmap bitmap) {
+					return bitmap.getByteCount();
+				}
+			};
+		}
+		return mMemoryCache;
+	}
+
 
 }

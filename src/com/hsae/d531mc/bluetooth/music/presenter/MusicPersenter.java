@@ -3,6 +3,7 @@ package com.hsae.d531mc.bluetooth.music.presenter;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Message;
 
 import com.anwsdk.service.AudioControl;
@@ -127,6 +128,10 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE :
 			mIMusicModel.sendActivityPauseMsg();
 			break;
+		case MusicActionDefine.ACTION_SETTING_UPDATE_BG :
+			initBg();
+			break;
+			
 		default:
 			break;
 		}
@@ -137,6 +142,7 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicView).attach(this);
 		int status = mIMusicModel.getA2DPConnectStatus();
 		mIMusicView.updateViewByConnectStatus(status);
+		initBg();
 		LogUtil.i(TAG, " --- init +++ ");
 		if (status == MangerConstant.Anw_SUCCESS) {
 			mIMusicModel.playStatus();
@@ -153,6 +159,12 @@ public class MusicPersenter implements IObserver {
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 		}
 		initMusicModel();
+	}
+	
+	private void initBg(){
+		Bitmap bg = mIMusicModel.getBg();
+		LogUtil.i(TAG, " --- initBg --- bg = " + bg);
+		mIMusicView.updateBgBitmap(bg);
 	}
 
 	private void exit() {

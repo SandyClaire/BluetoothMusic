@@ -2,6 +2,8 @@ package com.hsae.d531mc.bluetooth.music.view;
 
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
+
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -72,5 +74,11 @@ public interface IMusicView {
 	 * finish Music Activity
 	 */
 	public void finishMusicActivity();
+	
+	/**
+	 * 更新背景图片
+	 * @return
+	 */
+	public void updateBgBitmap(Bitmap bg);
 
 }

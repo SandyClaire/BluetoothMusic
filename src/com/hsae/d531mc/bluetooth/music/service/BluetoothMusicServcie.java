@@ -1,18 +1,23 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
-
+import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.ContentObserver;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
-
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
@@ -22,6 +27,7 @@ import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
+import com.hsae.d531mc.bluetooth.music.util.Util;
 
 /**
  * 
@@ -60,6 +66,8 @@ public class BluetoothMusicServcie extends Service {
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mBluetoothMusicModel.setMusicStreamMute();
+		initBackground();
+		registerContentObserver();
 		super.onCreate();
 	}
 
@@ -83,6 +91,7 @@ public class BluetoothMusicServcie extends Service {
 	@Override
 	public void onDestroy() {
 		mContext.unregisterReceiver(mReceiver);
+		unRegisterContentObserver();
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
 	}
@@ -373,7 +382,7 @@ public class BluetoothMusicServcie extends Service {
 	}
 
 	/**
-	 * set time end
+	 * set timer end
 	 */
 	public void setTimingEnd() {
 		if (stepTimeHandler != null) {
@@ -407,6 +416,65 @@ public class BluetoothMusicServcie extends Service {
 			stepTimeHandler.postAtTime(this, next);
 		}
 
+	}
+	
+	public void registerContentObserver() {
+		Uri uri = Uri.parse(Util.WALL_CONTENT_URI + "/" + Util.WALLPAPER_SET);
+		if (mObserver == null) {
+			mObserver = new WallContentObserver(new Handler());
+		}
+		getContentResolver().registerContentObserver(uri, false,
+				mObserver);
+	}
+
+	public void unRegisterContentObserver() {
+		if (mObserver != null) {
+			getContentResolver().unregisterContentObserver(mObserver);
+		}
+	}
+	
+	WallContentObserver mObserver;
+	class WallContentObserver extends ContentObserver {
+
+		public WallContentObserver(Handler handler) {
+			super(handler);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onChange(boolean selfChange) {
+			super.onChange(selfChange);
+			LogUtil.i(TAG, "wall paperchanged");
+			initBackground();
+		}
+	}
+	
+	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
+
+		@Override
+		protected Bitmap doInBackground(Bundle... params) {
+			byte[] in = params[0].getByteArray(Util.VALUE);
+			return BitmapFactory.decodeByteArray(in, 0, in.length);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			LogUtil.i(TAG, "onPostExecute --- result = " + result);
+			mBluetoothMusicModel.deleteWallpaperCache();
+			mBluetoothMusicModel.addWallPaperToCache(result);
+			
+		}
+	}
+	
+	@SuppressLint("NewApi")
+	public void initBackground() {
+		LogUtil.i(TAG, "initBackground");
+		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI,
+				Util.METHOD_GET_VALUE_WALL, Util.WALLPAPER_SET, null);
+		if (bd != null) {
+			BitmapWorkerTask mTask = new BitmapWorkerTask();
+			mTask.execute(bd);
+		}
 	}
 
 }

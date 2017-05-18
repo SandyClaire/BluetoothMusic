@@ -8,9 +8,6 @@ import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -23,10 +20,9 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -41,7 +37,6 @@ import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
-import com.hsae.d531mc.bluetooth.music.util.Util;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
 /**
@@ -58,12 +53,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private ImageView mBtnMusicSwith;
 	private ImageView mBtnSettings;
-	private Button mBtnPrev;
-	private Button mBtnPlay;
-	private Button mBtnNext;
-	private LinearLayout mBtnRepeat;
-	private LinearLayout mBtnShuffle;
-	private Button mBtnHome;
+	private ImageButton mBtnPrev;
+	private ImageView mBtnPlay;
+	private ImageButton mBtnNext;
+	private ImageView mBtnHome;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
 	private TextView mTextCurTime;
@@ -77,11 +70,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private ImageView mImageShuffle;
 	private ImageView mImageRepeat;
 	private BluetoothSettingFragment mSettingFragment;
-	private FrameLayout mLinBg;
+	private ImageView mImageBg;
 	private ImageView mSeekTail;
-	private LinearLayout mLinDisconTip;
-	private LinearLayout mLinContent;
-	private FrameLayout mFraBtn;
+	private TextView mTextTip;
 	private boolean isFramShow = false;
 	private boolean isSupportPlaybackpos = false;
 	private boolean isSupportMetadata = false;
@@ -91,6 +82,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final int SHORT_CLICK_NEXT = 4;
 	private boolean isNormalPrev = true;
 	private boolean isNormalNext = true;
+	private FrameLayout mFraInfo;
+	private FrameLayout mFraControl;
 	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 		
 		@Override
@@ -146,7 +139,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		// 透明导航栏
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		setContentView(R.layout.music_main_new);
+		setContentView(R.layout.music_main);
 		initView();
 		initMvp();
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
@@ -164,11 +157,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private void initView() {
 		mBtnMusicSwith = (ImageView) findViewById(R.id.btn_source_settings);
 		mBtnSettings = (ImageView) findViewById(R.id.btn_bt_settings);
-		mBtnPrev = (Button) findViewById(R.id.btn_prev);
-		mBtnPlay = (Button) findViewById(R.id.btn_play);
-		mBtnNext = (Button) findViewById(R.id.btn_next);
-		mBtnRepeat = (LinearLayout) findViewById(R.id.btn_repeat);
-		mBtnShuffle = (LinearLayout) findViewById(R.id.btn_shuffle);
+		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
+		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
+		mBtnNext = (ImageButton) findViewById(R.id.btn_next);
 		mSeekBar = (SeekBar) findViewById(R.id.music_seekbar);
 		mTextTitle = (TextView) findViewById(R.id.music_title);
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
@@ -176,14 +167,14 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
 		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
-		mBtnHome = (Button) findViewById(R.id.btn_home);
-		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
-		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
-		mLinBg = (FrameLayout) findViewById(R.id.lin_music_bg);
+		mBtnHome = (ImageView) findViewById(R.id.btn_home);
+		mImageShuffle = (ImageView) findViewById(R.id.btn_shuffle);
+		mImageRepeat = (ImageView) findViewById(R.id.btn_repeat);
+		mImageBg = (ImageView) findViewById(R.id.default_screenbg);
 		mSeekTail = (ImageView) findViewById(R.id.seekbar_tail);
-		mLinDisconTip = (LinearLayout) findViewById(R.id.lin_disconnect_tip);
-		mLinContent = (LinearLayout) findViewById(R.id.lin_music_content);
-		mFraBtn = (FrameLayout) findViewById(R.id.fra_avrcp_btn);
+		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
+		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
+		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
 				.getInstance(this);
@@ -192,8 +183,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnPrev.setOnTouchListener(prevListener);
 		mBtnPlay.setOnClickListener(this);
 		mBtnNext.setOnTouchListener(nextListener);
-		mBtnRepeat.setOnClickListener(this);
-		mBtnShuffle.setOnClickListener(this);
+		mImageRepeat.setOnClickListener(this);
+		mImageShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
 		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
@@ -229,36 +220,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 	};
 	
-	byte[] in;
-	
-	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
-
-		@Override
-		protected Bitmap doInBackground(Bundle... params) {
-			in = params[0].getByteArray(Util.VALUE);
-			return BitmapFactory.decodeByteArray(in, 0, in.length);
-		}
-
-		@Override
-		protected void onPostExecute(Bitmap result) {
-			in = null;
-			BitmapDrawable newDrawable = new BitmapDrawable(
-					getResources(), result);
-			mLinBg.setBackground(newDrawable);
-		}
-
-	}
-	
-	
-	public void initBackground() {
-		LogUtil.i(TAG, "initBackground");
-		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI,
-				Util.METHOD_GET_VALUE_WALL, Util.WALLPAPER_SET, null);
-		if (bd != null) {
-			BitmapWorkerTask mTask = new BitmapWorkerTask();
-			mTask.execute(bd);
-		}
-	}
 	
 	private OnTouchListener touchListener = new OnTouchListener() {
 
@@ -279,7 +240,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onResume() {
-		initBackground();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -442,20 +402,20 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnPrev.setEnabled(flag);
 		mBtnPlay.setEnabled(flag);
 		mBtnNext.setEnabled(flag);
-		mBtnRepeat.setEnabled(flag);
-		mBtnShuffle.setEnabled(flag);
+		mImageRepeat.setEnabled(flag);
+		mImageShuffle.setEnabled(flag);
 		mSeekBar.setEnabled(flag);
 		if (flag) {
-			mLinContent.setVisibility(View.VISIBLE);
-			mLinDisconTip.setVisibility(View.GONE);
-			mFraBtn.setVisibility(View.VISIBLE);
+			mFraInfo.setVisibility(View.VISIBLE);
+			mTextTip.setVisibility(View.GONE);
+			mFraControl.setVisibility(View.VISIBLE);
 		} else {
-			mLinContent.setVisibility(View.GONE);
-			mFraBtn.setVisibility(View.GONE);
-			mLinDisconTip.setVisibility(View.VISIBLE);
+			mFraInfo.setVisibility(View.GONE);
+			mFraControl.setVisibility(View.GONE);
+			mTextTip.setVisibility(View.VISIBLE);
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setBackground(getResources().getDrawable(
+			mBtnPlay.setImageDrawable(getResources().getDrawable(
 					R.drawable.btn_music_play));
 			
 		}
@@ -466,12 +426,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG, "Activity updatePlayBtnByStatus -- flag = " + flag);
 		if (flag) {
 			ismPlaying = true;
-			mBtnPlay.setBackground(getResources().getDrawable(
+			mBtnPlay.setImageDrawable(getResources().getDrawable(
 					R.drawable.btn_music_pause));
 		} else {
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setBackground(getResources().getDrawable(
+			mBtnPlay.setImageDrawable(getResources().getDrawable(
 					R.drawable.btn_music_play));
 		}
 	}
@@ -628,10 +588,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mRepeatAllowedlist.addAll(allowList);
 		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setEnabled(false);
 			mImageRepeat.setEnabled(false);
 		} else {
-			mBtnRepeat.setEnabled(true);
 			mImageRepeat.setEnabled(true);
 		}
 	}
@@ -643,10 +601,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG,
 				"mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setEnabled(false);
 			mImageShuffle.setEnabled(false);
 		} else {
-			mBtnShuffle.setEnabled(true);
 			mImageShuffle.setEnabled(true);
 		}
 	}
@@ -664,19 +620,19 @@ public class MusicMainActivity extends Activity implements ISubject,
 				switch (nAttrValue) {
 				case AudioControl.PLAYER_REPEAT_MODE_OFF:
 					mImageRepeat
-							.setBackgroundResource(R.drawable.btn_music_repeat_order);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_repeat_order));
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK:
 					mImageRepeat
-							.setBackgroundResource(R.drawable.btn_music_repeat_singel);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_repeat_singel));
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_ALL_TRACK:
 					mImageRepeat
-							.setBackgroundResource(R.drawable.btn_music_repeat_all);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_repeat_all));
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_GROUP:
 					mImageRepeat
-							.setBackgroundResource(R.drawable.btn_music_repeat_all);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_repeat_all));
 					break;
 				}
 			}
@@ -688,15 +644,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 				switch (nAttrValue) {
 				case AudioControl.PLAYER_SHUFFLE_OFF:
 					mImageShuffle
-							.setBackgroundResource(R.drawable.btn_music_shuffle_close);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_shuffle_close));
 					break;
 				case AudioControl.PLAYER_SHUFFLE_ALL_TRACK:
 					mImageShuffle
-							.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_shuffle_open));
 					break;
 				case AudioControl.PLAYER_SHUFFLE_GROUP:
 					mImageShuffle
-							.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+							.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_shuffle_open));
 					break;
 
 				}
@@ -712,10 +668,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mShuffleAllowedlist.add(AllowArray[i]);
 		}
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setEnabled(false);
 			mImageShuffle.setEnabled(false);
 		} else {
-			mBtnShuffle.setEnabled(true);
 			mImageShuffle.setEnabled(true);
 		}
 	}
@@ -727,10 +681,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mRepeatAllowedlist.add(AllowArray[i]);
 		}
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setEnabled(false);
 			mImageRepeat.setEnabled(false);
 		} else {
-			mBtnRepeat.setEnabled(true);
 			mImageRepeat.setEnabled(true);
 		}
 	}
@@ -892,6 +844,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 		isNormalNext = true;
 	}
-	
 
+	@Override
+	public void updateBgBitmap(Bitmap bg) {
+		mImageBg.setImageBitmap(bg);
+		
+	}
+
+	
 }

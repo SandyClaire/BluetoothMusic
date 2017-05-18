@@ -2,6 +2,8 @@ package com.hsae.d531mc.bluetooth.music.model;
 
 import java.util.ArrayList;
 
+import android.graphics.Bitmap;
+
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -137,5 +139,15 @@ public interface IMusicModel {
 	 * 自动连接A2DP
 	 */
 	public void autoConnectA2DP();
+	
+	/**
+	 * 获取缓存背景
+	 */
+	public Bitmap getBg();
+	
+	/**
+	 * 更新背景
+	 */
+	public void updateBg();
 	
 }

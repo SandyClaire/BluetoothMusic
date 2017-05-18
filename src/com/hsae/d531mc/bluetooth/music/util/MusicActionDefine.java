@@ -54,6 +54,7 @@ public class MusicActionDefine {
     static public final int ACTION_SETTING_CONNECT_MOBILE = 79;
     
     static public final int ACTION_SETTING_GET_PAIRED_DEVICES = 80;
+    static public final int ACTION_SETTING_UPDATE_BG = 81;
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     

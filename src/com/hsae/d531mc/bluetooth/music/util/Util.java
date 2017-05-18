@@ -14,5 +14,6 @@ public class Util {
 	public static final String WALLPAPER_SET = "wallpaperSet";
 	public static final String METHOD_PUT_VALUE = "putValue";
 	public static final String METHOD_GET_VALUE_WALL = "getValueWall";
+	public static final String MC_WALLPAPER = "mc_wallpaper";
 
 }
