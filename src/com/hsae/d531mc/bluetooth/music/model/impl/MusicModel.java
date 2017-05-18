@@ -134,6 +134,15 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 		mBundle.putString("currentTime", position);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+	}
+
+	@Override
+	public void setCurrentPlayerAPSettings(int nAttrID, int nAttrValue) {
+		try {
+			mBluetoothMusicModel.setCurrentPlayerAPSetting(nAttrID, nAttrValue);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}	
 	
 	

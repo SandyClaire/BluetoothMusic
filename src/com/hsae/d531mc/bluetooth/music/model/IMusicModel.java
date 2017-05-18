@@ -66,4 +66,11 @@ public interface IMusicModel {
 	 * @param position
 	 */
 	public void getCurrentMusicPlayPosition(String position);
+	
+	/**
+	 * set current player ap setting
+	 * @param nAttrID
+	 * @param nAttrValue
+	 */
+	public void setCurrentPlayerAPSettings(int nAttrID , int nAttrValue);
 }

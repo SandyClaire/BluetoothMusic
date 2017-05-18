@@ -95,7 +95,6 @@ public class MusicSwitchFragmet extends Fragment {
 			}
 			return convertView;
 		}
-		
 	}
 	
 	public class ViewHolder{

@@ -27,6 +27,10 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_FASTFORWORD = 24;
     static public final int ACTION_A2DP_REWIND = 25;
     
-    
+    static public final int ACTION_A2DP_REPEAT_ALL = 30;
+    static public final int ACTION_A2DP_REPEAT_SINGLE = 31;
+    static public final int ACTION_A2DP_REPEAT_ORDER = 32;
+    static public final int ACTION_A2DP_SHUFFLE_OPEN = 33;
+    static public final int ACTION_A2DP_SHUFFLE_CLOSE = 34;
     
 }

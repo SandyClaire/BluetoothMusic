@@ -1,10 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.presenter;
 
-import java.util.regex.Pattern;
-
 import android.content.Context;
 import android.os.Message;
-import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
@@ -74,7 +71,21 @@ public class MusicPersenter implements IObserver {
 			String currentTime = inMessage.getData().getString("currentTime");
 			mIMusicView.updateMusicPlayCurrentTime(currentTime);
 			break;
-			
+		case MusicActionDefine.ACTION_A2DP_REPEAT_ALL:
+			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 4);
+			break;
+		case MusicActionDefine.ACTION_A2DP_REPEAT_ORDER:
+			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 3);
+			break;
+		case MusicActionDefine.ACTION_A2DP_REPEAT_SINGLE:
+			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_REPEAT, 2);
+			break;
+		case MusicActionDefine.ACTION_A2DP_SHUFFLE_OPEN:
+			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, 1);
+			break;
+		case MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE:
+			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, 2);
+			break;
 		default:
 			break;
 		}

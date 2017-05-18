@@ -2,17 +2,22 @@ package com.hsae.d531mc.bluetooth.music;
 
 import java.util.regex.Pattern;
 
+import android.annotation.SuppressLint;
+import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.RemoteException;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -114,12 +119,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 				return false;
 			}
 		});
-
 	}
-	
+
 	@Override
 	protected void onStop() {
-		if(mMusicHandler!=null)
+		if (mMusicHandler != null)
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		super.onStop();
 	}
@@ -169,10 +173,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 			msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
 			break;
 		case R.id.btn_repeat:
-
+			showRepeatPopUp(playModeListener);
 			break;
 		case R.id.btn_shuffle:
-
+			showShufflePopUp(playModeListener);
 			break;
 		default:
 			break;
@@ -348,10 +352,116 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (!currentTime.equals("-1")) {
 			mTextCurTime.setText(getCurrentTime(currentTime));
 		}
-		if(mMusicHandler!=null)
-		{
+		if (mMusicHandler != null) {
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mMusicHandler.postDelayed(updateMusicPlayTimer,1000);
+			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
 		}
 	}
+
+	private View mRepeatView;
+
+	private PopupWindow repeatWindow ;
+
+	@SuppressLint("InlinedApi")
+	private void showRepeatPopUp(OnClickListener clickListener) {
+		LayoutInflater inflater = (LayoutInflater) MusicMainActivity.this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mRepeatView = inflater.inflate(R.layout.pop_repeat, null);
+
+		Button btnRepeatAll = (Button) mRepeatView
+				.findViewById(R.id.btn_repeat_all);
+		Button btnRepeatSingle = (Button) mRepeatView
+				.findViewById(R.id.btn_repeat_single);
+		Button btnRepeatOrder = (Button) mRepeatView
+				.findViewById(R.id.btn_repeat_order);
+		btnRepeatAll.setOnClickListener(clickListener);
+		btnRepeatSingle.setOnClickListener(clickListener);
+		btnRepeatOrder.setOnClickListener(clickListener);
+		
+		repeatWindow = new PopupWindow(MusicMainActivity.this);
+		repeatWindow.setContentView(mRepeatView);
+		repeatWindow.setWidth(LayoutParams.WRAP_CONTENT);
+		repeatWindow.setHeight(LayoutParams.WRAP_CONTENT);
+		repeatWindow.setFocusable(true);
+		repeatWindow.showAtLocation(
+				MusicMainActivity.this.findViewById(R.id.btn_repeat),
+				Gravity.BOTTOM | Gravity.RIGHT, 112, 47);
+	}
+
+	private View mShuffleView;
+
+	private PopupWindow shuffleWindow;
+
+	@SuppressLint("InlinedApi")
+	private void showShufflePopUp(OnClickListener clickListener) {
+		LayoutInflater inflater = (LayoutInflater) MusicMainActivity.this
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		mShuffleView = inflater.inflate(R.layout.pop_shuffle, null);
+
+		Button btnOpen = (Button) mShuffleView
+				.findViewById(R.id.btn_shuffle_open);
+		Button btnClose = (Button) mShuffleView
+				.findViewById(R.id.btn_shuffle_close);
+		btnOpen.setOnClickListener(clickListener);
+		btnClose.setOnClickListener(clickListener);
+
+		shuffleWindow = new PopupWindow(MusicMainActivity.this);
+		shuffleWindow.setContentView(mShuffleView);
+		shuffleWindow.setWidth(LayoutParams.WRAP_CONTENT);
+		shuffleWindow.setHeight(LayoutParams.WRAP_CONTENT);
+		shuffleWindow.setFocusable(true);
+		shuffleWindow.showAtLocation(
+				MusicMainActivity.this.findViewById(R.id.btn_shuffle),
+				Gravity.BOTTOM | Gravity.RIGHT, 38, 47);
+	}
+
+	private OnClickListener playModeListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			Message msg = Message.obtain();
+			switch (v.getId()) {
+			case R.id.btn_repeat_all:
+				if (repeatWindow != null) {
+					repeatWindow.dismiss();
+					repeatWindow = null;
+				}
+				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ALL;
+				break;
+			case R.id.btn_repeat_order:
+				if (repeatWindow != null) {
+					repeatWindow.dismiss();
+					repeatWindow = null;
+				}
+				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ORDER;
+				break;
+			case R.id.btn_repeat_single:
+				if (repeatWindow != null) {
+					repeatWindow.dismiss();
+					repeatWindow = null;
+				}
+				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_SINGLE;
+				break;
+			case R.id.btn_shuffle_open:
+				if (shuffleWindow != null) {
+					shuffleWindow.dismiss();
+					shuffleWindow = null;
+				}
+				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_OPEN;
+				break;
+			case R.id.btn_shuffle_close:
+				if (shuffleWindow != null) {
+					shuffleWindow.dismiss();
+					shuffleWindow = null;
+				}
+				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE;
+				break;
+			default:
+				
+				break;
+			}
+			MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
+		}
+	};
+
 }
