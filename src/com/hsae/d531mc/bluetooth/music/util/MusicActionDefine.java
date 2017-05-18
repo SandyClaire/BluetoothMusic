@@ -33,4 +33,9 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_SHUFFLE_OPEN = 33;
     static public final int ACTION_A2DP_SHUFFLE_CLOSE = 34;
     
+    static public final int ACTION_A2DP_REQUEST_AUDIO_FOCUSE = 40;
+    
+    
+    static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
+    
 }

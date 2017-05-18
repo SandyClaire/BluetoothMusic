@@ -47,6 +47,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
 	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
 	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
+	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
+	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
 
 
 	public MusicSwitchFragmet(Context context) {
@@ -124,8 +126,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			updateSelectedShow(3);
 			boolean isUsb = isUsbConnected() || !isIpodConnected();
 			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
-			String strPackage = isUsb ? "com.hsae.d531mc.usbmedia" : "com.hsae.d531mc.ipod";
-			String strClass = isUsb ? "com.hsae.d531mc.usbmedia.music.MusicPlayActivity" : "com.hsae.d531mc.ipod.view.MainActivity";
+			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
+			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
 			startOtherAPP(app, strPackage, strClass, bundle);
 			break;
 		case R.id.lin_music_bluetooth:

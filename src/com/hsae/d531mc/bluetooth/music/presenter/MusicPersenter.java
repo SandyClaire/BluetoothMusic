@@ -88,6 +88,9 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE:
 			mIMusicModel.setCurrentPlayerAPSettings(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, 2);
 			break;
+		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
+			mIMusicModel.requestAudioFoucs();
+			break;
 		default:
 			break;
 		}
@@ -96,7 +99,6 @@ public class MusicPersenter implements IObserver {
 	private void init() {
 		((ISubject) mIMusicModel).attach(this);
 		((ISubject) mIMusicView).attach(this);
-		mIMusicModel.requestAudioFoucs();
 		int status = mIMusicModel.getA2DPConnectStatus();
 		mIMusicView.updateViewByConnectStatus(status);
 		if (status == 1) {

@@ -13,8 +13,6 @@ import android.util.Log;
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
-import com.hsae.autosdk.bt.music.BTMusicProxy;
-import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -34,7 +32,6 @@ public class BluetoothMusicServcie extends Service {
 	private String mAlbum = "";
 	private String mTotalTIme = "";
 	private boolean isplaying = false;
-	private BTMusicProxy mBTMusicProxy;
 	private BTMusicManager mBTMmanager;
 
 	@Override
@@ -51,9 +48,6 @@ public class BluetoothMusicServcie extends Service {
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
 		mBluetoothMusicModel.bindService();
 		registBroadcast();
-		mBTMusicProxy = BTMusicProxy.getInstance();
-		mBTMusicProxy.registerBTMusicListener(musicListener);
-		mBTMusicProxy.play();
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		Log.i(TAG, "---------- service oncreat ------------");
 		super.onCreate();
@@ -152,7 +146,8 @@ public class BluetoothMusicServcie extends Service {
 						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum,
 								mTotalTIme);
 						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
-
+						BTMusicInfo info = new BTMusicInfo(mTitle, mAtrist, mAlbum, null);
+						notifyAutroMusicInfo(info);
 						Log.i(TAG, "-- nPlayStatus = " + nPlayStatus
 								+ " --- mTitle = " + mTitle + " --- mAtrist = "
 								+ mAtrist + " --- mTotalTIme = " + mTotalTIme);
@@ -225,33 +220,16 @@ public class BluetoothMusicServcie extends Service {
 			}
 		}
 	}
-
-	IBTMusicListener musicListener = new IBTMusicListener.Stub() {
-
-		@Override
-		public void syncBtMusicInfo(BTMusicInfo arg0) throws RemoteException {
-			// TODO Auto-generated method stub
-
+	
+	private void notifyAutroMusicInfo(BTMusicInfo info){
+		try {
+			if(mBTMmanager.mListener != null){
+				mBTMmanager.mListener.syncBtMusicInfo(info);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
 		}
+	}
 
-		@Override
-		public void onTrackProgress(long arg0, long arg1)
-				throws RemoteException {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onPlaybackStateChanged(int arg0) throws RemoteException {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onModeChanged(int arg0, int arg1) throws RemoteException {
-			// TODO Auto-generated method stub
-
-		}
-	};
 
 }

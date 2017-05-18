@@ -578,14 +578,14 @@ public class BluetoothMusicModel {
         audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); //STREAM_MUSIC
         int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "FocusManager获取音频焦点成功");
+            Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-            Log.i(TAG, "requestAudioFocus---" + "FocusManager获取音频焦点失败");
+            Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
             isAudioFocused = false;
         } else {
         	isAudioFocused = false;
-            Log.i(TAG, "requestAudioFocus---" + "FocusManager获取音频焦点失败");
+            Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
         }
         mainAudioChanged(isAudioFocused);
         if (isAudioFocused) {

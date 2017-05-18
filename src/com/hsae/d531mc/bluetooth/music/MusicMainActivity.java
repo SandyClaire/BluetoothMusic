@@ -6,8 +6,10 @@ import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -141,6 +143,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 		});
 		isfirst = true;
 	}
+	
+	@Override
+	protected void onResume() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
+		this.notify(msg, FLAG_RUN_SYNC);
+		registBroadcast();
+		super.onResume();
+	}
 
 	private void showFram() {
 		if (isfirst) {
@@ -216,7 +227,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);
 			startActivity(intent);
-			this.finish();
 			break;
 		default:
 			break;
@@ -505,5 +515,21 @@ public class MusicMainActivity extends Activity implements ISubject,
 			MusicMainActivity.this.notify(msg, FLAG_RUN_SYNC);
 		}
 	};
+	
+	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+		
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			MusicMainActivity.this.unregisterReceiver(mReceiver);
+			MusicMainActivity.this.finish();
+			Log.e("wangda", "finish");
+		}
+	};
+	
+	private void registBroadcast(){
+		IntentFilter intent = new IntentFilter();
+		intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
+		this.registerReceiver(mReceiver, intent);
+	}
 
 }
