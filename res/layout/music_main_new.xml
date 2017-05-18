@@ -58,8 +58,7 @@
                             android:marqueeRepeatLimit="-1"
                             android:singleLine="true"
                             android:layout_marginTop="@dimen/text_artist_margin_top"
-                            android:text="@string/music_bluetooth_disconnect"
-                            android:textStyle="bold" />
+                            android:text="@string/music_bluetooth_disconnect" />
 
                         <TextView
                             android:id="@+id/music_artist"
@@ -155,6 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
+                    android:layout_marginTop="15dp"
                     android:orientation="horizontal" >
 
                     <Button
@@ -209,6 +209,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginTop="6dp"
                             android:layout_marginLeft="@dimen/music_buttom_button_mergin"
                             android:layout_marginRight="@dimen/music_buttom_button_mergin"
                             android:background="@drawable/btn_music_repeat_singel" />
@@ -230,6 +231,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center_vertical"
+                            android:layout_marginTop="6dp"
                             android:layout_marginLeft="@dimen/music_buttom_button_mergin"
                             android:layout_marginRight="@dimen/music_buttom_button_mergin"
                             android:background="@drawable/btn_music_shuffle_close" />
@@ -290,6 +292,7 @@
 
                 <Button
                     android:id="@+id/btn_home"
+                    android:layout_marginTop="6dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_home" />

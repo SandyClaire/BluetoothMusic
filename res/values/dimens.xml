@@ -5,9 +5,9 @@
     <dimen name="music_contents_panding_lift">160dp</dimen>
     <dimen name="music_contents_panding_right">80dp</dimen>
     <dimen name="music_bottombar_higth">110dp</dimen>
-    <dimen name="music_buttom_button_mergin">48dp</dimen>
+    <dimen name="music_buttom_button_mergin">52dp</dimen>
     <dimen name="music_popup_wigth">171dp</dimen>
-    <dimen name="music_play_width">300dp</dimen>
+    <dimen name="music_play_width">320dp</dimen>
     <dimen name="music_left_slide_width">425dp</dimen>
     <dimen name="music_image_height">403dp</dimen>
     <dimen name="music_text_info_pandding">20dp</dimen>
