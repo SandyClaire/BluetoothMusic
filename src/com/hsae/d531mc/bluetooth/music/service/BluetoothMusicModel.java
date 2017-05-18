@@ -580,6 +580,7 @@ public class BluetoothMusicModel {
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;
+            mainAudioChanged(isAudioFocused);
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
             Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
             isAudioFocused = false;
@@ -587,7 +588,6 @@ public class BluetoothMusicModel {
         	isAudioFocused = false;
             Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
         }
-        mainAudioChanged(isAudioFocused);
         if (isAudioFocused) {
 			try {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
@@ -613,14 +613,17 @@ public class BluetoothMusicModel {
 		    switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
             	isAudioFocused = true;
+            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             	isAudioFocused = true;
+            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
             	isAudioFocused = true;
+            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
@@ -649,7 +652,7 @@ public class BluetoothMusicModel {
 					e.printStackTrace();
 				}
 			}
-		    mainAudioChanged(isAudioFocused);
+		    
 		}
 	};
 

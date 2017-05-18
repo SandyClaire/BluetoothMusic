@@ -71,16 +71,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.e("wangda",
-				"oncreate ------------ 1 --------------- "
-						+ System.currentTimeMillis());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.music_main);
 		initView();
 		initMvp();
-		Log.e("wangda",
-				"oncreate ------------ 2 --------------- "
-						+ System.currentTimeMillis());
 	}
 
 	private void initMvp() {
@@ -111,7 +105,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome = (Button) findViewById(R.id.btn_home);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mFragmentManager = getFragmentManager();
-		mSeekBar.setEnabled(false);
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
 		mBtnPlay.setOnClickListener(this);
@@ -195,26 +188,29 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void onClick(View v) {
-		Message msg = Message.obtain();
+		
 		switch (v.getId()) {
 		case R.id.btn_bt_settings:
 			showFram();
 			break;
 		case R.id.btn_prev:
-			msg.what = MusicActionDefine.ACTION_A2DP_PREV;
-			this.notify(msg, FLAG_RUN_MAIN_THREAD);
+			Message msgp = Message.obtain();
+			msgp.what = MusicActionDefine.ACTION_A2DP_PREV;
+			this.notify(msgp, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_play:
+			Message msgl = Message.obtain();
 			if (ismPlaying) {
-				msg.what = MusicActionDefine.ACTION_A2DP_PAUSE;
+				msgl.what = MusicActionDefine.ACTION_A2DP_PAUSE;
 			} else {
-				msg.what = MusicActionDefine.ACTION_A2DP_PLAY;
+				msgl.what = MusicActionDefine.ACTION_A2DP_PLAY;
 			}
-			this.notify(msg, FLAG_RUN_MAIN_THREAD);
+			this.notify(msgl, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_next:
-			msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
-			this.notify(msg, FLAG_RUN_MAIN_THREAD);
+			Message msgn = Message.obtain();
+			msgn.what = MusicActionDefine.ACTION_A2DP_NEXT;
+			this.notify(msgn, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_repeat:
 			showRepeatPopUp(playModeListener);
@@ -261,6 +257,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnRepeat.setEnabled(flag);
 		mBtnShuffle.setEnabled(flag);
 		mSeekBar.setEnabled(flag);
+		if (!flag) {
+			ismPlaying = false;
+			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+			mBtnPlay.setBackground(getResources().getDrawable(
+					R.drawable.btn_music_play));
+		}
 	}
 
 	@Override
@@ -269,13 +271,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			ismPlaying = true;
 			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.btn_music_pause));
-			;
 		} else {
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.btn_music_play));
-			;
 		}
 	}
 
