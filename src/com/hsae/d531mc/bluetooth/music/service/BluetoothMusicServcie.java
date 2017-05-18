@@ -33,6 +33,7 @@ public class BluetoothMusicServcie extends Service {
 	private String mTotalTIme = "";
 	private boolean isplaying = false;
 	private BTMusicManager mBTMmanager;
+	private String mTimePosition = "-1";
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -71,6 +72,7 @@ public class BluetoothMusicServcie extends Service {
 	@Override
 	public void onDestroy() {
 		mContext.unregisterReceiver(mReceiver);
+		Log.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
 	}
 
@@ -160,6 +162,12 @@ public class BluetoothMusicServcie extends Service {
 
 					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
 						isplaying = true;
+						if (!mTimePosition.equals("-1")) {
+							mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition,
+									isplaying);
+							Log.i(TAG, "MSG_ACTION_A2DP_PLAYSTATUS -- mPosition = "
+									+ mTimePosition);
+						}
 					} else {
 						isplaying = false;
 					}
@@ -171,12 +179,12 @@ public class BluetoothMusicServcie extends Service {
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
 				if (mBundle != null) {
-					String strPos = mBundle.getString("Position");
-					if (!strPos.equals("-1")) {
-						mBluetoothMusicModel.updateCurrentPlayTime(strPos,
+					mTimePosition = mBundle.getString("Position");
+					if (!mTimePosition.equals("-1")) {
+						mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition,
 								isplaying);
 						Log.i(TAG, "MSG_ACTION_A2DP_PLAYBACKPOS -- strPos = "
-								+ strPos);
+								+ mTimePosition);
 					}
 				}
 			} else if (strAction
@@ -187,17 +195,17 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
-						if (isplaying == false) {
-							try {
-								isplaying = true;
-								String totalTime = mBluetoothMusicModel
-										.A2DPGetCurrentAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
-								mBluetoothMusicModel.updateCurrentPlayTime(
-										totalTime, isplaying);
-							} catch (RemoteException e) {
-								e.printStackTrace();
-							}
-						}
+//						if (isplaying == false) {
+//							try {
+//								isplaying = true;
+//								String totalTime = mBluetoothMusicModel
+//										.A2DPGetCurrentAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
+//								mBluetoothMusicModel.updateCurrentPlayTime(
+//										totalTime, isplaying);
+//							} catch (RemoteException e) {
+//								e.printStackTrace();
+//							}
+//						}
 						break;
 					}
 				}

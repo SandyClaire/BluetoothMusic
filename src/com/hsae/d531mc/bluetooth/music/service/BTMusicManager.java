@@ -12,8 +12,6 @@ import com.anwsdk.service.AudioControl;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
 import com.hsae.autosdk.hmi.HmiConst;
-import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
-import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 
 
 
@@ -30,6 +28,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 		super();
 		this.mContext = mContext;
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
+		Log.e(TAG , "------------------ INIT");
 	}
 	
 	public static BTMusicManager getInstance(Context context) {
@@ -89,9 +88,10 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 
 	@Override
 	public void hide() throws RemoteException {
-		Intent intent = new Intent();
-		intent.setAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
-		mContext.sendBroadcast(intent);
+//		Intent intent = new Intent();
+//		intent.setAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
+//		mContext.sendBroadcast(intent);
+		Log.e(TAG , "------------------ hide");
 	}
 
 	@Override
@@ -240,7 +240,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	public void registerBTMusicListener(IBTMusicListener arg0)
 			throws RemoteException {
 		mListener = arg0;
-		Log.e(TAG, "1111111111 - mListener" + mListener);
+		Log.e(TAG, " ----------- mListener" + mListener);
 	}
 
 	@Override
