@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/transparent" >
+
+    <LinearLayout
+        android:id="@+id/layout_mediaswitch"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/blue"
+        android:orientation="vertical" >
+
+      
+        <Button
+            android:id="@+id/btn_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="btn_playlist" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_musicinfo"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_gravity="top"
+        android:layout_marginLeft="80dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/red" >
+
+        <LinearLayout
+            android:id="@+id/musicinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:layout_marginLeft="150dp"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/music_title"
+                style="@style/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="music_title" />
+
+            <TextView
+                android:id="@+id/music_artist"
+                style="@style/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="music_artist" />
+
+            <TextView
+                android:id="@+id/music_album"
+                style="@style/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="music_album" />
+
+            <com.hsae.d531mc.bluetooth.music.util.MarqueeTextView
+                android:id="@+id/music_previous"
+                style="@style/timeText"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:singleLine="true"
+                android:text="music_previous_music_previous" />
+
+            <TextView
+                android:id="@+id/music_next"
+                style="@style/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="music_next" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/music_cover"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="end"
+            android:layout_marginRight="150dp"
+            android:layout_toRightOf="@id/musicinfo"
+            android:background="@drawable/ic_launcher" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/layout_control"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="80dp"
+        android:background="@color/transparent" >
+
+        <RelativeLayout
+            android:id="@+id/layout_seek_bar"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|left"
+            android:layout_marginBottom="150dp" >
+
+            <SeekBar
+                android:id="@+id/music_seekbar"
+                style="@style/CustomSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true" />
+
+            <TextView
+                android:id="@+id/music_currenttime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/music_seekbar"
+                android:layout_gravity="left"
+                android:layout_marginLeft="10dp"
+                android:text="@string/play_text_min"
+                android:textSize="15sp" />
+
+            <TextView
+                android:id="@+id/music_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/music_seekbar"
+                android:layout_gravity="left"
+                android:layout_marginLeft="160dp"
+                android:layout_toRightOf="@id/music_currenttime"
+                android:text="@string/play_text_max"
+                android:textColor="@color/white"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_playbtn"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom|center_horizontal"
+            android:orientation="horizontal" >
+
+            <Button
+                android:id="@+id/btn_shuffle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_shuffle" />
+
+            <Button
+                android:id="@+id/btn_repeat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_repeat" />
+
+            <Button
+                android:id="@+id/btn_prev"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/music_buttom_button_mergin"
+                android:layout_marginRight="@dimen/music_buttom_button_mergin"
+                android:text="btn_prev" />
+
+            <Button
+                android:id="@+id/btn_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_play" />
+
+            <Button
+                android:id="@+id/btn_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_next" />
+
+            <Button
+                android:id="@+id/btn_favorit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="btn_favorit" />
+        </LinearLayout>
+    </FrameLayout>
+
+</FrameLayout>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <dimen name="music_buttom_button_mergin">20dp</dimen>
+    
+    <dimen name="music_contents_panding_lift">40dp</dimen>
+    <dimen name="music_contents_panding_right">40dp</dimen>
+    
+</resources>

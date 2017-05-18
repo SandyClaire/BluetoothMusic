@@ -1,0 +1,8 @@
+<resources>
+
+    <string name="app_name">蓝牙音乐</string>
+
+    <string name="music_name">音乐名称 : %s</string>
+    <string name="music_artist">演唱者 : %s</string>
+    <string name="music_album">音乐专辑 : %s</string>
+</resources>
