@@ -1417,10 +1417,12 @@ public class BluetoothMusicModel {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
 					if (!isPlay && !isPauseByCall) {
+//						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
 				} else {
 					if (isPlay && !isPauseByCall) {
+//						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					}
 				}

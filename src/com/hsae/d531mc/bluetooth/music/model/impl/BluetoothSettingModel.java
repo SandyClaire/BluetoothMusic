@@ -107,6 +107,9 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		int backcode = -1;
 		try {
 			backcode = mBluetoothModel.inquiryBtStop();
+			if (backcode == -1) {
+				SearchFinish();
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

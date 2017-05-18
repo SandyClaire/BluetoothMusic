@@ -92,20 +92,20 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SEACH_CALLBACK:
 			final int result = inMessage.getData().getInt("code");
 			if (result == 647) {
-				//隔1S执行停止动作
+				// 隔1S执行停止动作
 				mIBluetoothSettingView.setButtonClickable(false);
 				handler.postDelayed(new Runnable() {
-					
+
 					@Override
 					public void run() {
 						mIBluetoothSettingView.isSearching(result == 1);
 						mIBluetoothSettingView.setButtonClickable(true);
 					}
 				}, 1000);
-			}else{
+			} else {
 				mIBluetoothSettingView.isSearching(result == 1);
 			}
-				
+
 			break;
 		case MusicActionDefine.ACTION_SETTING_PAIR:
 			String address = inMessage.getData().getString("address");
@@ -127,7 +127,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			if (pairStatus == MangerConstant.Anw_SUCCESS) {
 				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
-				connectMoblie(pairAddress);
+				connectMoblie(pairAddress, 1000);
 				mIBluetoothSettingView.showConnecttingStatus(pairAddress);
 			}
 			break;
@@ -186,7 +186,7 @@ public class BluetoothSettingPresenter implements IObserver {
 		}
 	};
 
-	private void connectMoblie(final String address) {
+	private void connectMoblie(final String address, long delay) {
 		int conn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL);
 		int a2dpConn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL);
 
@@ -195,8 +195,20 @@ public class BluetoothSettingPresenter implements IObserver {
 			mBluetoothSettingModel.disconnectMoblie();
 			isConnect = true;
 		} else {
-			mBluetoothSettingModel.connectMoblie(address);
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					if (mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL) != 1) {
+						mBluetoothSettingModel.connectMoblie(address);
+					}
+				}
+			}, delay);
 		}
+	}
+
+	private void connectMoblie(String address) {
+		this.connectMoblie(address, 0);
 	}
 
 	private void init() {
@@ -252,7 +264,6 @@ public class BluetoothSettingPresenter implements IObserver {
 		((ISubject) mBluetoothSettingModel).detach(this);
 		((ISubject) mIBluetoothSettingView).detach(this);
 	}
-	
-	
+
 	Handler handler = new Handler();
 }
