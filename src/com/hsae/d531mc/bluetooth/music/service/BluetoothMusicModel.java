@@ -538,7 +538,7 @@ public class BluetoothMusicModel {
 	 */
 	public boolean tryToSwitchSource() {
 		Source source = new Source();
-        boolean isSwitch = source.tryToSwitchSource(App.BT_PHONE, true);
+        boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC, true);
         return isSwitch;
     }
 	

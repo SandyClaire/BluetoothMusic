@@ -109,6 +109,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome = (Button) findViewById(R.id.btn_home);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mFragmentManager = getFragmentManager();
+		mSeekBar.setEnabled(false);
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
 		mBtnPlay.setOnClickListener(this);
@@ -276,8 +277,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextArtist.setText(bean.getAtrist());
 			mTextAlbum.setText(bean.getAlbum());
 			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
-			Log.e("wangda", "~~~~~~~~~~~~~~~~~~~~~~~~ totaltime = "
-					+ bean.getTotalTime());
 		} else {
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
