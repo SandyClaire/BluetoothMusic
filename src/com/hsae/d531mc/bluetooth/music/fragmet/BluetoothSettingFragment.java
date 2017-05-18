@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.util.LogUtil;
@@ -197,9 +196,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void inquiryFinish() {
-		Toast.makeText(mContext,
-				mContext.getResources().getString(R.string.search_finish),
-				Toast.LENGTH_SHORT).show();
 		updateSearchBtnShow(false);
 	}
 
@@ -394,9 +390,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 					mListVisibleDevices.remove(i);
 				}
 			}
-			Toast.makeText(mContext,
-					getResources().getString(R.string.pair_success),
-					Toast.LENGTH_SHORT).show();
 		} else {
 			for (int i = 0; i < mListVisibleDevices.size(); i++) {
 				if (mListVisibleDevices.get(i).getAddress().equals(address)) {
@@ -404,9 +397,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 							BluetoothDevice.DEVICE_UNPAIR);
 				}
 			}
-			Toast.makeText(mContext,
-					getResources().getString(R.string.pair_fail),
-					Toast.LENGTH_SHORT).show();
 		}
 		mVisibleAdapter.notifyDataSetChanged();
 	}

@@ -55,8 +55,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final String TAG = "MusicMainActivity";
 	private MusicPersenter mPresenter;
 
-	private Button mBtnMusicSwith;
-	private Button mBtnSettings;
+	private ImageView mBtnMusicSwith;
+	private ImageView mBtnSettings;
 	private Button mBtnPrev;
 	private Button mBtnPlay;
 	private Button mBtnNext;
@@ -77,7 +77,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private ImageView mImageShuffle;
 	private ImageView mImageRepeat;
 	private BluetoothSettingFragment mSettingFragment;
-	private LinearLayout mLinBg;
+	private FrameLayout mLinBg;
+	private ImageView mSeekTail;
+	private LinearLayout mLinDisconTip;
+	private LinearLayout mLinContent;
+	private FrameLayout mFraBtn;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +92,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		// 透明导航栏
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		setContentView(R.layout.music_main);
+		setContentView(R.layout.music_main_new);
 		initView();
 		initMvp();
 	}
@@ -103,8 +107,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	private void initView() {
-		mBtnMusicSwith = (Button) findViewById(R.id.btn_source_settings);
-		mBtnSettings = (Button) findViewById(R.id.btn_bt_settings);
+		mBtnMusicSwith = (ImageView) findViewById(R.id.btn_source_settings);
+		mBtnSettings = (ImageView) findViewById(R.id.btn_bt_settings);
 		mBtnPrev = (Button) findViewById(R.id.btn_prev);
 		mBtnPlay = (Button) findViewById(R.id.btn_play);
 		mBtnNext = (Button) findViewById(R.id.btn_next);
@@ -121,7 +125,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome = (Button) findViewById(R.id.btn_home);
 		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
 		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
-		mLinBg = (LinearLayout) findViewById(R.id.lin_music_bg);
+		mLinBg = (FrameLayout) findViewById(R.id.lin_music_bg);
+		mSeekTail = (ImageView) findViewById(R.id.seekbar_tail);
+		mLinDisconTip = (LinearLayout) findViewById(R.id.lin_disconnect_tip);
+		mLinContent = (LinearLayout) findViewById(R.id.lin_music_content);
+		mFraBtn = (FrameLayout) findViewById(R.id.fra_avrcp_btn);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
 				.getInstance(this);
@@ -162,16 +170,19 @@ public class MusicMainActivity extends Activity implements ISubject,
 		initBackground();
 	}
 	
+	byte[] in;
+	
 	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
 
 		@Override
 		protected Bitmap doInBackground(Bundle... params) {
-			byte[] in = params[0].getByteArray(Util.VALUE);
+			in = params[0].getByteArray(Util.VALUE);
 			return BitmapFactory.decodeByteArray(in, 0, in.length);
 		}
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
+			in = null;
 			BitmapDrawable newDrawable = new BitmapDrawable(
 					getResources(), result);
 			mLinBg.setBackground(newDrawable);
@@ -343,12 +354,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateViewByConnectStatus(int status) {
 		if (status == 0) {
 			updateViewShow(false);
-			mTextTitle.setText(getResources().getString(
-					R.string.music_bluetooth_disconnect));
-			mTextArtist.setText(getResources().getString(
-					R.string.music_bluetooth_disconnect_summery));
-			mTextAlbum.setText(getResources().getString(
-					R.string.music_bluetooth_disconnect));
+			mSeekTail.setVisibility(View.GONE);
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
@@ -372,11 +378,19 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnRepeat.setEnabled(flag);
 		mBtnShuffle.setEnabled(flag);
 		mSeekBar.setEnabled(flag);
-		if (!flag) {
+		if (flag) {
+			mLinContent.setVisibility(View.VISIBLE);
+			mLinDisconTip.setVisibility(View.GONE);
+			mFraBtn.setVisibility(View.VISIBLE);
+		} else {
+			mLinContent.setVisibility(View.GONE);
+			mFraBtn.setVisibility(View.GONE);
+			mLinDisconTip.setVisibility(View.VISIBLE);
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.btn_music_play));
+			
 		}
 	}
 
@@ -466,6 +480,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				isSupportPlaybackpos = true;
 				int pos = Integer.valueOf(nTime) / 1000;
 				mSeekBar.setProgress(pos);
+				freshSeekBarTail(pos);
 				return toTime(Integer.valueOf(nTime));
 			} else {
 				return "00:00";
@@ -503,18 +518,30 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextCurTime.setText("00:00");
 		}
 	}
+	
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		startActivity(intent);
+		finishActivity();
+		super.onBackPressed();
+	}
 
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
-		mTextCurTime.setText(getCurrentTime(currentTime));
-		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
-		if (isPlaying && (mMusicHandler != null)) {
-			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
-		}
-		if (!isPlaying) {
-			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-		}
+//		if (isSupportMetadata) {
+			mTextCurTime.setText(getCurrentTime(currentTime));
+			LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
+//		}
+//		if (isPlaying && (mMusicHandler != null)) {
+//			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+//			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
+//		}
+//		if (!isPlaying) {
+//			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+//		}
 	}
 
 	private ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
@@ -629,21 +656,74 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void finishMusicActivity() {
 		finishActivity();
 	}
-
-	// private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-	//
-	// @Override
-	// public void onReceive(Context context, Intent intent) {
-	// MusicMainActivity.this.unregisterReceiver(mReceiver);
-	// MusicMainActivity.this.finish();
-	// Log.e("wangda", "finish");
-	// }
-	// };
-
-	// private void registBroadcast(){
-	// IntentFilter intent = new IntentFilter();
-	// intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
-	// this.registerReceiver(mReceiver, intent);
-	// }
+	
+	public void freshSeekBarTail(int progress){
+		int mMax = mSeekBar.getMax();
+		LogUtil.i(TAG,"freshSeekBarTail");
+		LogUtil.i(TAG, "progress: "+progress+",,,mMax: "+mMax);
+		int deltaX;
+		if(mMax == 0 || progress == 0){
+			mSeekTail.setVisibility(View.GONE);
+			return;
+		}else{
+			deltaX = 480*progress/mMax;
+			if(deltaX == 0){
+				mSeekTail.setVisibility(View.GONE);
+				return;
+			}else{
+				mSeekTail.setVisibility(View.VISIBLE);
+				LogUtil.i(TAG, "progress: "+progress/(float)mMax);
+				LogUtil.i(TAG, "deltaX: "+deltaX);
+			}
+			
+		}
+		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mSeekTail
+				.getLayoutParams();
+		
+		if(deltaX <= 30){
+			lp.height = 15;
+			lp.width = deltaX+10;
+			lp.topMargin = 30;
+			lp.leftMargin = 0;
+		}else if(deltaX <= 50){
+			lp.height = 25;
+			lp.width = deltaX+20;
+			lp.topMargin = 26;
+			lp.leftMargin = 0;
+		}else if(deltaX <= 100){
+			lp.height = 35;
+			lp.width = deltaX+25;
+			lp.topMargin = 23;
+			lp.leftMargin = 0;
+		} else if(deltaX <= 135){
+			lp.height = 45;
+			lp.width = deltaX+25;
+			lp.leftMargin = 0;
+			lp.topMargin = 18;
+		}else if(deltaX <= 165){
+			lp.height = 52;
+			lp.width = deltaX+35;
+			lp.leftMargin = 0;
+			lp.topMargin = 17;
+		}else if(deltaX <= 320){
+			lp.height = 52;
+			lp.width = 199;
+			lp.leftMargin = deltaX - 199+30;	
+			lp.topMargin = 17;
+		}else if(deltaX <= 400){
+			lp.height = 52;
+			lp.width = 199;
+			lp.leftMargin = deltaX - 199+20;	
+			lp.topMargin = 17;
+		}else{
+			lp.height = 52;
+			lp.width = 199;
+			lp.leftMargin = deltaX - 199+15;	
+			lp.topMargin = 17;
+		}
+		mSeekTail.setLayoutParams(lp);
+		mSeekTail.bringToFront();
+		mSeekTail.postInvalidate();
+	}
 
 }

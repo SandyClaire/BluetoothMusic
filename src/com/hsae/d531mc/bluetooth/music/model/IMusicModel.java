@@ -42,7 +42,7 @@ public interface IMusicModel {
 	 * update play or pause status
 	 * @param status
 	 */
-	public int playStatus();
+	public void playStatus();
 	
 	/**
 	 * support metadata or not

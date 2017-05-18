@@ -38,10 +38,12 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
 			mIMusicModel.requestAudioFoucs();
+			LogUtil.i(TAG, "requestAudioFoucs");
 			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			mIMusicView.updateViewByConnectStatus(conStatus);
+			LogUtil.i(TAG, "updateViewByConnectStatus -- conStatus = " + conStatus);
 			if (conStatus == MangerConstant.Anw_SUCCESS) {
 				initMusicModel();
 			}
@@ -49,28 +51,35 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
 			boolean playStatus = inMessage.getData().getBoolean("playStatus");
 			mIMusicView.updatePlayBtnByStatus(playStatus);
-//			LogUtil.i("wangda", "MusicPersenter --- updatePlayBtnByStatus = " + playStatus);
+			LogUtil.i(TAG, "updatePlayBtnByStatus -- playStatus = " + playStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH:
 			mIMusicView.finishMusicActivity();
+			LogUtil.i(TAG, "finishMusicActivity");
 			break;
 		case MusicActionDefine.ACTION_A2DP_PREV:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_BACKWARD);
+			LogUtil.i(TAG, "CONTROL_BACKWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_PAUSE:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_PAUSE);
+			LogUtil.i(TAG, "CONTROL_PAUSE");
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_PLAY);
+			LogUtil.i(TAG, "CONTROL_PLAY");
 			break;
 		case MusicActionDefine.ACTION_A2DP_NEXT:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FORWARD);
+			LogUtil.i(TAG, "CONTROL_FORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_FASTFORWORD:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD);
+			LogUtil.i(TAG, "CONTROL_FASTFORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_REWIND:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND);
+			LogUtil.i(TAG, "CONTROL_REWIND");
 			break;
 		case MusicActionDefine.ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE:
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
@@ -125,9 +134,9 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicView).attach(this);
 		int status = mIMusicModel.getA2DPConnectStatus();
 		mIMusicView.updateViewByConnectStatus(status);
+		LogUtil.i(TAG, " --- init +++ ");
 		if (status == MangerConstant.Anw_SUCCESS) {
-			int playStatus = mIMusicModel.playStatus();
-			LogUtil.i(TAG, "init ---- playStatus = " + playStatus);
+			mIMusicModel.playStatus();
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			String title = mIMusicModel
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);
@@ -139,7 +148,6 @@ public class MusicPersenter implements IObserver {
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
-//			mIMusicView.updatePlayBtnByStatus(playStatus);
 		}
 		initMusicModel();
 	}
@@ -149,8 +157,12 @@ public class MusicPersenter implements IObserver {
 		mIMusicModel.releaseModel();
 		((ISubject) mIMusicModel).detach(this);
 		((ISubject) mIMusicModel).detach(this);
+		LogUtil.i(TAG, " --- exit +++ ");
 	}
 
+	/**
+	 * 初始化音乐模式
+	 */
 	private void initMusicModel() {
 		int[] AllowArray = new int[10];
 		int repeatNum = mIMusicModel.retrieveCurrentPlayerAPSupported(
@@ -172,6 +184,12 @@ public class MusicPersenter implements IObserver {
 								.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE));
 	}
 
+	/**
+	 * 切换音乐模式
+	 * @param nAttriID
+	 * @param AllowedList
+	 * @param nCurrentMode
+	 */
 	private void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
 			int nCurrentMode) {
 		int nSupportSize = 0;

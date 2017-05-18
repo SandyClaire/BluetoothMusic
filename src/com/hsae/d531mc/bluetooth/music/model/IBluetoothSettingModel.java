@@ -23,7 +23,7 @@ public interface IBluetoothSettingModel {
 	 * @param inqCallBack
 	 * @return
 	 */
-	public int getBluetoothVisibleDevices();
+	public void getBluetoothVisibleDevices();
 	
 	/**
 	 * stop inquiry
@@ -39,7 +39,7 @@ public interface IBluetoothSettingModel {
 	 * @param strCOD
 	 * @return
 	 */
-	public int devicePair(String address , String strCOD);
+	public void devicePair(String address , String strCOD);
 	
 	
 	/**

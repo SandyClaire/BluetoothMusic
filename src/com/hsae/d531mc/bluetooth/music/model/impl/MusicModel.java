@@ -27,7 +27,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Handler mHandler = new Handler();
-	private int playStatus = -1;
 
 	public MusicModel(Context mContext) {
 		super();
@@ -47,6 +46,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBluetoothMusicModel.unregistMusicListener();
 	}
 
+	/**
+	 * 获取A2DP连接状态
+	 */
 	@Override
 	public int getA2DPConnectStatus() {
 		int backCode = -1;
@@ -71,6 +73,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		LogUtil.i(TAG, "--- updateConnectStatusMsg = " + status);
 	}
 
+	/**
+	 * 蓝牙控制命令
+	 */
 	@Override
 	public void setAVRCPControl(int command) {
 		try {
@@ -79,6 +84,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
 
 	@Override
@@ -89,23 +95,22 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", flag);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "--- ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE = " + flag);
+		LogUtil.i(TAG, "updatePlayOrPauseStatus -- status = " + flag);
 	}
 
 	@Override
-	public int playStatus() {
+	public void playStatus() {
 		mHandler.postDelayed(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					playStatus = mBluetoothMusicModel.getPlayStatus();
+					mBluetoothMusicModel.getPlayStatus();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
 		}, 500);
-		return playStatus;
 	}
 
 	@Override
@@ -116,7 +121,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		LogUtil.i(TAG, "--- A2DPSupportMetadata = " + isSupport);
+		LogUtil.i(TAG, "A2DPSupportMetadata -- isSupport = " + isSupport);
 		return isSupport;
 	}
 
@@ -139,7 +144,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putSerializable("musicBean", bean);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "--- getCurrentMusicBean = " + bean.getTitle());
+		LogUtil.i(TAG, "getCurrentMusicBean -- bean = " + bean);
 	}
 
 	@Override
@@ -151,7 +156,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", isPlaying);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "--- getCurrentMusicPlayPosition  position = " + position +  "-- isPlaying = " + isPlaying);
+		LogUtil.i(TAG, "getCurrentMusicPlayPosition -- position = " + position +  "-- isPlaying = " + isPlaying);
 	}
 
 	@Override
@@ -176,7 +181,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putIntegerArrayList("repeatList", AllowList);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-
+		LogUtil.i(TAG, "updateAttributeRepeat -- repeatList = " + AllowList);
 	}
 
 	@Override
@@ -187,6 +192,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putIntegerArrayList("shuffleList", AllowList);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "updateAttributeShuffle -- shuffleList = " + AllowList);
 	}
 
 	@Override
@@ -245,6 +251,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH;
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "finishMusicActivity");
 	}
 
 }

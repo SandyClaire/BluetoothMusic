@@ -65,11 +65,12 @@ public class BluetoothMusicModel {
 		public void onServiceConnected(ComponentName name, IBinder service) {
 			LogUtil.i(TAG, "---------- onServiceConnected ------------");
 			mIAnwPhoneLink = IAnwPhoneLink.Stub.asInterface(service);
-			if(mIAnwPhoneLink==null){
+			if (mIAnwPhoneLink == null) {
 				return;
 			}
 			try {
-				if (getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0) == 1) {
+				if (getConnectStatus(
+						MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0) == 1) {
 					getCurrentPlayerAPSetting();
 				}
 			} catch (RemoteException e) {
@@ -107,8 +108,8 @@ public class BluetoothMusicModel {
 	 * This function retrieves the connect status of remote device.
 	 * 
 	 * @param nProfileType
-	 *            [in] The profile that want to check. Please reference ��Profile
-	 *            type�� section in MangerConstant object for detail.
+	 *            [in] The profile that want to check. Please reference
+	 *            ��Profile type�� section in MangerConstant object for detail.
 	 * @param mIndex
 	 *            [in] The connection��s ID, used in SPP connection only.
 	 * @return Returns Anw_SUCCESS on success or returns an error code on
@@ -189,8 +190,8 @@ public class BluetoothMusicModel {
 	 * This function retrieves the information of current connected device.
 	 * 
 	 * @param nProfileType
-	 *            [in] The profile that want to check. Please reference ��Profile
-	 *            type�� section in MangerConstant object for detail.
+	 *            [in] The profile that want to check. Please reference
+	 *            ��Profile type�� section in MangerConstant object for detail.
 	 * @param strAddress
 	 *            [out] The Bluetooth device��s MAC address
 	 * @param strName
@@ -475,7 +476,7 @@ public class BluetoothMusicModel {
 	 * music playing.
 	 * 
 	 * @param op_code
-	 *        [in] Please reference AVRCP_Operation_ID for detail command
+	 *            [in] Please reference AVRCP_Operation_ID for detail command
 	 *            information.
 	 * @return Returns Anw_SUCCESS on success or returns an error code on
 	 *         failure.
@@ -491,7 +492,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
 	}
-	
+
 	/**
 	 * This function is used to inquiry remote Bluetooth mobile devices in the
 	 * nearby area.
@@ -507,7 +508,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack);
 	}
-	
+
 	/**
 	 * This function cancels the current inquiry operation.
 	 * 
@@ -521,7 +522,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_DeviceInquiryStop();
 	}
-	
+
 	/**
 	 * This function is used to pair with Bluetooth remote device.
 	 * 
@@ -547,7 +548,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_DevicePair(address, pin_code, cod);
 	}
-	
+
 	/**
 	 * Use this function to retrieve the current status of inquiry.
 	 * 
@@ -564,7 +565,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_IsCurrentInquiring();
 	}
-	
+
 	/**
 	 * This function retrieves the paired list.
 	 * 
@@ -612,7 +613,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_DisconnectMobile();
 	}
-	
+
 	/**
 	 * This function is used to disconnect a previous connected Bluetooth
 	 * device.
@@ -631,7 +632,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_A2DPDisconnect();
 	}
-	
+
 	/**
 	 * This function is used to un-pair the Bluetooth device which is already
 	 * paired.
@@ -653,6 +654,28 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_DeviceUnPair(address);
 	}
 	
+	/**
+	 * Use this function to establish the Bluetooth connection with the paired
+	 * device. It connects to the A2DP profile.
+	 * 
+	 * @param address
+	 *            The Bluetooth address of remote device
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int a2dpConnect(String address) throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_A2DPConnect(address);
+	}
+
+
 	/**
 	 * Use this function to establish the Bluetooth connection with the paired
 	 * device. It connects to the HF profile and the profile that can retrieves
@@ -679,9 +702,10 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_ConnectMobile(address);
 	}
-	
+
 	/**
 	 * Use this function to set stream volume to mute or un-mute.
+	 * 
 	 * @param mode
 	 * @return
 	 * @throws RemoteException
@@ -695,14 +719,15 @@ public class BluetoothMusicModel {
 			return errorCode;
 		}
 		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
-	} 
-	
+	}
+
 	/**
 	 * 获取本机名称
+	 * 
 	 * @return
 	 * @throws RemoteException
 	 */
-	public String getDeviceName() throws RemoteException{
+	public String getDeviceName() throws RemoteException {
 		if (null == mIAnwPhoneLink) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
@@ -712,16 +737,17 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_GetDeviceName();
 	}
-	
+
 	/**
 	 * 设置手机声音
+	 * 
 	 * @param bSpeaker
 	 * @param nVal
 	 * @return
 	 * @throws RemoteException
 	 */
-	public boolean setDeviceVol(boolean bSpeaker,
-			int nVal) throws RemoteException{
+	public boolean setDeviceVol(boolean bSpeaker, int nVal)
+			throws RemoteException {
 		if (null == mIAnwPhoneLink) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
@@ -731,7 +757,7 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_SetDeviceVol(bSpeaker, nVal);
 	}
-	
+
 	/**
 	 * 注册 Blutooth Setting 监听
 	 * 
@@ -741,7 +767,7 @@ public class BluetoothMusicModel {
 			IBluetoothSettingModel mBluetoothSettingModel) {
 		nIBluetoothSettingModel = mBluetoothSettingModel;
 	}
-	
+
 	/**
 	 * 更新配对状态
 	 * 
@@ -753,19 +779,20 @@ public class BluetoothMusicModel {
 			nIBluetoothSettingModel.updateDevicePair(address, status);
 		}
 	}
-	
+
 	/**
 	 * 取消Blutooth Setting 监听
 	 */
 	public void unregistBluetoothSettingListener() {
 		nIBluetoothSettingModel = null;
 	}
-	
+
 	/**
 	 * 监听蓝牙开关状体
+	 * 
 	 * @param status
 	 */
-	public void updateBTEnalbStatus(int status){
+	public void updateBTEnalbStatus(int status) {
 		if (null != nIBluetoothSettingModel) {
 			nIBluetoothSettingModel.updateBtEnableStatus(status);
 		}
@@ -773,14 +800,16 @@ public class BluetoothMusicModel {
 
 	/**
 	 * regist music status listener
+	 * 
 	 * @param nMusicModel
 	 */
 	public void registMusicListener(IMusicModel nMusicModel) {
 		mIMusicModel = nMusicModel;
 	}
-	
+
 	/**
 	 * 更新链接状态
+	 * 
 	 * @param status
 	 */
 	public void updateMsgByConnectStatusChange(int status) {
@@ -791,42 +820,44 @@ public class BluetoothMusicModel {
 			notifyAutroMusicInfo(null);
 		}
 	}
-	
+
 	/**
 	 * 更新HFP链接状态
+	 * 
 	 * @param status
 	 */
-	public void updateHFPConnectStatus(int status){
+	public void updateHFPConnectStatus(int status) {
 		if (null != nIBluetoothSettingModel) {
 			nIBluetoothSettingModel.updateConnectStatus(status);
 		}
 	}
-	
+
 	/**
 	 * 结束蓝牙音乐
 	 */
-	public void finishActivity(){
+	public void finishActivity() {
 		if (null != mIMusicModel) {
 			mIMusicModel.finishMusicActivity();
 		}
 	}
-	
+
 	/**
 	 * 跟新播放状态
+	 * 
 	 * @param flag
 	 */
 	public void updatePlayStatus(boolean flag) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updatePlayOrPauseStatus(flag);
-			LogUtil.i("wangda",
-					"updatePlayStatus -- flag = " + flag);
+			LogUtil.i("wangda", "updatePlayStatus -- flag = " + flag);
 		}
 	}
-	
+
 	private MusicBean mBean;
-	
+
 	/**
 	 * 更新当前音乐信息
+	 * 
 	 * @param bean
 	 */
 	public void updateCurrentMusicInfo(MusicBean bean) {
@@ -835,66 +866,71 @@ public class BluetoothMusicModel {
 			mIMusicModel.getCurrentMusicBean(bean);
 		}
 	}
-	
+
 	/**
 	 * 更新播放进度时间
+	 * 
 	 * @param position
 	 * @param isPlaying
 	 */
-	public void updateCurrentPlayTime(String position , boolean isPlaying) {
+	public void updateCurrentPlayTime(String position, boolean isPlaying) {
 		if (null != mIMusicModel) {
-			mIMusicModel.getCurrentMusicPlayPosition(position,isPlaying);
+			mIMusicModel.getCurrentMusicPlayPosition(position, isPlaying);
 		}
 	}
-	
+
 	/**
 	 * 更新循环模式
+	 * 
 	 * @param AllowList
 	 */
-	public void updateRepeatModel(ArrayList<Integer> AllowList){
+	public void updateRepeatModel(ArrayList<Integer> AllowList) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeRepeat(AllowList);
 		}
 	}
-	
+
 	/**
 	 * 更新随机模式
+	 * 
 	 * @param AllowList
 	 */
-	public void updateShuffleModel(ArrayList<Integer> AllowList){
+	public void updateShuffleModel(ArrayList<Integer> AllowList) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeShuffle(AllowList);
 		}
 	}
-	
+
 	/**
 	 * 切换模式后更新当前模式
+	 * 
 	 * @param nAttrID
 	 * @param nAttrValue
 	 */
-	public void updatePlayerModelSetting(int nAttrID , int nAttrValue){
+	public void updatePlayerModelSetting(int nAttrID, int nAttrValue) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updataPlayerModel(nAttrID, nAttrValue);
 		}
 	}
-	
+
 	/**
 	 * unregist music status listener
 	 */
 	public void unregistMusicListener() {
 		mIMusicModel = null;
 	}
-	
+
 	/**
 	 * 切换音源
+	 * 
 	 * @return
 	 */
 	public boolean tryToSwitchSource() {
 		Source source = new Source();
-        boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
-        return isSwitch;
-    }
-	
+		boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
+		return isSwitch;
+	}
+
 	/**
 	 * 判断电话界面时候在最前面
 	 */
@@ -909,89 +945,109 @@ public class BluetoothMusicModel {
 		}
 		return false;
 	}
-	
+
 	/**
-     * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
-     * @param isChanged
-     */
-     public void mainAudioChanged(boolean isChanged) {
-    	Source source = new Source();
-    	source.mainAudioChanged(App.BT_MUSIC, isChanged);
-        LogUtil.i(TAG, "requestAudioSource == " + isChanged);
-        if (source.getCurrentSource() == App.BT_MUSIC) {
+	 * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
+	 * @param isChanged
+	 */
+	public void mainAudioChanged(boolean isChanged) {
+		Source source = new Source();
+		source.mainAudioChanged(App.BT_MUSIC, isChanged);
+		LogUtil.i(TAG, "requestAudioSource == " + isChanged);
+		if (source.getCurrentSource() == App.BT_MUSIC) {
 			try {
-				audioSetStreamMode(0);
+				getPlayStatus();
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
-    }
-    
-    public boolean isAudioFocused = false;
-    public AudioManager audioManager;
-    
-    /** 获取Android音频焦点 */
-    public void requestAudioFocus(boolean flag) {
-    	Source source = new Source();
-    	LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
-    	if (source.getCurrentSource() == App.BT_MUSIC) {
-    		try {
+	}
+
+	/**
+	 * 如果焦点不再蓝牙音乐，将蓝牙音乐mute
+	 */
+	public void setMusicStreamMute() {
+		Source source = new Source();
+		try {
+			if (source.getCurrentSource() != App.BT_MUSIC) {
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public boolean isAudioFocused = false;
+	public AudioManager audioManager;
+
+	/** 获取Android音频焦点 */
+	public void requestAudioFocus(boolean flag) {
+		Source source = new Source();
+		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
+		if (source.getCurrentSource() == App.BT_MUSIC) {
+			try {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 			return;
 		}
-        LogUtil.i(TAG, "requestAudioFocus---request audio focus");
-        audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); //STREAM_MUSIC
-        int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
-            isAudioFocused = true;
-            mainAudioChanged(flag);
-            notifyLauncherInfo();
-        } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
-            LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
-            isAudioFocused = false;
-        } else {
-        	isAudioFocused = false;
-            LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
-        }
-        if (isAudioFocused) {
+		LogUtil.i(TAG, "requestAudioFocus---request audio focus");
+		audioManager = (AudioManager) mContext
+				.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
+		int result = audioManager.requestAudioFocus(mAFCListener,
+				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+			LogUtil.i(TAG,
+					"requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED"
+							+ "BluetoothMusicModel获取音频焦点成功");
+			isAudioFocused = true;
+			mainAudioChanged(flag);
+		} else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
+			LogUtil.i(TAG, "requestAudioFocus---"
+					+ "BluetoothMusicModel获取音频焦点失败");
+			isAudioFocused = false;
+		} else {
+			isAudioFocused = false;
+			LogUtil.i(TAG, "requestAudioFocus---"
+					+ "BluetoothMusicModel获取音频焦点失败");
+		}
+		notifyLauncherInfo();
+		if (isAudioFocused) {
 			try {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
-    }
-    
-    /**
-     * 通知launcher 音乐信息
-     */
-    private void notifyLauncherInfo(){
-    	int connStatus = 0;
-        try {
-        	connStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+	}
+
+	/**
+	 * 通知launcher 音乐信息
+	 */
+	private void notifyLauncherInfo() {
+		int connStatus = 0;
+		try {
+			connStatus = getConnectStatus(
+					MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-        if (connStatus == MangerConstant.Anw_SUCCESS) {
-        	if (mBean != null) {
-        		BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
-        				mBean.getAlbum(), null);
-        		notifyAutroMusicInfo(info);
-        	} else {
-        		BTMusicInfo info = new BTMusicInfo("", "",
-        				"", null);
-        		notifyAutroMusicInfo(info);
-        	}
+		if (connStatus == MangerConstant.Anw_SUCCESS && mBean != null) {
+			BTMusicInfo info = new BTMusicInfo(mBean.getTitle(),
+					mBean.getAtrist(), mBean.getAlbum(), null);
+			notifyAutroMusicInfo(info);
+		} else {
+			BTMusicInfo info = new BTMusicInfo("", "", "", null);
+			notifyAutroMusicInfo(info);
 		}
-    }
-    
-    public void notifyAutroMusicInfo(BTMusicInfo info) {
-    	if (null == mBTMmanager) {
-    		mBTMmanager = BTMusicManager.getInstance(mContext);
+
+	}
+
+	public void notifyAutroMusicInfo(BTMusicInfo info) {
+		if (null == mBTMmanager) {
+			mBTMmanager = BTMusicManager.getInstance(mContext);
 		}
 		try {
 			if (mBTMmanager.mListener != null) {
@@ -1001,60 +1057,66 @@ public class BluetoothMusicModel {
 			e.printStackTrace();
 		}
 	}
-    
-    /**
-     * 音源焦点变化监听
-     */
-    OnAudioFocusChangeListener mAFCListener = new OnAudioFocusChangeListener() {
-		
+
+	/**
+	 * 音源焦点变化监听
+	 */
+	OnAudioFocusChangeListener mAFCListener = new OnAudioFocusChangeListener() {
+
 		@Override
 		public void onAudioFocusChange(int focusChange) {
-		    switch (focusChange) {
-            case AudioManager.AUDIOFOCUS_GAIN:
-            	isAudioFocused = true;
-            	mainAudioChanged(isCallActivityShow());
-            	notifyLauncherInfo();
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
-                break;
-            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-            	isAudioFocused = true;
-            	mainAudioChanged(isCallActivityShow());
-            	notifyLauncherInfo();
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
-                break;
-            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-            	isAudioFocused = true;
-            	mainAudioChanged(isCallActivityShow());
-            	notifyLauncherInfo();
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS:
-            	isAudioFocused = false;
-            	notifyAutroMusicInfo(null);
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-            	isAudioFocused = false;
-            	notifyAutroMusicInfo(null);
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
-                break;
-            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-            	isAudioFocused = false;
-            	notifyAutroMusicInfo(null);
-                LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
-                break;
-            }
-		    Source source = new Source();
-		    LogUtil.i(TAG, "-------------- BT mAFCListener getCurrentSource" + source.getCurrentSource());
-		    if (isAudioFocused) {
+			switch (focusChange) {
+			case AudioManager.AUDIOFOCUS_GAIN:
+				isAudioFocused = true;
+				mainAudioChanged(isCallActivityShow());
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_GAIN");
+				break;
+			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+				isAudioFocused = true;
+				mainAudioChanged(isCallActivityShow());
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
+				break;
+			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+				isAudioFocused = true;
+				mainAudioChanged(isCallActivityShow());
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+				break;
+			case AudioManager.AUDIOFOCUS_LOSS:
+				isAudioFocused = false;
+				notifyAutroMusicInfo(null);
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_LOSS");
+				break;
+			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+				isAudioFocused = false;
+				notifyAutroMusicInfo(null);
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
+				break;
+			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+				isAudioFocused = false;
+				notifyAutroMusicInfo(null);
+				LogUtil.i(TAG,
+						"mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+				break;
+			}
+			notifyLauncherInfo();
+			Source source = new Source();
+			LogUtil.i(TAG, "-------------- BT mAFCListener getCurrentSource"
+					+ source.getCurrentSource());
+			if (isAudioFocused) {
 				try {
 					AVRCPControl(AudioControl.CONTROL_PLAY);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-			}else {
+			} else {
 				try {
 					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

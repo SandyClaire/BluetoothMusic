@@ -109,9 +109,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		Message msg = Message.obtain();
 
 		if (arg1) {
-			msg.what = KEY_DOWN;
-			mHandler.sendMessageDelayed(msg, 2000);
-			mIsLongPress = false;
+//			msg.what = KEY_DOWN;
+//			mHandler.sendMessageDelayed(msg, 2000);
+//			mIsLongPress = false;
 		} else {
 			int hmiIndex = keyEventDispatcher(arg0);
 			msg.what = hmiIndex;

@@ -135,7 +135,7 @@ interface IAnwPhoneLink {
 	int 		ANWBT_HidDisconnect();
 	int 		ANWBT_HidWriteCoordinate(int nButtonType, int nXCor, int nYCor, int nWheel);
 	int 		ANWBT_HidHandleButton(int nModifier, int nReserved, int nKeyLength, in byte[] bNormalKey);
-	
+		
 	int   		ANWBT_AudioBrowsingGetElement(String uuid,int Attr_mask,int nMaxGetCount,IAnwBrowsingCallBack cb);
 	int   		ANWBT_AudioBrowsingSearch(String Folder_UID ,String keyword,int Attr_mask,int nMaxGetCount,IAnwBrowsingCallBack cb);
 	int   		ANWBT_AudioBrowsingGetNowPlayingList(int Attr_mask,int nMaxGetCount,IAnwBrowsingCallBack cb);
@@ -250,5 +250,14 @@ interface IAnwPhoneLink {
 	int   		ANWBT_SendEmail(in EmailData email);
 	int   		ANWBT_SetEmailProperty(in EmailData email,int nPropertyValue);
 	int   		ANWBT_GetMessageFolderListing(out MAPFolderInfo[] FolderInfo);
+	                                                                              
+	int   		ANWBT_SendSMSEx(String strNumber,String Text,boolean bUnicodeEncode);
 	
+	boolean   	ANWBT_GetPANInitStatus();
+	int 		ANWBT_PanInit();
+	int 		ANWBT_PanDeinit();
+	int 		ANWBT_PanConnect(String address);
+	int 		ANWBT_PanDisconnect();
+		
+	int   	ANWBT_CallWaitingEx(int nType,int nIdx);
 }

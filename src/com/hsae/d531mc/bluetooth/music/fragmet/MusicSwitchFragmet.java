@@ -53,6 +53,10 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
 	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
 	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
+	private static final int SOURCE_AM = 1;
+	private static final int SOURCE_FM = 2;
+	private static final int SOURCE_USB_IPOD = 3;
+	private static final int SOURCE_BT = 0;
 
 	public static Fragment getInstance(Context mContext) {
 		if (null == fragment) {
@@ -65,23 +69,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mView = inflater.inflate(R.layout.music_switch, container, false);
-		// setBlurBackground();
 		return mView;
 	}
-
-	// private void setBlurBackground() {
-	// int scaleRatio = 35;
-	// int blurRadius = 8;
-	// Bitmap originBitmap = BitmapFactory.decodeResource(getResources(),
-	// R.drawable.bg_bluetoothsettings);
-	// Bitmap scaledBitmap = Bitmap.createScaledBitmap(originBitmap,
-	// originBitmap.getWidth() / scaleRatio,
-	// originBitmap.getHeight() / scaleRatio,
-	// false);
-	// Bitmap blurBitmap = FastBlurUtil.doBlur(scaledBitmap, blurRadius, true);
-	// Drawable background = new BitmapDrawable(getResources(), blurBitmap);
-	// mView.setBackground(background);
-	// }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -127,21 +116,21 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		Bundle bundle = new Bundle();
 		switch (v.getId()) {
 		case R.id.lin_music_am:
-			updateSelectedShow(1);
+			updateSelectedShow(SOURCE_AM);
 			bundle.putInt("band", 0x01);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_fm:
-			updateSelectedShow(2);
+			updateSelectedShow(SOURCE_FM);
 			bundle.putInt("band", 0x03);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_ipod:
-			updateSelectedShow(3);
+			updateSelectedShow(SOURCE_USB_IPOD);
 			boolean isUsb = isUsbConnected() || !isIpodConnected();
 			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
 			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
@@ -153,7 +142,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_bluetooth:
-			updateSelectedShow(0);
+			updateSelectedShow(SOURCE_BT);
 			break;
 		case R.id.btn_close_switch:
 			((MusicMainActivity) getActivity()).closeMusicSwitch();
@@ -197,9 +186,13 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		return isConnected;
 	}
 
+	/**
+	 * 更新按钮状态
+	 * @param flag
+	 */
 	private void updateSelectedShow(int flag) {
 		switch (flag) {
-		case 0:
+		case SOURCE_BT:
 			mTextAM.setTextColor(getResources().getColor(R.color.white));
 			mTextAM.setEnabled(true);
 			mTextFM.setTextColor(getResources().getColor(R.color.white));
@@ -212,7 +205,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextBT.setTextColor(getResources().getColor(R.color.light_orange));
 			mTextBT.setEnabled(false);
 			break;
-		case 1:
+		case SOURCE_AM:
 			mTextAM.setTextColor(getResources().getColor(R.color.light_orange));
 			mTextAM.setEnabled(false);
 			mTextFM.setTextColor(getResources().getColor(R.color.white));
@@ -225,7 +218,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextBT.setTextColor(getResources().getColor(R.color.white));
 			mTextBT.setEnabled(true);
 			break;
-		case 2:
+		case SOURCE_FM:
 			mTextFM.setTextColor(getResources().getColor(R.color.light_orange));
 			mTextFM.setEnabled(false);
 			mTextAM.setTextColor(getResources().getColor(R.color.white));
@@ -238,7 +231,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextBT.setTextColor(getResources().getColor(R.color.white));
 			mTextBT.setEnabled(true);
 			break;
-		case 3:
+		case SOURCE_USB_IPOD:
 			mTextIPOD.setTextColor(getResources()
 					.getColor(R.color.light_orange));
 			mTextUSB.setTextColor(getResources().getColor(R.color.light_orange));

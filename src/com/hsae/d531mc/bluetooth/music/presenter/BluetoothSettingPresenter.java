@@ -21,7 +21,7 @@ import com.hsae.d531mc.bluetooth.music.view.IBluetoothSettingView;
  */
 public class BluetoothSettingPresenter implements IObserver {
 
-	private static final String TAG = "BluetoothSettingPresenter";
+	private static final String TAG = "MusicBTPresenter";
 	private IBluetoothSettingModel mBluetoothSettingModel;
 	private IBluetoothSettingView mIBluetoothSettingView;
 	private int backcode = 0;
@@ -52,7 +52,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			}
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY:
-			backcode = mBluetoothSettingModel.getBluetoothVisibleDevices();
+			mBluetoothSettingModel.getBluetoothVisibleDevices();
 			break;
 		case MusicActionDefine.ACTION_SETTING_STOP_INQUIRY:
 			mBluetoothSettingModel.stopInquiry();
@@ -60,9 +60,8 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_PAIR:
 			String address = inMessage.getData().getString("address");
 			String strCOD = inMessage.getData().getString("strcod");
-			backcode = mBluetoothSettingModel.devicePair(address, strCOD);
-			LogUtil.i(TAG, "--- pair  -  backcode = " + backcode
-					+ " --- strCOD = " + strCOD + "address" + address);
+			mBluetoothSettingModel.devicePair(address, strCOD);
+			LogUtil.i(TAG, "--- pair  -  strCOD = " + strCOD + "address" + address);
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY_DEVICES:
 			BluetoothDevice bean = (BluetoothDevice) inMessage.getData()

@@ -29,10 +29,9 @@ import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 public class BluetoothSettingModel extends ContactsSubjecter implements
 		IBluetoothSettingModel {
 
-	private static final String TAG = "BluetoothSettingModel";
+	private static final String TAG = "MusicBTModel";
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothModel;
-	private int backcode = 0;
 	private Handler mHandler = new Handler();
 	private static final int conDelayTime = 1500;
 	private static final int pairDelayTime = 1500;
@@ -58,7 +57,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	}
 
 	@Override
-	public int getBluetoothVisibleDevices() {
+	public void getBluetoothVisibleDevices() {
 
 		Thread inquiryThread = null;
 		inquiryThread = new Thread(new Runnable() {
@@ -66,16 +65,15 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			@Override
 			public void run() {
 				try {
-					backcode = mBluetoothModel.inquiryBtDevices(InquiryCallBack);
+					mBluetoothModel.inquiryBtDevices(InquiryCallBack);
 				} catch (RemoteException e) {
-					Log.e(TAG, "inquiryThread-RemoteException = "
-							+ e.toString());
+					Log.e(TAG,
+							"inquiryThread-RemoteException = " + e.toString());
 				}
 			}
 		}, "inquiryThread");
 		inquiryThread.start();
 		LogUtil.i(TAG, "--- inquiryThread.star");
-		return backcode;
 	}
 
 	private IAnwInquiryCallBackEx InquiryCallBack = new IAnwInquiryCallBackEx.Stub() {
@@ -145,26 +143,32 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		Message msg_search = Message.obtain();
 		msg_search.what = MusicActionDefine.ACTION_SETTING_INQUIRY_FINISH;
 		this.notify(msg_search, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, " --- SearchFinish");
 	}
 
 	@Override
 	public int stopInquiry() {
+		int backcode = -1;
 		try {
 			backcode = mBluetoothModel.inquiryBtStop();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		LogUtil.i(TAG, " --- stopInquiry");
 		return backcode;
 	}
 
+	/**
+	 * 发起配对
+	 */
 	@Override
-	public int devicePair(final String address, final String strCOD) {
+	public void devicePair(final String address, final String strCOD) {
 		final Thread pairThread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					backcode = mBluetoothModel.pair(address, "0000",
+					mBluetoothModel.pair(address, "0000",
 							Integer.parseInt(strCOD, 16));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
@@ -174,20 +178,16 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			}
 		}, "pairthread");
 
-		if (isCurrentInquring()) {
-			stopInquiry();
-			mHandler.postDelayed(new Runnable() {
+		stopInquiry();
+		mHandler.postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					pairThread.start();
-				}
-			}, pairDelayTime);
+			@Override
+			public void run() {
+				pairThread.start();
+				LogUtil.i(TAG, " devicePair -- address = " + address);
+			}
+		}, pairDelayTime);
 
-		} else {
-			pairThread.start();
-		}
-		return backcode;
 	}
 
 	/**
@@ -239,6 +239,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		
+		LogUtil.i(TAG, " getPairedDevies -- SIZE = " + mListPairedBeans.size());
 
 		return mListPairedBeans;
 	}
@@ -286,6 +288,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 
 	@Override
 	public int unpairDevice(String pairedAddress) {
+		int backcode = -1;
 		try {
 			backcode = mBluetoothModel.unPair(pairedAddress);
 		} catch (RemoteException e) {
@@ -296,29 +299,20 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 
 	@Override
 	public void connectMoblie(final String connectAddress) {
-		if (isCurrentInquring()) {
-			stopInquiry();
-			mHandler.postDelayed(new Runnable() {
+		stopInquiry();
+		mHandler.postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					try {
-						mBluetoothModel.connectMobile(connectAddress);
-						// mBluetoothModel.a2dpConnect(connectAddress);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
+			@Override
+			public void run() {
+				try {
+					mBluetoothModel.connectMobile(connectAddress);
+					mBluetoothModel.a2dpConnect(connectAddress);
+				} catch (RemoteException e) {
+					e.printStackTrace();
 				}
-			}, conDelayTime);
-
-		} else {
-			try {
-				mBluetoothModel.connectMobile(connectAddress);
-				// mBluetoothModel.a2dpConnect(connectAddress);
-			} catch (RemoteException e) {
-				e.printStackTrace();
 			}
-		}
+		}, conDelayTime);
+
 	}
 
 	@Override
@@ -326,7 +320,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		String name = "";
 		try {
 			name = mBluetoothModel.getDeviceName();
-			LogUtil.e(TAG, "------- local name = " + name);
+			LogUtil.e(TAG, "getLocalName -- name = " + name);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -335,13 +329,13 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 
 	@Override
 	public int getConnectStatus(int profile) {
-		int backCode = -1;
+		int status = -1;
 		try {
-			backCode = mBluetoothModel.getConnectStatus(profile, 0);
+			status = mBluetoothModel.getConnectStatus(profile, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return backCode;
+		return status;
 	}
 
 	@Override

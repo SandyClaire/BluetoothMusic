@@ -13,15 +13,14 @@ public class MusicActionDefine {
     static public final int ACTION_APP_EXIT = 99;
     
     static public final int ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE = 100;
-
     
-    // connect status
+    // CONNECT status
     static public final int ACTION_A2DP_CONNECT_STATUS_CHANGE = 10;
     static public final int ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE = 11;
     static public final int ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE = 12;
     static public final int ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE = 13;
     
-    //play event
+    //CONTROL event
     static public final int ACTION_A2DP_PLAY = 20;
     static public final int ACTION_A2DP_PAUSE = 21;
     static public final int ACTION_A2DP_PREV = 22;
@@ -29,6 +28,7 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_FASTFORWORD = 24;
     static public final int ACTION_A2DP_REWIND = 25;
     
+    //MODEL 
     static public final int ACTION_A2DP_REPEAT_MODEL = 30;
     static public final int ACTION_A2DP_SHUFFLE_MODEL = 31;
         
@@ -41,8 +41,7 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_ACTIVITY_PAUSE = 60;
     static public final int ACTION_A2DP_ACTIVITY_FINISH = 61;
     
-    
-    // settings page
+    // SETTING page
     static public final int ACTION_SETTING_INQUIRY = 70;
     static public final int ACTION_SETTING_STOP_INQUIRY = 71;
     static public final int ACTION_SETTING_PAIR = 72;
