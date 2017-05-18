@@ -2,13 +2,11 @@
 
     <string name="app_name">蓝牙音乐</string>
 
-    <string name="music_name">音乐名称 : %s</string>
-    <string name="music_artist">演唱者 : %s</string>
-    <string name="music_album">音乐专辑 : %s</string>
     <string name="music_source_title">音源选择</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
     <string name="music_source_ipod">IPOD</string>
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">蓝牙音乐</string>
+    <string name="music_matedate_unsupport">不支持</string>
 </resources>

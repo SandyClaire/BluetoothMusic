@@ -51,7 +51,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
                         android:orientation="vertical" >
 
                         <TextView
@@ -59,6 +59,7 @@
                             style="@style/musicNameText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textStyle="bold"
                             android:text="music"/>
 
                         <TextView
@@ -66,6 +67,7 @@
                             style="@style/musicArtistText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/text_artist_margin_top"
                             android:text="artist" />
 
                         <TextView
