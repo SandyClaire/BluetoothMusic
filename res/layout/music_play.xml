@@ -66,7 +66,7 @@
         <TextView
             android:id="@+id/music_title"
             style="@style/timeText"
-            android:layout_width="520dp"
+            android:layout_width="470dp"
             android:layout_height="80dp"
             android:layout_gravity="top|center_vertical"
             android:layout_marginTop="70dp"
@@ -81,7 +81,7 @@
         <TextView
             android:id="@+id/music_artist"
             style="@style/timeText"
-            android:layout_width="520dp"
+            android:layout_width="470dp"
             android:layout_height="40dp"
             android:layout_gravity="top|center_vertical"
             android:layout_marginTop="180dp"
@@ -171,7 +171,7 @@
                 android:layout_marginTop="55dp"
                 android:text="@string/play_text_min"
                 android:textColor="@color/white"
-                android:textSize="22sp" />
+                android:textSize="24sp" />
 
             <TextView
                 android:id="@+id/music_totaltime"
@@ -182,7 +182,7 @@
                 android:layout_marginTop="55dp"
                 android:text="@string/play_text_max"
                 android:textColor="@color/white"
-                android:textSize="22sp" />
+                android:textSize="24sp" />
 
             <ImageView
                 android:id="@+id/seekbar_tail"

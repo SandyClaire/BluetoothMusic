@@ -26,7 +26,7 @@
                 android:layout_weight="1"
                 android:text="@string/pair_devices"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_28" />
+                android:textSize="@dimen/text_size_30" />
         </LinearLayout>
 
         <LinearLayout
@@ -65,14 +65,14 @@
             android:layout_weight="1"
             android:text="@string/visible_devices"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_28" />
+            android:textSize="@dimen/text_size_30" />
 
         <ProgressBar
-            android:id="@+id/pro_search"
+            android:id="@+id/pro_search2"
             style="?android:attr/progressBarStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/devices_discribe_progressbar_margin"
+            android:layout_width="26px"
+            android:layout_marginRight="35px"
+            android:layout_height="26px"
             android:visibility="invisible" />
     </LinearLayout>
 

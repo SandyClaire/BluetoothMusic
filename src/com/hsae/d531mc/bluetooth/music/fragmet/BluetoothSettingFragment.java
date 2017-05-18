@@ -40,12 +40,11 @@ import com.hsae.d531mc.bluetooth.music.view.IBluetoothSettingView;
  * @author wangda
  *
  */
-public class BluetoothSettingFragment extends Fragment implements ISubject,
-		IBluetoothSettingView, OnClickListener {
-	
+public class BluetoothSettingFragment extends Fragment implements ISubject, IBluetoothSettingView, OnClickListener {
+
 	private static final String TAG = "BluetoothSettingFragment";
 	private static final String ACTION_REMOTE_BLUETOOTHPAIR = "com.remote.bluetooth.pair";
-	
+
 	private View mView;
 	private ListView mListVisible;
 	private Button mBtnSearch;
@@ -68,7 +67,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private static BluetoothSettingFragment fragment;
 	private List<BluetoothDevice> mListPairedDevices = new ArrayList<BluetoothDevice>();
 	private List<BluetoothDevice> mListVisibleDevices = new ArrayList<BluetoothDevice>();
-	
 
 	public static Fragment getInstance(Context nContext) {
 		if (null == fragment) {
@@ -79,10 +77,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		mView = inflater.inflate(R.layout.bluetooth_setting_fragment,
-				container, false);
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+		mView = inflater.inflate(R.layout.bluetooth_setting_fragment, container, false);
 		return mView;
 	}
 
@@ -96,13 +92,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	@SuppressLint("InflateParams")
 	private void initView() {
 		mInflater = LayoutInflater.from(mContext);
-		View headerView = mInflater.inflate(R.layout.devices_list_header_view,
-				null);
-		mProSearch = (ProgressBar) headerView.findViewById(R.id.pro_search);
+		View headerView = mInflater.inflate(R.layout.devices_list_header_view, null);
+		mProSearch = (ProgressBar) headerView.findViewById(R.id.pro_search2);
 		mListVisible = (ListView) mView.findViewById(R.id.list_visible_devices);
 		mBtnSearch = (Button) mView.findViewById(R.id.btn_search);
-		mListPaired = (ListViewEx) headerView
-				.findViewById(R.id.list_paired_device);
+		mListPaired = (ListViewEx) headerView.findViewById(R.id.list_paired_device);
 		mLinPair = (LinearLayout) headerView.findViewById(R.id.linear_pair);
 		mLinVis = (LinearLayout) headerView.findViewById(R.id.lin_visible_text);
 		mTextEnable = (TextView) mView.findViewById(R.id.text_enable_tip);
@@ -149,29 +143,27 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private void updateSearchBtnShow(boolean flag) {
 		if (flag) {
 			isSearching = true;
-			mBtnSearch
-					.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);
+			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);
 			mProSearch.setVisibility(View.VISIBLE);
 		} else {
 			isSearching = false;
-			mBtnSearch
-					.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
+			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
 			mProSearch.setVisibility(View.INVISIBLE);
 		}
 	}
-	
+
 	@Override
 	public void onResume() {
 		getCaplayStatus();
 		super.onResume();
 	}
-	
-	private void getCaplayStatus(){
+
+	private void getCaplayStatus() {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
-	
+
 	@Override
 	public void onDetach() {
 		super.onDetach();
@@ -237,6 +229,17 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	private class PairedAdapter extends BaseAdapter {
 
+		class ViewHolder {
+			TextView mTextDeviceName;
+			// TextView mTextDeviceStatus;
+			LinearLayout mBtnDeviceUpair;
+			ImageView mImageUnpair;
+			TextView  tvDisConnect;
+			LinearLayout mLinItem;
+			
+			ProgressBar progressBar;
+		}
+
 		@Override
 		public int getCount() {
 			return mListPairedDevices.size();
@@ -259,16 +262,14 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			if (null == convertView) {
 				convertView = mInflater.inflate(R.layout.devices_item, null);
 				holder = new ViewHolder();
-				holder.mTextDeviceName = (TextView) convertView
-						.findViewById(R.id.tv_devicename);
-				holder.mLinItem = (LinearLayout) convertView
-						.findViewById(R.id.lin_devcies_list_item);
-				holder.mTextDeviceStatus = (TextView) convertView
-						.findViewById(R.id.tv_devicestatus);
-				holder.mBtnDeviceUpair = (LinearLayout) convertView
-						.findViewById(R.id.btn_unpair_disconnect);
-				holder.mImageUnpair = (ImageView) convertView
-						.findViewById(R.id.img_upair_disconnect);
+				holder.mTextDeviceName = (TextView) convertView.findViewById(R.id.tv_devicename);
+				holder.mLinItem = (LinearLayout) convertView.findViewById(R.id.lin_devcies_list_item);
+				// holder.mTextDeviceStatus = (TextView)
+				// convertView.findViewById(R.id.tv_devicestatus);
+				holder.mBtnDeviceUpair = (LinearLayout) convertView.findViewById(R.id.btn_unpair_disconnect);
+				holder.mImageUnpair = (ImageView) convertView.findViewById(R.id.img_upair_disconnect);
+				holder.progressBar = (ProgressBar) convertView.findViewById(R.id.pro_pairing);
+				holder.tvDisConnect = (TextView) convertView.findViewById(R.id.tv_disconnect);
 				convertView.setTag(holder);
 			} else {
 				holder = (ViewHolder) convertView.getTag();
@@ -276,43 +277,53 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 			final BluetoothDevice bean = mListPairedDevices.get(position);
 			holder.mBtnDeviceUpair.setVisibility(View.VISIBLE);
-
+			holder.mBtnDeviceUpair.setBackgroundResource(R.drawable.bg_list_item_selected);
 			holder.mTextDeviceName.setText(bean.getDeviceName());
-			holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
+			holder.progressBar.setVisibility(View.GONE);
+			// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 			holder.mImageUnpair.setVisibility(View.VISIBLE);
 			if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTED) {
-				holder.mTextDeviceStatus.setVisibility(View.GONE);
-				holder.mTextDeviceStatus.setText(getResources().getString(
-						R.string.bluetooth_status_connected));
-				holder.mImageUnpair.setBackground(getResources().getDrawable(
-						R.drawable.btn_disconnect_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(
-						R.color.yellow));
+				holder.progressBar.setVisibility(View.GONE);
+				holder.mImageUnpair.setVisibility(View.GONE);
+				holder.tvDisConnect.setVisibility(View.VISIBLE);
+				holder.mBtnDeviceUpair.setBackground(null);
+				
+				// holder.mTextDeviceStatus.setVisibility(View.GONE);
+				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connected));
+//				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_disconnect_device));
+				
+				
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.yellow));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
-				holder.mTextDeviceStatus.setVisibility(View.GONE);
-				holder.mImageUnpair.setBackground(getResources().getDrawable(
-						R.drawable.btn_unpair_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(
-						R.color.white));
+				holder.progressBar.setVisibility(View.GONE);
+				holder.mImageUnpair.setVisibility(View.VISIBLE);
+				holder.tvDisConnect.setVisibility(View.GONE);
+				
+				// holder.mTextDeviceStatus.setVisibility(View.GONE);
+				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTING) {
-				holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
-				holder.mTextDeviceStatus.setText(getResources().getString(
-						R.string.bluetooth_status_connecting));
-				holder.mImageUnpair.setBackground(getResources().getDrawable(
-						R.drawable.btn_unpair_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(
-						R.color.white));
+				holder.progressBar.setVisibility(View.VISIBLE);
+				holder.mImageUnpair.setVisibility(View.GONE);
+				holder.tvDisConnect.setVisibility(View.GONE);
+				
+				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
+				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connecting));
+				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
 				holder.mLinItem.setEnabled(false);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_DISCONNECTING) {
-				holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
-				holder.mTextDeviceStatus.setText(getResources().getString(
-						R.string.bluetooth_status_disconnecting));
-				holder.mImageUnpair.setBackground(getResources().getDrawable(
-						R.drawable.btn_disconnect_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(
-						R.color.white));
+				
+				holder.progressBar.setVisibility(View.GONE);
+				holder.mImageUnpair.setVisibility(View.VISIBLE);
+				holder.tvDisConnect.setVisibility(View.GONE);
+				
+				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
+				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_disconnecting));
+				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
 				holder.mLinItem.setEnabled(false);
 			}
 
@@ -320,7 +331,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 				@Override
 				public void onClick(View v) {
-					LogUtil.i(TAG, "unpairRequest -- status =  "+bean.getStatus());
+					LogUtil.i(TAG, "unpairRequest -- status =  " + bean.getStatus());
 					if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTED) {
 						disconnectRequest(bean);
 					} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
@@ -348,6 +359,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	private void connectRequest(BluetoothDevice bean) {
 		if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
+
+			// 用于判断是否从车机端发出的配对。此处若是之前已配对，但手机端已移除配对、则再此连接时会发出配对请求
+			Intent intent = new Intent(ACTION_REMOTE_BLUETOOTHPAIR);
+			intent.putExtra("remoteAddress", bean.getAddress());
+			mContext.sendBroadcast(intent);
+
 			bean.setStatus(BluetoothDevice.DEVICE_CONNECTING);
 			mPairedAdapter.notifyDataSetChanged();
 			Message msg = Message.obtain();
@@ -368,21 +385,13 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	private void unpairRequest(BluetoothDevice bean) {
-		LogUtil.i(TAG, "unpairRequest -- name =  "+bean.getDeviceName());
+		LogUtil.i(TAG, "unpairRequest -- name =  " + bean.getDeviceName());
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_SETTING_UNPAIR;
 		Bundle mBundle = new Bundle();
 		mBundle.putString("pairdAddress", bean.getAddress());
 		msg.setData(mBundle);
 		BluetoothSettingFragment.this.notify(msg, FLAG_RUN_SYNC);
-	}
-
-	class ViewHolder {
-		TextView mTextDeviceName;
-		TextView mTextDeviceStatus;
-		LinearLayout mBtnDeviceUpair;
-		ImageView mImageUnpair;
-		LinearLayout mLinItem;
 	}
 
 	@Override
@@ -413,8 +422,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void updateUnpairListByStatus(int status, String address) {
-		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
-				+ "-- address = " + address);
+		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status + "-- address = " + address);
 		if (status == MangerConstant.Anw_SUCCESS) {
 			for (int i = 0; i < mListVisibleDevices.size(); i++) {
 				if (mListVisibleDevices.get(i).getAddress().equals(address)) {
@@ -424,8 +432,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		} else {
 			for (int i = 0; i < mListVisibleDevices.size(); i++) {
 				if (mListVisibleDevices.get(i).getAddress().equals(address)) {
-					mListVisibleDevices.get(i).setStatus(
-							BluetoothDevice.DEVICE_UNPAIR);
+					mListVisibleDevices.get(i).setStatus(BluetoothDevice.DEVICE_UNPAIR);
 				}
 			}
 		}
@@ -434,6 +441,13 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	public class BluetoothDeviceAdapter extends BaseAdapter {
+
+		class ViewHolder {
+			TextView mTextDeviceName;
+			// TextView mTextStatus;
+			LinearLayout mLinItem;
+			ProgressBar progressBar;
+		}
 
 		private Context mContext;
 		private LayoutInflater mInflater;
@@ -474,8 +488,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		}
 
 		public void remove(int index) {
-			if (mListVisibleDevices == null
-					|| (index >= mListVisibleDevices.size()) || index < 0)
+			if (mListVisibleDevices == null || (index >= mListVisibleDevices.size()) || index < 0)
 				return;
 			mListVisibleDevices.remove(index);
 			notifyDataSetChanged();
@@ -483,18 +496,17 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 		@SuppressLint("InflateParams")
 		@Override
-		public View getView(final int position, View convertView,
-				ViewGroup parent) {
+		public View getView(final int position, View convertView, ViewGroup parent) {
 			ViewHolder mHolder;
 			if (null == convertView) {
 				convertView = mInflater.inflate(R.layout.devices_item, null);
 				mHolder = new ViewHolder();
-				mHolder.mTextDeviceName = (TextView) convertView
-						.findViewById(R.id.tv_devicename);
-				mHolder.mTextStatus = (TextView) convertView
-						.findViewById(R.id.tv_devicestatus);
-				mHolder.mLinItem = (LinearLayout) convertView
-						.findViewById(R.id.lin_devcies_list_item);
+				mHolder.mTextDeviceName = (TextView) convertView.findViewById(R.id.tv_devicename);
+				// mHolder.mTextStatus = (TextView)
+				// convertView.findViewById(R.id.tv_devicestatus);
+				mHolder.mLinItem = (LinearLayout) convertView.findViewById(R.id.lin_devcies_list_item);
+				mHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.pro_pairing);
+				
 				convertView.setTag(mHolder);
 			} else {
 				mHolder = (ViewHolder) convertView.getTag();
@@ -506,15 +518,15 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				mHolder.mTextDeviceName.setText(bean.getDeviceName());
 				if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRING) {
 					mHolder.mLinItem.setEnabled(false);
-					mHolder.mTextStatus.setVisibility(View.VISIBLE);
-					mHolder.mTextStatus.setText(getResources().getText(
-							R.string.bluetooth_status_pairing));
-					mHolder.mTextStatus.setTextColor(getResources().getColor(
-							R.color.white));
+					mHolder.progressBar.setVisibility(View.VISIBLE);
+					// mHolder.mTextStatus.setVisibility(View.VISIBLE);
+					// mHolder.mTextStatus.setText(getResources().getText(R.string.bluetooth_status_pairing));
+					// mHolder.mTextStatus.setTextColor(getResources().getColor(R.color.white));
 
 				} else if (bean.getStatus() == BluetoothDevice.DEVICE_UNPAIR) {
 					mHolder.mLinItem.setEnabled(true);
-					mHolder.mTextStatus.setVisibility(View.GONE);
+					mHolder.progressBar.setVisibility(View.GONE);
+					// mHolder.mTextStatus.setVisibility(View.GONE);
 				}
 			} else {
 				mHolder.mTextDeviceName.setText("");
@@ -540,19 +552,13 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			return convertView;
 		}
 
-		class ViewHolder {
-			TextView mTextDeviceName;
-			TextView mTextStatus;
-			LinearLayout mLinItem;
-		}
-
 	}
 
 	private void pairRequest(BluetoothDevice bean) {
 		Intent intent = new Intent(ACTION_REMOTE_BLUETOOTHPAIR);
 		intent.putExtra("remoteAddress", bean.getAddress());
 		mContext.sendBroadcast(intent);
-		
+
 		Message msg_pair = Message.obtain();
 		String strCod = bean.getStrCOD().substring(2);
 		msg_pair.what = MusicActionDefine.ACTION_SETTING_PAIR;
@@ -617,7 +623,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		LogUtil.i(TAG, "initVisibleList size = " + list.size());
 		if (list.size() == 0) {
 			searchDevices();
-		}else {
+		} else {
 			for (int i = 0; i < list.size(); i++) {
 				showVisibleDevices(list.get(i));
 				if (list.get(i).getStatus() == BluetoothDevice.DEVICE_PAIRING) {
@@ -634,11 +640,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			return;
 		}
 		if (conn) {
-			mTextEnable.setText(getResources().getString(
-					R.string.bluetooth_enable_carplay_text));
+			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_carplay_text));
 		} else {
-			mTextEnable.setText(getResources().getString(
-					R.string.bluetooth_enable_text));
+			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_text));
 		}
 	}
 }

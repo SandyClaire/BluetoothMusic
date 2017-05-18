@@ -31,7 +31,7 @@
     <dimen name="setting_layout_pandding_right">40dp</dimen>
     <dimen name="setting_title_layout_pandding">10dp</dimen>
     <dimen name="setting_title_text_margin_left">10dp</dimen>
-    <dimen name="setting_refrash_button_margin_right">10dp</dimen>
+    <dimen name="setting_refrash_button_margin_right">5dp</dimen>
     <dimen name="setting_pair_upair_text_height">58dp</dimen>
     <dimen name="text_size_36">36dp</dimen>
     <dimen name="text_size_20">20dp</dimen>
@@ -39,6 +39,7 @@
     <dimen name="text_size_24">24dp</dimen>
     <dimen name="text_size_26">26dp</dimen>
     <dimen name="text_size_28">28dp</dimen>
+      <dimen name="text_size_30">30dp</dimen>
     <dimen name="text_size_38">38dp</dimen>
 
     <!-- devices item -->
@@ -48,7 +49,7 @@
     <dimen name="devices_item_right_button_width">100dp</dimen>
     <dimen name="devices_item_margin_left">30dp</dimen>
     <dimen name="devices_item_summery_text_size">18dp</dimen>
-    <dimen name="devices_item_name_text_height">30dp</dimen>
+    <dimen name="devices_item_name_text_height">40dp</dimen>
     <dimen name="devices_item_summery_text_height">25dp</dimen>
     <dimen name="left_title_padding_left">60dp</dimen>
     <dimen name="left_text_size">28dp</dimen>

@@ -22,7 +22,8 @@
             android:layout_height="@dimen/devices_item_name_text_height"
             android:gravity="center_vertical"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_26" />
+            android:singleLine="true"
+            android:textSize="@dimen/text_size_28" />
 
         <TextView
             android:id="@+id/tv_devicestatus"
@@ -36,10 +37,11 @@
 
     <LinearLayout
         android:id="@+id/btn_unpair_disconnect"
-        android:layout_width="@dimen/devices_item_right_button_width"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/bg_list_item_selected"
         android:gravity="center"
+        android:minWidth="@dimen/devices_item_right_button_width"
         android:orientation="vertical"
         android:visibility="gone" >
 
@@ -48,6 +50,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_disconnect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_disconnect"
+            android:gravity="center"
+            android:text="@string/bluetooth_disconnect"
+            android:textColor="@color/selector_color_discoonct"
+            android:textSize="24sp"
+            android:visibility="gone" />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pro_pairing"
+        style="?android:attr/progressBarStyleSmall"
+        android:layout_width="26px"
+        android:layout_height="26px"
+        android:layout_marginRight="35px"
+        android:visibility="gone" />
 
 </LinearLayout>

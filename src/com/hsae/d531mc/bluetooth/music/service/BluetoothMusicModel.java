@@ -539,6 +539,7 @@ public class BluetoothMusicModel {
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
 		}
+		LogUtil.i(TAG, "AVRCPControl : op_code= "+op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
 	}
 
@@ -1201,7 +1202,7 @@ public class BluetoothMusicModel {
 	/** 获取Android音频焦点 */
 	public void requestAudioFocus(boolean flag) {
 		Source source = new Source();
-		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
+		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource()+",isHandPuse = "+isHandPuse+"");
 		if (source.getCurrentSource() == App.BT_MUSIC) {
 			mainAudioChanged(flag);
 			//如果手动点击停止，不进行播放；

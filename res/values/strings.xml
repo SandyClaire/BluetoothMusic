@@ -3,7 +3,7 @@
 
     <string name="app_name">Bluetooth Music</string>
     <string name="hello_world">Hello world!</string>
-	<string name="play_text_min">00:00</string>
+    <string name="play_text_min">00:00</string>
     <string name="play_text_max">59:59</string>
     <string name="music_source_title">Audio source selection</string>
     <string name="music_source_am">AM</string>
@@ -16,7 +16,7 @@
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth device</string>
     <string name="music_bluetooth_disconnect_tip">Bluetooth music disconnected</string>
     <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife connection \n Bluetooth music function cannot be used</string>
-    
+
     <!-- bluetooth settings -->
     <string name="visible_devices">Available devices</string>
     <string name="pair_devices">Paired devices</string>
@@ -24,13 +24,13 @@
     <string name="pair_fail">Pair fail</string>
     <string name="pair_success">Pair success</string>
     <string name="bluetooth_connect">Bluetooth connect</string>
+    <string name="bluetooth_disconnect">Disconnect</string>
     <string name="bluetooth_status_connected">Connected</string>
     <string name="bluetooth_status_connecting">Connecting...</string>
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>
     <string name="bluetooth_status_pairing">Pairing...</string>
     <string name="bluetooth_enable_text">Please turn on bluetooth function</string>
     <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
-    
     <string name="music_switch_split">/</string>
-    
+
 </resources>

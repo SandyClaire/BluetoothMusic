@@ -19,7 +19,6 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.os.SystemClock;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
@@ -231,7 +230,6 @@ public class BluetoothMusicServcie extends Service {
 					{
 						int nId = mBundle.getInt("Attribute_id");
 						String strMetadata = mBundle.getString("MetaData");
-
 						switch (nId) {
 						case AudioControl.MEDIA_ATTR_MEDIA_TITLE:
 							mTitle = strMetadata;
