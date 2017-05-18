@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.R;
 
 /**
@@ -23,7 +25,7 @@ import com.hsae.d531mc.bluetooth.music.R;
  *
  */
 @SuppressLint("NewApi")
-public class MusicSwitchFragmet extends Fragment implements OnClickListener{
+public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 
 	private static final String TAG = "MusicSwitchFragmet";
 	private View mView;
@@ -36,7 +38,12 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 	private TextView mTextIPOD;
 	private TextView mTextBT;
 	private Context mContext;
-	
+	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
+	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
+	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
+	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
+
+
 	public MusicSwitchFragmet(android.content.Context context) {
 		super();
 		mContext = context;
@@ -48,24 +55,25 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 		mView = inflater.inflate(R.layout.music_switch, container, false);
 		return mView;
 	}
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 	}
-	
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		initView();
 		super.onActivityCreated(savedInstanceState);
 	}
-	
-	private void initView(){
+
+	private void initView() {
 		mLinAM = (LinearLayout) mView.findViewById(R.id.lin_music_am);
 		mLinFM = (LinearLayout) mView.findViewById(R.id.lin_music_fm);
 		mLinIpod = (LinearLayout) mView.findViewById(R.id.lin_music_ipod);
-		mLinBluetooth = (LinearLayout) mView.findViewById(R.id.lin_music_bluetooth);
+		mLinBluetooth = (LinearLayout) mView
+				.findViewById(R.id.lin_music_bluetooth);
 		mTextAM = (TextView) mView.findViewById(R.id.text_switch_am);
 		mTextFM = (TextView) mView.findViewById(R.id.text_switch_fm);
 		mTextIPOD = (TextView) mView.findViewById(R.id.text_switch_ipod);
@@ -76,7 +84,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 		mLinBluetooth.setOnClickListener(this);
 		updateSelectedShow(0);
 	}
-	
+
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
@@ -89,16 +97,19 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 		case R.id.lin_music_am:
 			updateSelectedShow(1);
 			bundle.putInt("band", 0x01);
-			startOtherAPP("com.hsae.d531mc.radio", "com.hsae.d531mc.radio.RadioActivity", bundle);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE,
+					RADIO_ACTIVITY_AM_FM, bundle);
 			break;
 		case R.id.lin_music_fm:
 			updateSelectedShow(2);
 			bundle.putInt("band", 0x03);
-			startOtherAPP("com.hsae.d531mc.radio", "com.hsae.d531mc.radio.RadioActivity", bundle);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE,
+					RADIO_ACTIVITY_AM_FM, bundle);
 			break;
 		case R.id.lin_music_ipod:
 			updateSelectedShow(3);
-			startOtherAPP("com.hsae.d531mc.ipod", "com.hsae.d531mc.ipod.view.MainActivity", bundle);
+			startOtherAPP(App.IPOD_MUSIC, IPOD_PACKAGE,
+					IPOD_ACTIVITY, bundle);
 			break;
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(0);
@@ -108,8 +119,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 			break;
 		}
 	}
-	
-	private void updateSelectedShow(int flag){
+
+	private void updateSelectedShow(int flag) {
 		switch (flag) {
 		case 0:
 			mTextAM.setTextColor(getResources().getColor(R.color.white));
@@ -142,7 +153,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 			mTextBT.setEnabled(true);
 			break;
 		case 3:
-			mTextIPOD.setTextColor(getResources().getColor(R.color.light_orange));
+			mTextIPOD.setTextColor(getResources()
+					.getColor(R.color.light_orange));
 			mTextIPOD.setEnabled(false);
 			mTextFM.setTextColor(getResources().getColor(R.color.white));
 			mTextFM.setEnabled(true);
@@ -155,49 +167,58 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener{
 			break;
 		}
 	}
-	
+
 	/**
-     * @Description: 跳转至其他应用
-     * @param appId
-     * @param activityName
-     * @param bundle
-     */
-    public void startOtherAPP(String appId, String activityName, Bundle bundle) {
-        if (isAppInstalled(getActivity(), appId)) {
-            Intent intent = new Intent(Intent.ACTION_MAIN);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            ComponentName comp = new ComponentName(appId, activityName);
-            intent.setComponent(comp);
+	 * @Description: 跳转至其他应用
+	 * @param appId
+	 * @param activityName
+	 * @param bundle
+	 */
+	public void startOtherAPP(App app, String appId, String activityName,
+			Bundle bundle) {
+		Source source = new Source();
+		boolean tryToSwitchSource = source.tryToSwitchSource(app, 1);
+		if (tryToSwitchSource) {
 
-            int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED;
-            intent.setFlags(launchFlags);
-            intent.setAction("android.intent.action.VIEW");
-            if (bundle != null) {
-                intent.putExtras(bundle);
-            }
-            getActivity().startActivity(intent);
-            getActivity().finish();
-        }
-    }
-    
-    
-    /**
-     * @Description: 判断应用是否安装
-     * @param context
-     * @param packagename
-     * @return
-     */
-    private boolean isAppInstalled(Context context, String packagename) {
-        PackageInfo packageInfo;
-        try {
-            packageInfo = context.getPackageManager().getPackageInfo(packagename, 0);
-        } catch (NameNotFoundException e) {
-            packageInfo = null;
-            e.printStackTrace();
-        }
+			if (isAppInstalled(getActivity(), appId)) {
+				Intent intent = new Intent(Intent.ACTION_MAIN);
+				intent.addCategory(Intent.CATEGORY_LAUNCHER);
+				ComponentName comp = new ComponentName(appId, activityName);
+				intent.setComponent(comp);
 
-        boolean isInstalled = (packageInfo == null) ? false : true;
-        return isInstalled;
-    }
-	
+				int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK
+						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED;
+				intent.setFlags(launchFlags);
+				intent.setAction("android.intent.action.VIEW");
+				if (bundle != null) {
+					intent.putExtras(bundle);
+				}
+				getActivity().startActivity(intent);
+				getActivity().finish();
+			}
+		} else {
+			source.tryToSwitchSource(app, 0);
+		}
+	}
+
+	/**
+	 * @Description: 判断应用是否安装
+	 * @param context
+	 * @param packagename
+	 * @return
+	 */
+	private boolean isAppInstalled(Context context, String packagename) {
+		PackageInfo packageInfo;
+		try {
+			packageInfo = context.getPackageManager().getPackageInfo(
+					packagename, 0);
+		} catch (NameNotFoundException e) {
+			packageInfo = null;
+			e.printStackTrace();
+		}
+
+		boolean isInstalled = (packageInfo == null) ? false : true;
+		return isInstalled;
+	}
+
 }

@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -66,11 +67,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		Log.e("wangda", "oncreate ------------ 1 --------------- " + System.currentTimeMillis());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.music_main);
-		InitService();
+//		InitService();
 		initView();
 		initMvp();
+		Log.e("wangda", "oncreate ------------ 2 --------------- " + System.currentTimeMillis());
 	}
 
 	private void initMvp() {
