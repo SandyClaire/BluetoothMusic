@@ -914,7 +914,6 @@ public class BluetoothMusicModel {
 							getPairedList(mCount, Name,
 									Address, COD);
 						} catch (RemoteException e) {
-							e.printStackTrace();
 						}
 						for (int i = 0; i < mCount[0]; i++) {
 							if (mAddress.equals(Address[i])) {

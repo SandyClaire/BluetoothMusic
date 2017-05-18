@@ -107,7 +107,6 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_CONNECT_MOBILE:
 			String conAddress = inMessage.getData().getString("connectAddress");
 			connectMoblie(conAddress);
-			// mBluetoothSettingModel.connectMoblie(conAddress);
 			break;
 		case MusicActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES:
 			List<BluetoothDevice> pairedList = mBluetoothSettingModel

@@ -6,6 +6,7 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.LayoutInflater;
@@ -41,7 +42,10 @@ import com.hsae.d531mc.bluetooth.music.view.IBluetoothSettingView;
  */
 public class BluetoothSettingFragment extends Fragment implements ISubject,
 		IBluetoothSettingView, OnClickListener {
+	
 	private static final String TAG = "BluetoothSettingFragment";
+	private static final String ACTION_REMOTE_BLUETOOTHPAIR = "com.remote.bluetooth.pair";
+	
 	private View mView;
 	private ListView mListVisible;
 	private Button mBtnSearch;
@@ -64,6 +68,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private static BluetoothSettingFragment fragment;
 	private List<BluetoothDevice> mListPairedDevices = new ArrayList<BluetoothDevice>();
 	private List<BluetoothDevice> mListVisibleDevices = new ArrayList<BluetoothDevice>();
+	
 
 	public static Fragment getInstance(Context nContext) {
 		if (null == fragment) {
@@ -277,7 +282,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			holder.mImageUnpair.setVisibility(View.VISIBLE);
 			if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTED) {
 				holder.mTextDeviceStatus.setVisibility(View.GONE);
-				;
 				holder.mTextDeviceStatus.setText(getResources().getString(
 						R.string.bluetooth_status_connected));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(
@@ -287,7 +291,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
 				holder.mTextDeviceStatus.setVisibility(View.GONE);
-				;
 				holder.mImageUnpair.setBackground(getResources().getDrawable(
 						R.drawable.btn_unpair_device));
 				holder.mTextDeviceName.setTextColor(getResources().getColor(
@@ -295,7 +298,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTING) {
 				holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
-				;
 				holder.mTextDeviceStatus.setText(getResources().getString(
 						R.string.bluetooth_status_connecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(
@@ -305,7 +307,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				holder.mLinItem.setEnabled(false);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_DISCONNECTING) {
 				holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
-				;
 				holder.mTextDeviceStatus.setText(getResources().getString(
 						R.string.bluetooth_status_disconnecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(
@@ -548,6 +549,10 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	private void pairRequest(BluetoothDevice bean) {
+		Intent intent = new Intent(ACTION_REMOTE_BLUETOOTHPAIR);
+		intent.putExtra("remoteAddress", bean.getAddress());
+		mContext.sendBroadcast(intent);
+		
 		Message msg_pair = Message.obtain();
 		String strCod = bean.getStrCOD().substring(2);
 		msg_pair.what = MusicActionDefine.ACTION_SETTING_PAIR;
