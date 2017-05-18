@@ -411,4 +411,11 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
+	@Override
+	public void updateLocalName() {
+		Message msg_search = Message.obtain();
+		msg_search.what = MusicActionDefine.ACTION_SETTING_UPDATE_LOCALNAME;
+		this.notify(msg_search, FLAG_RUN_MAIN_THREAD);
+	}
+
 }

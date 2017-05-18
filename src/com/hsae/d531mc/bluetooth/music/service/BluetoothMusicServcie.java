@@ -318,7 +318,7 @@ public class BluetoothMusicServcie extends Service {
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
 						mBluetoothMusicModel.isPlay = true;
-//						mBluetoothMusicModel.updatePlayStatus(true);
+						// mBluetoothMusicModel.updatePlayStatus(true);
 						break;
 					}
 				}
@@ -400,17 +400,16 @@ public class BluetoothMusicServcie extends Service {
 		Soc soc = new Soc();
 		UsbDevices usbDevices = soc.getCurrentDevice();
 		LogUtil.i("BluetoothMusicModel", " autoConnA2dp usbDevices = " + usbDevices.toString());
-		// if (usbDevices.equals(UsbDevices.IPOD)
-		// ||usbDevices.equals(UsbDevices.CARLIFE) ) {
-		try {
-			LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
-			// if (mBluetoothMusicModel.isCurrentInquiring()) {
-			// mBluetoothMusicModel.inquiryBtStop();
-			// }
-			mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
-		} catch (RemoteException e) {
+		if (usbDevices.equals(UsbDevices.IPOD) || usbDevices.equals(UsbDevices.CARLIFE)) {
+			try {
+				LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
+				// if (mBluetoothMusicModel.isCurrentInquiring()) {
+				// mBluetoothMusicModel.inquiryBtStop();
+				// }
+				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
+			} catch (RemoteException e) {
+			}
 		}
-		// }
 	}
 
 	/**

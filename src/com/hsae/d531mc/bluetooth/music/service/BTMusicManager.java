@@ -1,9 +1,16 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import android.app.ActionBar.LayoutParams;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PixelFormat;
 import android.os.RemoteException;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.TextView;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
@@ -11,9 +18,13 @@ import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
 import com.hsae.autosdk.hmi.HmiConst;
+import com.hsae.autosdk.popup.PopupListener;
+import com.hsae.autosdk.popup.PopupRequest;
+import com.hsae.autosdk.popup.constant.PopupConst.Popup;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
+import com.hsae.d531mc.bluetooth.music.R;
 
 public class BTMusicManager extends IBTMusicManager.Stub {
 
@@ -94,7 +105,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public boolean isConnected() throws RemoteException {
-		return mBluetoothMusicModel.a2dpStatus ==1;
+		return mBluetoothMusicModel.a2dpStatus == 1;
 	}
 
 	boolean isFrist = true;
@@ -164,13 +175,13 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		mBluetoothMusicModel.requestAudioFocus(false);
 		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
-	
-//	public void playByVr() throws RemoteException {
-//		mBluetoothMusicModel.isHandPuse = false;
-//		mBluetoothMusicModel.tryToSwitchSource();
-//		mBluetoothMusicModel.requestAudioFocus(false);
-//		LogUtil.i(TAG, "------------- playByVr ");
-//	}
+
+	// public void playByVr() throws RemoteException {
+	// mBluetoothMusicModel.isHandPuse = false;
+	// mBluetoothMusicModel.tryToSwitchSource();
+	// mBluetoothMusicModel.requestAudioFocus(false);
+	// LogUtil.i(TAG, "------------- playByVr ");
+	// }
 
 	@Override
 	public void playByName(String arg0) throws RemoteException {
@@ -179,7 +190,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void popUpCurrentMode() throws RemoteException {
-		// TODO Auto-generated method stub
+		showPopUp(mContext.getResources().getString(R.string.app_name));
 	}
 
 	@Override
@@ -267,4 +278,52 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		this.show();
 	}
 
+	private PopupRequest tipRequest;
+	private TextView tipText;
+	private boolean isTipPopShow = false;
+
+	private void showPopUp(String tip) {
+		if (null == tipRequest) {
+			final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+			params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+			params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+					| WindowManager.LayoutParams.FLAG_DIM_BEHIND | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+			params.format = PixelFormat.TRANSLUCENT;
+			params.dimAmount = 0.1f;
+
+			params.width = LayoutParams.MATCH_PARENT;
+			params.height = LayoutParams.WRAP_CONTENT;
+
+			params.dimAmount = 0.0f;
+			params.gravity = Gravity.TOP;
+
+			View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
+
+			tipText = (TextView) tipView.findViewById(R.id.text_tip);
+
+			tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
+		}
+
+		tipText.setText(tip);
+		if (isTipPopShow) {
+			tipRequest.hidePopup();
+			tipRequest.showPopup();
+		} else {
+			tipRequest.showPopup();
+		}
+
+	}
+
+	PopupListener tipListener = new PopupListener() {
+
+		@Override
+		public void onShow() {
+			isTipPopShow = true;
+		}
+
+		@Override
+		public void onHide() {
+			isTipPopShow = false;
+		}
+	};
 }

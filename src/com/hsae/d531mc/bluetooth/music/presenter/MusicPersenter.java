@@ -153,11 +153,6 @@ public class MusicPersenter implements IObserver {
 		if (isCarlifeConnected) {
 			status = -1;
 		}
-//		else if (!carlifeState && status ==0) {
-//			status = 0;
-//		}else if (!carlifeState && status ==1){
-//			status = 1;
-//		}
 		LogUtil.i(TAG, " --- init +++ status = " + status);
 		mIMusicView.updateViewByConnectStatus(status);
 		initBg();

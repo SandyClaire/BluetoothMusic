@@ -1015,6 +1015,7 @@ public class BluetoothMusicModel {
 	public void updateBTEnalbStatus(int status) {
 		if (null != mIBluetoothSettingModel) {
 			mIBluetoothSettingModel.updateBtEnableStatus(status);
+			mIBluetoothSettingModel.updateLocalName();
 		}
 	}
 
@@ -1222,7 +1223,7 @@ public class BluetoothMusicModel {
 	 */
 	public void mainAudioChanged(boolean isActivite) {
 		Source source = new Source();
-		LogUtil.i(TAG, "mainAudioChanged == " + source.getCurrentSource() +"isActivite = "+isActivite);
+		LogUtil.i(TAG, "mainAudioChanged == " + source.getCurrentSource() + "isActivite = " + isActivite);
 		source.mainAudioChanged(App.BT_MUSIC, isActivite);
 	}
 
@@ -1326,13 +1327,17 @@ public class BluetoothMusicModel {
 	 * 自动连接蓝牙音乐
 	 */
 	private void autoConnectA2DP() {
+		if (mIMusicModel == null) {
+			LogUtil.i(TAG, "autoConnectA2DP : mIMusicModel is null ");
+			return;
+		}
+		if (!isDisByIpod) {
+			return;
+		}	
+		
+		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = "+ a2dpStatus);
 		if (hfpStatus == 1 && a2dpStatus != 1) {
-			LogUtil.i("BluetoothMusicModel", "autoConnA2dp hfpStatus = " + hfpStatus + " --- a2dpStatus = "
-					+ a2dpStatus);
-			if (mIMusicModel != null) {
-				mIMusicModel.autoConnectA2DP();
-				return;
-			}
+			mIMusicModel.autoConnectA2DP();
 		}
 	}
 

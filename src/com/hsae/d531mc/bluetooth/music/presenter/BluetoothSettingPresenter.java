@@ -41,6 +41,9 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_LAUNCHED:
 			init();
 			break;
+		case MusicActionDefine.ACTION_SETTING_UPDATE_LOCALNAME:
+			initBtName();
+			break;
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;

@@ -322,7 +322,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	protected void onResume() {
 		super.onResume();
 		ivBT.setSelected(true);
-		// updateViewByConnectStatus(-1);
 
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
@@ -339,7 +338,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 		pauseAnim();
-		// getCarlifeStatus();
 	}
 
 	/**
@@ -635,20 +633,22 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		} else if (status == -1) {
 			// carlife is connected
 			updateViewShow(false, true);
-		} 
-//		else if (status == -2) {
-//			// carlife is not connected
-//			updateViewShow(true, true);
-//			mSeekTail.setVisibility(View.GONE);
-//			mTextTotalTime.setText("00:00");
-//			mTextCurTime.setText("00:00");
-//			mSeekBar.setMax(0);
-//			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT, AudioControl.PLAYER_REPEAT_MODE_OFF);
-//			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, AudioControl.PLAYER_SHUFFLE_OFF);
-//			mRepeatAllowedlist.clear();
-//			mShuffleAllowedlist.clear();
-//			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
-//		}
+		}
+		// else if (status == -2) {
+		// // carlife is not connected
+		// updateViewShow(true, true);
+		// mSeekTail.setVisibility(View.GONE);
+		// mTextTotalTime.setText("00:00");
+		// mTextCurTime.setText("00:00");
+		// mSeekBar.setMax(0);
+		// UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
+		// AudioControl.PLAYER_REPEAT_MODE_OFF);
+		// UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
+		// AudioControl.PLAYER_SHUFFLE_OFF);
+		// mRepeatAllowedlist.clear();
+		// mShuffleAllowedlist.clear();
+		// LogUtil.i(TAG, "Bluetooth A2DP disconnected");
+		// }
 	}
 
 	private void updateViewShow(boolean flag, boolean isFromCarlife) {
@@ -729,26 +729,34 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
+			mSeekTail.setVisibility(View.GONE);
 		}
 	}
 
 	private String getTotalTime(String nTime) {
+		String timeStr = "00:00";
+
 		if (nTime.equals("-1")) {
-			return "00:00";
+			return timeStr;
 		} else {
 			if (isNumeric(nTime) == true) {
-				int iMax = Integer.valueOf(nTime) / 1000;
-				mSeekBar.setMax(iMax);
-				return toTime(Integer.valueOf(nTime));
+				try {
+					long iMax = Long.valueOf(nTime) / 1000;
+					mSeekBar.setMax((int)iMax);
+					timeStr = toTime(Long.valueOf(nTime));
+				} catch (NumberFormatException e) {
+					LogUtil.i(TAG, " is number but is not long");
+				}
+				return timeStr;
 			} else {
-				return "00:00";
+				return timeStr;
 			}
 		}
 	}
 
-	private String toTime(int time) {
-		int minute = time / 1000 / 60;
-		int s = time / 1000 % 60;
+	private String toTime(long time) {
+		long minute = time / 1000 / 60;
+		long s = time / 1000 % 60;
 		String mm = null;
 		String ss = null;
 		if (minute < 10)
@@ -957,7 +965,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			} else {
 				mSeekTail.setVisibility(View.VISIBLE);
 			}
-
 		}
 		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mSeekTail.getLayoutParams();
 

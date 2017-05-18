@@ -144,5 +144,7 @@ public interface IBluetoothSettingModel {
 
 	public void onInquiryCallBack(Integer result);
 
+	public void updateLocalName();
+
 	
 }

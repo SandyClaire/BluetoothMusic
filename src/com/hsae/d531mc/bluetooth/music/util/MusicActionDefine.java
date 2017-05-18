@@ -13,6 +13,7 @@ public class MusicActionDefine {
     static public final int ACTION_APP_EXIT = 99;
     static public final int ACTION_ISBTSEARCHING = 0X10010;
     public static final int ACTION_SEACH_CALLBACK = 0X10011;
+    public static final int ACTION_SETTING_UPDATE_LOCALNAME = 0X1012;
     
     
     static public final int ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE = 100;
