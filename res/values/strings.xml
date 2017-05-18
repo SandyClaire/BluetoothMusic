@@ -3,8 +3,8 @@
 
     <string name="app_name">BluetoothMusic</string>
     <string name="hello_world">Hello world!</string>
-	<string name="play_text_min">00:00:00</string>
-    <string name="play_text_max">59:59:59</string>
+	<string name="play_text_min">00:00</string>
+    <string name="play_text_max">59:59</string>
     <string name="music_source_title">audio source selection</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
@@ -12,5 +12,6 @@
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">Bluetooth</string>
     <string name="music_matedate_unsupport">UnSupport</string>
+    <string name="music_bluetooth_disconnect">disconnect</string>
     
 </resources>

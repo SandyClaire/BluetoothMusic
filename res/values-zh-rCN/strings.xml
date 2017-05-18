@@ -9,4 +9,5 @@
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">蓝牙音乐</string>
     <string name="music_matedate_unsupport">不支持</string>
+    <string name="music_bluetooth_disconnect">未连接</string>
 </resources>
