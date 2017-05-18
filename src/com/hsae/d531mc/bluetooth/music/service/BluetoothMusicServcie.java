@@ -202,8 +202,7 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
-							IPodProxy.getInstance().notifyA2dpConnected(
-									mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
+							IPodProxy.getInstance().notifyA2dpConnected(mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
 						}
 
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
@@ -354,7 +353,6 @@ public class BluetoothMusicServcie extends Service {
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
 			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
-
 				autoConnA2dp();
 				LogUtil.i("BluetoothMusicModel", " autoConnA2dp");
 			}
@@ -402,9 +400,9 @@ public class BluetoothMusicServcie extends Service {
 
 			try {
 				LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
-				if (mBluetoothMusicModel.isCurrentInquiring()) {
-					mBluetoothMusicModel.inquiryBtStop();
-				}
+//				if (mBluetoothMusicModel.isCurrentInquiring()) {
+//					mBluetoothMusicModel.inquiryBtStop();
+//				}
 				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
 			} catch (RemoteException e) {
 			}

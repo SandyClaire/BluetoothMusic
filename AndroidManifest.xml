@@ -6,13 +6,15 @@
     <uses-sdk
         android:minSdkVersion="11"
         android:targetSdkVersion="21" />
-    
+
     <!-- 系统设置修改权限 -->
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <!-- 壁纸设置权限 -->
-    <permission android:name="com.hsae.permission.systemsetting.provide"/>
-    <uses-permission android:name="com.hsae.permission.systemsetting.provide"/>
-    <uses-permission android:name="android.permission.GET_TASKS"/>
+    <permission android:name="com.hsae.permission.systemsetting.provide" />
+
+    <uses-permission android:name="com.hsae.permission.systemsetting.provide" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.STOP_APP_SWITCHES" />
 
     <application
         android:allowBackup="true"
@@ -31,14 +33,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <service android:name="com.hsae.d531mc.bluetooth.music.service.BluetoothMusicServcie"
+
+        <service
+            android:name="com.hsae.d531mc.bluetooth.music.service.BluetoothMusicServcie"
             android:exported="true" >
             <intent-filter>
                 <action android:name="com.hsae.auto.BT_MUSIC_SERVICE" />
             </intent-filter>
         </service>
-        
     </application>
 
 </manifest>

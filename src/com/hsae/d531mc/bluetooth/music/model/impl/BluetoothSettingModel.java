@@ -298,9 +298,6 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	 */
 	private void connect(String address) {
 		try {
-			if (mBluetoothModel.isCurrentInquiring()) {
-				mBluetoothModel.inquiryBtStop();
-			}
 			mBluetoothModel.connectMobile(address);
 			LogUtil.i(TAG, "connect --- address = " + address);
 		} catch (RemoteException e) {
