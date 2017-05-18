@@ -46,7 +46,7 @@
     </style>
     
     <style name="musicArtistText">
-		<item name="android:textSize">32dp</item>
+		<item name="android:textSize">36dp</item>
 		<item name="android:textColor">@android:color/white</item>        
     </style>
     
