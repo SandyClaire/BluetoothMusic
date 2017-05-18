@@ -8,4 +8,10 @@
     <string name="music_name">Music Name : %s</string>
     <string name="music_artist">Artist : %s</string>
     <string name="music_album">Music Album : %s</string>
+    <string name="music_source_title">audio source selection</string>
+    <string name="music_source_am">AM</string>
+    <string name="music_source_fm">FM</string>
+    <string name="music_source_ipod">IPOD</string>
+    <string name="music_source_usb">USB</string>
+    <string name="music_source_bluetooth">Bluetooth</string>
 </resources>

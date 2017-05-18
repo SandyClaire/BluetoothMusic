@@ -7,12 +7,133 @@
     android:paddingRight="34dp"
     android:orientation="vertical">
 
-    <ListView 
-        android:id="@+id/list_music_switch"
+    <LinearLayout 
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        ></ListView>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        
+        <TextView 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_title"
+            />
+        
+    </LinearLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/whiteGray"/>
+    
+    <LinearLayout 
+        android:id="@+id/lin_music_am"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        
+        <TextView 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_am"
+            android:drawableLeft="@drawable/icon_music_source_am_fm"
+            />
+        
+    </LinearLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/whiteGray"/>
+    
+    <LinearLayout 
+        android:id="@+id/lin_music_fm"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        
+        <TextView 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_fm"
+            android:drawableLeft="@drawable/icon_music_source_am_fm"
+            />
+        
+    </LinearLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/whiteGray"/>
+    
+    <LinearLayout 
+        android:id="@+id/lin_music_ipod"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        
+        <TextView 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_ipod"
+            android:drawableLeft="@drawable/icon_music_source_ipod"
+            />
+        
+    </LinearLayout>
+    
+    <View 
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/whiteGray"/>
+    
+    <LinearLayout 
+        android:id="@+id/lin_music_bluetooth"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        >
+        
+        <TextView 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="20dp"
+            android:textSize="24dp"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_bluetooth"
+            android:drawableLeft="@drawable/icon_music_source_bluetooth"
+            />
+        
+    </LinearLayout>
     
 
 </LinearLayout>
