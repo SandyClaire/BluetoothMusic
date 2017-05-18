@@ -136,9 +136,9 @@ public class BluetoothMusicServcie extends Service {
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mBluetoothMusicModel.setMusicStreamMute();
-		initBackground();
+//		initBackground();
+//		registerContentObserver();
 		mSoc.registerListener(mSocListener);
-		registerContentObserver();
 		super.onCreate();
 	}
 
@@ -162,7 +162,7 @@ public class BluetoothMusicServcie extends Service {
 	@Override
 	public void onDestroy() {
 		mContext.unregisterReceiver(mReceiver);
-		unRegisterContentObserver();
+//		unRegisterContentObserver();
 		mBluetoothMusicModel.releaseModel();
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
