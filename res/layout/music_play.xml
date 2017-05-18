@@ -43,7 +43,7 @@
             android:paddingLeft="5dp"
             android:paddingRight="6dp"
             android:paddingTop="20dp"
-            android:src="@drawable/btn_bt_setting" />
+            android:src="@drawable/icon_music_list" />
 
         <ImageView
             android:layout_width="80dp"

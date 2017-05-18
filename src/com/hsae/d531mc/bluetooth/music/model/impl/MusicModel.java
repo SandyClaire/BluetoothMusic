@@ -56,8 +56,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public int getA2DPConnectStatus() {
 		int backCode = -1;
 		try {
-			backCode = mBluetoothMusicModel.getConnectStatus(
-					MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+			backCode = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +87,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			e.printStackTrace();
 		}
 		if (command == AudioControl.CONTROL_PAUSE) {
-			mBluetoothMusicModel.isHandPuse = true ;
+			mBluetoothMusicModel.isHandPuse = true;
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
@@ -162,21 +161,21 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", isPlaying);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "getCurrentMusicPlayPosition -- position = " + position +  "-- isPlaying = " + isPlaying);
+		LogUtil.i(TAG, "getCurrentMusicPlayPosition -- position = " + position + "-- isPlaying = " + isPlaying);
 	}
 
 	@Override
 	public void setCurrentPlayerRepeatModel(int nAttrValue) {
 		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
 				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue );
+		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue);
 	}
-	
+
 	@Override
 	public void setCurrentPlayerShuffleModel(int nAttrValue) {
 		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
 				mBluetoothMusicModel.mShuffleAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue );
+		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue);
 	}
 
 	@Override
@@ -218,12 +217,10 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	}
 
 	@Override
-	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
-			int nArraySize) {
+	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray, int nArraySize) {
 		int nWriteSize = 0;
 		try {
-			nWriteSize = mBluetoothMusicModel.retrieveCurrentPlayerAPSupported(
-					nAttrID, nAllowArray, nArraySize);
+			nWriteSize = mBluetoothMusicModel.retrieveCurrentPlayerAPSupported(nAttrID, nAllowArray, nArraySize);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -234,8 +231,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public int retrieveCurrentPlayerAPSetting(int nAttrID) {
 		int attrID = 0;
 		try {
-			attrID = mBluetoothMusicModel
-					.retrieveCurrentPlayerAPSetting(nAttrID);
+			attrID = mBluetoothMusicModel.retrieveCurrentPlayerAPSetting(nAttrID);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -267,8 +263,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void autoConnectA2DP() {
-		Intent intent = new Intent(
-				MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
+		Intent intent = new Intent(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
 		mContext.sendBroadcast(intent);
 	}
 

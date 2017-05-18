@@ -2,8 +2,10 @@ package com.hsae.d531mc.bluetooth.music.presenter;
 
 import java.util.ArrayList;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Message;
 
 import com.anwsdk.service.AudioControl;
@@ -161,11 +163,10 @@ public class MusicPersenter implements IObserver {
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			boolean isPlay = mIMusicModel.initPlayStatus();
 			mIMusicView.updatePlayBtnByStatus(isPlay);
-			
 		}
 		initMusicModel();
 	}
-
+	
 	private void initBg() {
 		Bitmap bg = mIMusicModel.getBg();
 		LogUtil.i(TAG, " --- initBg --- bg = " + bg);

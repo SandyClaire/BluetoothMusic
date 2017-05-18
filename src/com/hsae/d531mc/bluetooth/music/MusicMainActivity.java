@@ -100,6 +100,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		@Override
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
+			case 111:
+				showFram(false);
+				break;
 			case LONG_CLICK_NEXT:
 				isNormalNext = false;
 				Message msgln = Message.obtain();
@@ -414,6 +417,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
+			mHandler.sendEmptyMessageDelayed(111,500);
 		} else if (status == 1) {
 			updateViewShow(true);
 			if (isFramShow) {
@@ -826,9 +830,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			case MotionEvent.ACTION_CANCEL:
 				nextUp();
 				break;
-
-			default:
-				break;
 			}
 			return false;
 		}
@@ -900,7 +901,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				mCover.setImageBitmap(null);
 				return;
 			}
-
 			resizeBmp.recycle();
 		} else {
 			mCover.setPadding(0, 0, 0, 0);
@@ -920,5 +920,4 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		// source.recycle();
 		return target;
 	}
-
 }

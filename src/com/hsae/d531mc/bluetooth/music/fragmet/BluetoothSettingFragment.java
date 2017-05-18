@@ -624,6 +624,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void updateTextTipShow(boolean conn) {
+		if (!this.isAdded()) {
+			throw new IllegalStateException("Fragment not attached to Activity");
+		}
 		if (conn) {
 			mTextEnable.setText(getResources().getString(
 					R.string.bluetooth_enable_carplay_text));

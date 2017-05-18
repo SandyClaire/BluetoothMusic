@@ -170,5 +170,5 @@ public interface IMusicModel {
 	 * @return
 	 */
 	public boolean initPlayStatus();
-	
+
 }
