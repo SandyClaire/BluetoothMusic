@@ -34,12 +34,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
-            <com.hsae.d531mc.bluetooth.contacts.utils.ListViewEx
+            <com.hsae.d531mc.bluetooth.music.util.ListViewEx
                 android:id="@+id/list_paired_device"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:divider="@null" >
-            </com.hsae.d531mc.bluetooth.contacts.utils.ListViewEx>
+            </com.hsae.d531mc.bluetooth.music.util.ListViewEx>
         </LinearLayout>
     </LinearLayout>
     
@@ -49,6 +49,7 @@
         android:background="@drawable/division_bluetooth_device" />
 
     <LinearLayout
+        android:id="@+id/lin_visible_text"
         android:layout_width="match_parent"
         android:layout_height="@dimen/setting_pair_upair_text_height"
         android:gravity="center_vertical"

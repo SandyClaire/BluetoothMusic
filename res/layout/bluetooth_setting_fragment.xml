@@ -54,14 +54,30 @@
             android:layout_height="1dp"
             android:background="@drawable/division_bluetooth_title" />
 
-        <ListView
-            android:id="@+id/list_visible_devices"
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:divider="@null"
-            android:scrollbars="none" >
-        </ListView>
+            android:layout_weight="1" >
+
+            <ListView
+                android:id="@+id/list_visible_devices"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:scrollbars="none" >
+            </ListView>
+
+            <TextView
+                android:id="@+id/text_enable_tip"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:layout_marginLeft="@dimen/setting_title_text_margin_left"
+                android:text="@string/bluetooth_enable_text"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_28" />
+        </FrameLayout>
     </LinearLayout>
 
     <LinearLayout

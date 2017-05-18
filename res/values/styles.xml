@@ -4,19 +4,9 @@
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
-    <style name="AppBaseTheme" parent="android:Theme.Light">
-        <!--
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        -->
-    </style>
 
     <!-- Application theme. -->
-    <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:windowNoTitle">true</item>
-        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
-    </style>
+
     <style name="top_texttitle_style">
         <item name="android:shadowColor">#ff000000</item>
         <item name="android:shadowDx">-2</item>
@@ -53,6 +43,31 @@
     <style name="musicTimeText">
 		<item name="android:textSize">20sp</item>
 		<item name="android:textColor">@android:color/white</item>        
+    </style>
+    
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <item name="android:windowAnimationStyle">@style/Animation</item>
+    </style>
+
+    <style name="Animation">
+        <item name="android:activityOpenEnterAnimation">@null</item>
+        <item name="android:activityOpenExitAnimation">@null</item>
+        <item name="android:activityCloseEnterAnimation">@null</item>
+        <item name="android:activityCloseExitAnimation">@null</item>
+        <item name="android:taskOpenEnterAnimation">@null</item>
+        <item name="android:taskOpenExitAnimation">@null</item>
+        <item name="android:taskCloseEnterAnimation">@null</item>
+        <item name="android:taskCloseExitAnimation">@null</item>
+        <item name="android:taskToFrontEnterAnimation">@null</item>
+        <item name="android:taskToFrontExitAnimation">@null</item>
+        <item name="android:taskToBackEnterAnimation">@null</item>
+        <item name="android:taskToBackExitAnimation">@null</item>
+    </style>
+
+    <style name="AppTheme" parent="AppBaseTheme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- <item name="android:windowIsTranslucent">true</item> -->
+        <item name="android:windowNoTitle">true</item>
     </style>
 
 </resources>
