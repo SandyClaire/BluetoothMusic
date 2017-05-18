@@ -629,8 +629,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	@Override
 	public void updateTextTipShow(boolean conn) {
-		if (!this.isAdded()) {
-			throw new IllegalStateException("Fragment not attached to Activity");
+		if (!isAdded()) {
+			LogUtil.e(TAG, "java.lang.IllegalStateException: Fragment not attached to Activity");
+			return;
 		}
 		if (conn) {
 			mTextEnable.setText(getResources().getString(
@@ -640,5 +641,4 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 					R.string.bluetooth_enable_text));
 		}
 	}
-
 }

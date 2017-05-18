@@ -314,10 +314,15 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 *            flag : true 显示音源切换 false 显示蓝牙设置
 	 */
 	private void showFram(boolean flag) {
+		if (!hasWindowFocus()) {
+			LogUtil.w(TAG, "activity is not on focus now ");
+			return;
+		}
+		
 		if (flag) {
-			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mFragmet).commit();
+			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mFragmet).commitAllowingStateLoss();
 		} else {
-			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mSettingFragment).commit();
+			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mSettingFragment).commitAllowingStateLoss();
 		}
 		isFramShow = true;
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
@@ -446,7 +451,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
-			mHandler.sendEmptyMessage(MSG_DRAWLAYOUT_SHOW);
+			mHandler.sendEmptyMessageDelayed(MSG_DRAWLAYOUT_SHOW, 500);
 		} else if (status == 1) {
 			updateViewShow(true);
 			if (isFramShow) {
@@ -455,7 +460,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
 	}
-
+	
 	private void updateViewShow(boolean flag) {
 		mBtnPrev.setEnabled(flag);
 		mBtnPlay.setEnabled(flag);
