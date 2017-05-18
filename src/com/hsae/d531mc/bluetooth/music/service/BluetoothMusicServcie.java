@@ -275,6 +275,9 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
+	/**
+	 * 如果焦点不再蓝牙音乐，将蓝牙音乐mute
+	 */
 	private void getAudioSource() {
 		Source source = new Source();
 		try {

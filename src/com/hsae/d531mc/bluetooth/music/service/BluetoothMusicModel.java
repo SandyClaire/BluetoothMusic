@@ -70,14 +70,9 @@ public class BluetoothMusicModel {
 				return;
 			}
 			try {
-//				nPowerStatus = mIAnwPhoneLink.ANWBT_GetBTPowerStatus();
-//				if (nPowerStatus == MangerConstant.BTPOWER_STATUS_OFF)
-//					mIAnwPhoneLink.ANWBT_BTPowerOn();
-				
 				if (getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0) == 1) {
 					getCurrentPlayerAPSetting();
 				}
-
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -798,12 +793,19 @@ public class BluetoothMusicModel {
 		}
 	}
 	
+	/**
+	 * 更新HFP链接状态
+	 * @param status
+	 */
 	public void updateHFPConnectStatus(int status){
 		if (null != nIBluetoothSettingModel) {
 			nIBluetoothSettingModel.updateConnectStatus(status);
 		}
 	}
 	
+	/**
+	 * 结束蓝牙音乐
+	 */
 	public void finishActivity(){
 		if (null != mIMusicModel) {
 			mIMusicModel.finishMusicActivity();
@@ -846,18 +848,31 @@ public class BluetoothMusicModel {
 		}
 	}
 	
+	/**
+	 * 更新循环模式
+	 * @param AllowList
+	 */
 	public void updateRepeatModel(ArrayList<Integer> AllowList){
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeRepeat(AllowList);
 		}
 	}
 	
+	/**
+	 * 更新随机模式
+	 * @param AllowList
+	 */
 	public void updateShuffleModel(ArrayList<Integer> AllowList){
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeShuffle(AllowList);
 		}
 	}
 	
+	/**
+	 * 切换模式后更新当前模式
+	 * @param nAttrID
+	 * @param nAttrValue
+	 */
 	public void updatePlayerModelSetting(int nAttrID , int nAttrValue){
 		if (null != mIMusicModel) {
 			mIMusicModel.updataPlayerModel(nAttrID, nAttrValue);
@@ -952,6 +967,9 @@ public class BluetoothMusicModel {
 		}
     }
     
+    /**
+     * 通知launcher 音乐信息
+     */
     private void notifyLauncherInfo(){
     	int connStatus = 0;
         try {

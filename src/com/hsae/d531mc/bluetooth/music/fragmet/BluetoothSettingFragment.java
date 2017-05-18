@@ -567,14 +567,19 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			mTextEnable.setVisibility(View.GONE);
 			mListVisible.setVisibility(View.VISIBLE);
 			mBtnSearch.setVisibility(View.VISIBLE);
+			Message msg_stop = Message.obtain();
+			msg_stop.what = MusicActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES;
+			this.notify(msg_stop, FLAG_RUN_MAIN_THREAD);
 		}else {
-			mListPairedDevices.clear();
-			mListVisibleDevices.clear();
 			mLinVis.setVisibility(View.GONE);
 			mTextEnable.setVisibility(View.VISIBLE);
 			mListVisible.setVisibility(View.GONE);
-			updatePairListVisible();
 			mBtnSearch.setVisibility(View.INVISIBLE);
+			mListPairedDevices.clear();
+			mListVisibleDevices.clear();
+			updatePairListVisible();
+			mVisibleAdapter.notifyDataSetChanged();
+			mPairedAdapter.notifyDataSetChanged();
 		}
 	}
 
