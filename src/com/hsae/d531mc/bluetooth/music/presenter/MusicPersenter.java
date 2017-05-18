@@ -147,7 +147,7 @@ public class MusicPersenter implements IObserver {
 		initBg();
 		LogUtil.i(TAG, " --- init +++ ");
 		if (status == MangerConstant.Anw_SUCCESS) {
-			mIMusicModel.playStatus();
+			mIMusicModel.getMusicMatedata();
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			String title = mIMusicModel
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_MEDIA_TITLE);
@@ -159,6 +159,9 @@ public class MusicPersenter implements IObserver {
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
+			boolean isPlay = mIMusicModel.initPlayStatus();
+			mIMusicView.updatePlayBtnByStatus(isPlay);
+			
 		}
 		initMusicModel();
 	}

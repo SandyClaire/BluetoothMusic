@@ -53,7 +53,6 @@ public class BluetoothMusicServcie extends Service {
 	private String mAtrist = "";
 	private String mAlbum = "";
 	private String mTotalTIme = "";
-	private boolean isplaying = false;
 	private BTMusicManager mBTMmanager;
 	private String mTimePosition = "-1";
 	private Soc mSoc;
@@ -89,6 +88,7 @@ public class BluetoothMusicServcie extends Service {
 							mAtrist = "";
 							mAlbum = "";
 							notifyAutoCoreConnectStatus(false);
+							mBluetoothMusicModel.isPlay = false;
 						} else {
 							if (isTicker) {
 								setTimingEnd();
@@ -96,6 +96,7 @@ public class BluetoothMusicServcie extends Service {
 							mTitle = "";
 							mAtrist = "";
 							mAlbum = "";
+							mBluetoothMusicModel.isPlay = false;
 							
 						}
 						break;
@@ -189,6 +190,7 @@ public class BluetoothMusicServcie extends Service {
 					} else {
 						mBluetoothMusicModel
 								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);
+						mBluetoothMusicModel.isPlay = false;
 					}
 				}
 				/* 蓝牙连接状态 */
@@ -286,10 +288,10 @@ public class BluetoothMusicServcie extends Service {
 					int nPlayStatus = mBundle.getInt("PlayStatus");
 
 					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
-						isplaying = true;
+						mBluetoothMusicModel.isPlay = true;
 						if (!mTimePosition.equals("-1")) {
 							mBluetoothMusicModel.updateCurrentPlayTime(
-									mTimePosition, isplaying);
+									mTimePosition, mBluetoothMusicModel.isPlay);
 							LogUtil.i(TAG, "PlayTime -- mPosition = "
 									+ mTimePosition);
 						}
@@ -299,10 +301,10 @@ public class BluetoothMusicServcie extends Service {
 					} else if (nPlayStatus == AudioControl.PLAYSTATUS_PAUSED
 							|| nPlayStatus == AudioControl.PLAYSTATUS_STOPPED) {
 						setTimingEnd();
-						isplaying = false;
+						mBluetoothMusicModel.isPlay = false;
 					} else if (nPlayStatus == AudioControl.PLAYSTATUS_FWD_SEEK
 							|| nPlayStatus == AudioControl.PLAYSTATUS_REV_SEEK) {
-						if (isplaying) {
+						if (mBluetoothMusicModel.isPlay) {
 							try {
 								mBluetoothMusicModel
 										.AVRCPControl(AudioControl.CONTROL_PLAY);
@@ -311,7 +313,7 @@ public class BluetoothMusicServcie extends Service {
 							}
 						}
 					}
-					mBluetoothMusicModel.updatePlayStatus(isplaying);
+					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 					mBluetoothMusicModel.setMusicStreamMute();
 					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = "
 							+ nPlayStatus);
@@ -323,7 +325,7 @@ public class BluetoothMusicServcie extends Service {
 					mTimePosition = mBundle.getString("Position");
 					if (!mTimePosition.equals("-1")) {
 						mBluetoothMusicModel.updateCurrentPlayTime(
-								mTimePosition, isplaying);
+								mTimePosition, mBluetoothMusicModel.isPlay);
 						LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = "
 								+ mTimePosition);
 					}
@@ -339,7 +341,7 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
-						isplaying = true;
+						mBluetoothMusicModel.isPlay = true;
 						mBluetoothMusicModel.updatePlayStatus(true);
 						break;
 					}
@@ -407,7 +409,8 @@ public class BluetoothMusicServcie extends Service {
 						.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 				mBluetoothMusicModel.getPlayStatus();
-				mBluetoothMusicModel.updatePlayStatus(true);
+				mBluetoothMusicModel.isPlay = true;
+				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -418,6 +421,8 @@ public class BluetoothMusicServcie extends Service {
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 				mBluetoothMusicModel
 						.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				mBluetoothMusicModel.isPlay = false;
+				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -609,15 +614,7 @@ public class BluetoothMusicServcie extends Service {
 	 * @param type
 	 */
 	private void disconnBTbyUsbConnectStatus(int type) {
-
-		if (type == USB_CONNECTED_IPOD) {
-			// try {
-			// mBluetoothModel.a2dpDisconnect();
-			// } catch (RemoteException e) {
-			// e.printStackTrace();
-			// }
-		}
-
+		
 	}
 
 	/**

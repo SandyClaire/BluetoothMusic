@@ -72,6 +72,9 @@ public class BluetoothMusicModel {
 	// carlife 是否连接
 	public boolean isCarLifeConnected = false;
 	
+	// 音乐是否播放
+	public boolean isPlay = false;
+	
 	/**
 	 * 循环集合
 	 */

@@ -41,10 +41,9 @@ public interface IMusicModel {
 	public void updatePlayOrPauseStatus(boolean flag);
 	
 	/**
-	 * update play or pause status
-	 * @param status
+	 * 获取播放歌曲信息
 	 */
-	public void playStatus();
+	public void getMusicMatedata();
 	
 	/**
 	 * support metadata or not
@@ -165,5 +164,11 @@ public interface IMusicModel {
 	 * 更新carlife连接状态
 	 */
 	public void updateCarlifeConnectStatus();
+	
+	/**
+	 * 初始化播放状态
+	 * @return
+	 */
+	public boolean initPlayStatus();
 	
 }

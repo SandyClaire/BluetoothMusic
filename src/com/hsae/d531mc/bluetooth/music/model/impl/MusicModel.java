@@ -83,7 +83,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public void setAVRCPControl(int command) {
 		try {
 			mBluetoothMusicModel.AVRCPControl(command);
-			playStatus();
+			getMusicMatedata();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -105,7 +105,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	}
 
 	@Override
-	public void playStatus() {
+	public void getMusicMatedata() {
 		mHandler.postDelayed(new Runnable() {
 
 			@Override
@@ -116,7 +116,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 					e.printStackTrace();
 				}
 			}
-		}, 500);
+		}, 400);
 	}
 
 	@Override
@@ -295,6 +295,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
+	@Override
+	public boolean initPlayStatus() {
+		return mBluetoothMusicModel.isPlay;
 	}
 
 }
