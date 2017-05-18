@@ -171,9 +171,10 @@ public class BluetoothMusicServcie extends Service {
 	private class BTBroadcastReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(Context arg0, Intent intent) {
+			
 			String strAction = intent.getAction();
+			LogUtil.i(TAG, "onReceive = "+strAction);
 			Bundle mBundle = intent.getExtras();
-
 			/* 蓝牙开关状态 */
 			if (strAction.equals(MangerConstant.MSG_ACTION_POWER_STATUS)) {
 				if (mBundle != null) {
@@ -260,7 +261,7 @@ public class BluetoothMusicServcie extends Service {
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("PlayStatus");
-
+					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = " + nPlayStatus);
 					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
 						mBluetoothMusicModel.isPlay = true;
 						if (!mTimePosition.equals("-1")) {
@@ -285,7 +286,7 @@ public class BluetoothMusicServcie extends Service {
 					}
 					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 					mBluetoothMusicModel.setMusicStreamMute();
-					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = " + nPlayStatus);
+					
 				}
 				/* 蓝牙音乐播放当前时间信息 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
@@ -374,7 +375,7 @@ public class BluetoothMusicServcie extends Service {
 			try {
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				// mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();
@@ -701,15 +702,17 @@ public class BluetoothMusicServcie extends Service {
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
 					try {
-						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
 				}
 			} else {
-				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
+				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_MUTE");
 				try {
-					mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+					if (mBluetoothMusicModel.getStreamMode() !=MangerConstant.AUDIO_STREAM_MODE_MUTE ) {
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

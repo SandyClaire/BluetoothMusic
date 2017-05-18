@@ -1130,7 +1130,7 @@ public class BluetoothMusicModel {
 	 * @return
 	 */
 	public boolean tryToSwitchSource() {
-		LogUtil.i(TAG,"tryToSwitchSource");
+		LogUtil.i(TAG, "tryToSwitchSource");
 		Source source = new Source();
 		boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
 		return isSwitch;
@@ -1156,9 +1156,10 @@ public class BluetoothMusicModel {
 	 */
 	public void mainAudioChanged(boolean isBack) {
 		LogUtil.i(TAG, "requestAudioSource == " + isBack);
+		isPlayByPower = false;
 		Source source = new Source();
 		source.mainAudioChanged(App.BT_MUSIC, isBack);
-	
+
 	}
 
 	/**
@@ -1172,13 +1173,14 @@ public class BluetoothMusicModel {
 			int mode = getStreamMode();
 			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
 			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
 				return;
 			}
 			if (soApp != App.BT_MUSIC) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE ||mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+			} else if (soApp == App.BT_MUSIC
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -1188,12 +1190,14 @@ public class BluetoothMusicModel {
 	public boolean isAudioFocused = false;
 	public AudioManager audioManager;
 
+	public boolean isPlayByPower = false;
+
 	/** 获取Android音频焦点 */
-	public void requestAudioFocus(boolean flag) {
+	public synchronized void requestAudioFocus(boolean flag) {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-			
+
 			mainAudioChanged(flag);
 			// 如果手动点击停止，不进行播放；
 			if (isHandPuse) {
@@ -1202,17 +1206,17 @@ public class BluetoothMusicModel {
 			try {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
-				e.printStackTrace();
 			}
 			return;
 		}
 		LogUtil.i(TAG, "requestAudioFocus---request audio focus");
 		audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
-		int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+		int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+				AudioManager.AUDIOFOCUS_GAIN);
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED"+ "BluetoothMusicModel获取音频焦点成功");
+			LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED"
+					+ "BluetoothMusicModel获取音频焦点成功");
 			if (!isAudioFocused) {
-				LogUtil.i(TAG, " requestAudioSource 22222222222222222222");
 				mainAudioChanged(flag);
 				autoConnectA2DP();
 			}
@@ -1261,7 +1265,7 @@ public class BluetoothMusicModel {
 			public void run() {
 				try {
 					getPlayStatus();
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -1347,11 +1351,9 @@ public class BluetoothMusicModel {
 				break;
 			}
 			notifyLauncherInfo();
-			Source source = new Source();
-			LogUtil.i(TAG, "audioSetStreamMode : isAudioFocused = " + isAudioFocused +"getCurrentSource = "+ source.getCurrentSource());
 			if (isAudioFocused) {
 				try {
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 					// 如果是手动暂停 不执行播放
 					if (isHandPuse) {
 						return;
@@ -1361,8 +1363,10 @@ public class BluetoothMusicModel {
 				}
 			} else {
 				try {
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+					if (isCurrentA2DPPlaying()) {
+						AVRCPControl(AudioControl.CONTROL_PAUSE);
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

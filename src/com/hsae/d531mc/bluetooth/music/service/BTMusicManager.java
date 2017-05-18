@@ -179,13 +179,11 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void playByName(String arg0) throws RemoteException {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void popUpCurrentMode() throws RemoteException {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -258,7 +256,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		LogUtil.i(TAG, "------------- exitDiagnoseMode ");
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 		}
 	}
 
