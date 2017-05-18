@@ -1343,10 +1343,6 @@ public class BluetoothMusicModel {
 			LogUtil.i(TAG, "autoConnectA2DP : mIMusicModel is null ");
 			return;
 		}
-		if (!isDisByIpod) {
-			return;
-		}	
-		
 		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = "+ a2dpStatus);
 		if (hfpStatus == 1 && a2dpStatus != 1) {
 			mIMusicModel.autoConnectA2DP();

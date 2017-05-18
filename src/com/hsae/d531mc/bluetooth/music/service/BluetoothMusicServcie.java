@@ -397,10 +397,10 @@ public class BluetoothMusicServcie extends Service {
 	 * 如果A2DP单独断开情况下，自动连接蓝牙音乐；
 	 */
 	private void autoConnA2dp() {
-		Soc soc = new Soc();
-		UsbDevices usbDevices = soc.getCurrentDevice();
-		LogUtil.i("BluetoothMusicModel", " autoConnA2dp usbDevices = " + usbDevices.toString());
-		if (usbDevices.equals(UsbDevices.IPOD) || usbDevices.equals(UsbDevices.CARLIFE)) {
+//		Soc soc = new Soc();
+//		UsbDevices usbDevices = soc.getCurrentDevice();
+//		LogUtil.i("BluetoothMusicModel", " autoConnA2dp usbDevices = " + usbDevices.toString());
+//		if (usbDevices.equals(UsbDevices.IPOD) || usbDevices.equals(UsbDevices.CARLIFE)) {
 			try {
 				LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
 				// if (mBluetoothMusicModel.isCurrentInquiring()) {
@@ -409,7 +409,7 @@ public class BluetoothMusicServcie extends Service {
 				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
 			} catch (RemoteException e) {
 			}
-		}
+//		}
 	}
 
 	/**
