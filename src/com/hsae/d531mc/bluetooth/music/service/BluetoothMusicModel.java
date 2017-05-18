@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
+import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.BT_ADV_DATA;
@@ -23,6 +24,8 @@ import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
+import com.hsae.autosdk.os.Soc;
+import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
@@ -48,7 +51,7 @@ public class BluetoothMusicModel {
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
-	private static final int errorCode = -1;
+	private static final int errorCode = 0;
 
 	public int hfpStatus = 0;
 	public int a2dpStatus = 0;
@@ -978,6 +981,9 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateCarlifeConnectStatus();
 		}
+		if (null != mIBluetoothSettingModel){
+			mIBluetoothSettingModel.updateCarlifeConnectStatus();
+		}
 	}
 
 	/**
@@ -1051,6 +1057,7 @@ public class BluetoothMusicModel {
 		}
 	}
 
+	
 	/**
 	 * 更新循环模式
 	 * 
@@ -1140,8 +1147,7 @@ public class BluetoothMusicModel {
 	public boolean tryToSwitchSource() {
 		LogUtil.i(TAG, "tryToSwitchSource");
 		Source source = new Source();
-		boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
-		return isSwitch;
+		return source.tryToSwitchSource(App.BT_MUSIC);
 	}
 
 	/**
@@ -1199,7 +1205,8 @@ public class BluetoothMusicModel {
 	Handler handler = new Handler();
 
 	public boolean isAudioFocused = false;
-	 int playtimes = 0;
+	int playtimes = 0;
+
 	/** 获取Android音频焦点 */
 	public synchronized void requestAudioFocus(boolean flag) {
 		Source source = new Source();
@@ -1211,21 +1218,24 @@ public class BluetoothMusicModel {
 				// 如果手动点击停止，不进行播放；
 				autoConnectA2DP();
 				if (!isHandPuse) {
-					handler.post(new Runnable() {
+					AVRCPControl(AudioControl.CONTROL_PLAY);
+
+					handler.postDelayed(new Runnable() {
 						@Override
 						public void run() {
 							try {
-								if (!isPlay && playtimes<5) {
+								if (!isPlay && playtimes < 5) {
+									playtimes++;
 									AVRCPControl(AudioControl.CONTROL_PLAY);
 									handler.postDelayed(this, 1000);
-								}else{
+								} else {
 									playtimes = 0;
 									handler.removeCallbacks(this);
 								}
 							} catch (RemoteException e) {
 							}
 						}
-					});
+					}, 1000);
 				}
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
@@ -1440,5 +1450,19 @@ public class BluetoothMusicModel {
 
 	public void setNextClicked() {
 		mIMusicModel.setNextClicked();
+	}
+	
+	
+	public boolean isCarlifeConnected() {
+		boolean isConnected = false;
+		Soc soc = new Soc();
+		UsbDevices deivce = soc.getCurrentDevice();
+		if (deivce != null) {
+			if (deivce == UsbDevices.CARLIFE) {
+				isConnected = true;
+			}
+		}
+		Log.i(TAG, "isCARLIFEConnected = " + soc.getCurrentDevice());
+		return isConnected;
 	}
 }

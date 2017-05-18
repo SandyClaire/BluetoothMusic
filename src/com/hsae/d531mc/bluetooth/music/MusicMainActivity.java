@@ -202,8 +202,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		ivUSB = (ImageView) findViewById(R.id.btn_source_usb);
 		ivBT = (ImageView) findViewById(R.id.btn_source_bt);
 		ivList = (ImageView) findViewById(R.id.btn_playlist);
-
 		ivAlbumCut = (ImageView) findViewById(R.id.music_defaultcover);
+
 		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
 		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
 		mBtnNext = (ImageButton) findViewById(R.id.btn_next);
@@ -320,30 +320,26 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	protected void onResume() {
+		super.onResume();
 		ivBT.setSelected(true);
+		// updateViewByConnectStatus(-1);
+
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 
 		boolean isUsb = isUsbConnected() || !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
-		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
+		super.onPause();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 		pauseAnim();
-		getCarlifeStatus();
-		super.onPause();
-	}
-
-	private void getCarlifeStatus() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS;
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+		// getCarlifeStatus();
 	}
 
 	/**
@@ -417,7 +413,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-
 		case R.id.btn_source_fm:
 			switchSource(Media.fm);
 			break;
@@ -618,8 +613,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	public void updateViewByConnectStatus(int status) {
+		LogUtil.i(TAG, "updateViewByConnectStatus " + status);
 		if (status == 0) {
-			updateViewShow(false);
+			updateViewShow(false, false);
 			mSeekTail.setVisibility(View.GONE);
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
@@ -631,15 +627,32 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 			mHandler.sendEmptyMessageDelayed(MSG_DRAWLAYOUT_SHOW, 500);
 		} else if (status == 1) {
-			updateViewShow(true);
+			updateViewShow(true, false);
 			if (isFramShow) {
 				closeMusicSwitch();
 			}
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
-		}
+		} else if (status == -1) {
+			// carlife is connected
+			updateViewShow(false, true);
+		} 
+//		else if (status == -2) {
+//			// carlife is not connected
+//			updateViewShow(true, true);
+//			mSeekTail.setVisibility(View.GONE);
+//			mTextTotalTime.setText("00:00");
+//			mTextCurTime.setText("00:00");
+//			mSeekBar.setMax(0);
+//			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT, AudioControl.PLAYER_REPEAT_MODE_OFF);
+//			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, AudioControl.PLAYER_SHUFFLE_OFF);
+//			mRepeatAllowedlist.clear();
+//			mShuffleAllowedlist.clear();
+//			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
+//		}
 	}
 
-	private void updateViewShow(boolean flag) {
+	private void updateViewShow(boolean flag, boolean isFromCarlife) {
+		LogUtil.i(TAG, "updateViewShow : flag = " + flag + "isFromCarlife = " + isFromCarlife);
 		mBtnPrev.setEnabled(flag);
 		mBtnPlay.setEnabled(flag);
 		mBtnNext.setEnabled(flag);
@@ -654,7 +667,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mFraInfo.setVisibility(View.GONE);
 			mFraControl.setVisibility(View.GONE);
 			mTextTip.setVisibility(View.VISIBLE);
-			getCarlifeStatus();
+
+			if (!isFromCarlife) {
+				mTextTip.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
+			} else {
+				mTextTip.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
+			}
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_play));
@@ -1014,16 +1032,11 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * 上一首抬起
 	 */
 	private void prevUp() {
-//		if (mHandler.hasMessages(LONG_CLICK_PREV)) {
-//			mHandler.removeMessages(LONG_CLICK_PREV);
-//			fastFowardMiles = 500;
-//			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
-//		}
 		if (isNormalPrev) {
 			LogUtil.i(TAG, " --- prevup ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_PREV);
 			mHandler.removeMessages(LONG_CLICK_PREV);
-		}else{
+		} else {
 			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
 		}
 		isNormalPrev = true;
@@ -1059,16 +1072,13 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * 下一曲抬起
 	 */
 	private void nextUp() {
-//		if (mHandler.hasMessages(LONG_CLICK_NEXT)) {
-//			
-//		}
-		
-		LogUtil.i(TAG, "nextUp --- nextUp "); 
+
+		LogUtil.i(TAG, "nextUp --- nextUp ");
 		if (isNormalNext) {
 			LogUtil.i(TAG, " --- nextUp ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
 			mHandler.removeMessages(LONG_CLICK_NEXT);
-		}else{
+		} else {
 			LogUtil.i(TAG, "LONG_CLICK_NEXT --- nextUp ");
 			mHandler.sendEmptyMessage(LONG_FAST_FORWORD_CANCLE);
 		}
@@ -1088,6 +1098,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	public void updateTextTipShow(boolean conn) {
+		LogUtil.i(TAG, "updateTextTipShow " + conn);
 		if (conn) {
 			mTextTip.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
 		} else {

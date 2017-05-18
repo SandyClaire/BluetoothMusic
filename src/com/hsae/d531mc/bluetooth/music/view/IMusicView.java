@@ -88,6 +88,6 @@ public interface IMusicView {
 	public void updateTextTipShow(boolean conn);
 
 	public void onUsbDesconnet();
-	
+
 	
 }

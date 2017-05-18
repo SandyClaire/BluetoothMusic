@@ -2,6 +2,7 @@ package com.hsae.d531mc.bluetooth.music.model.impl;
 
 import java.util.ArrayList;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -54,11 +55,12 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	 */
 	@Override
 	public int getA2DPConnectStatus() {
-		int backCode = -1;
+		int backCode = 0;
 		try {
 			backCode = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
+			backCode = -3;
 		}
 		LogUtil.i(TAG, "--- getA2DPConnectStatus = " + backCode);
 		return backCode;
@@ -75,6 +77,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		LogUtil.i(TAG, "--- updateConnectStatusMsg = " + status);
 	}
 
+	
 	/**
 	 * 蓝牙控制命令
 	 */
@@ -292,13 +295,13 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public boolean getCarlifeConnectStatus() {
-		return mBluetoothMusicModel.isCarLifeConnected;
+		return mBluetoothMusicModel.isCarlifeConnected();
 	}
 
 	@Override
 	public void updateCarlifeConnectStatus() {
 		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS;
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 

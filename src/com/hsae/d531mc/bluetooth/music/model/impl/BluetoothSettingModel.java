@@ -382,9 +382,20 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	@Override
 	public void updateCarplayConnectStatus() {
 		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS;
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
+	@Override
+	public boolean getCarLifeConnectstatus() {
+		return mBluetoothModel.isCarlifeConnected();
+	}
+
+	@Override
+	public void updateCarlifeConnectStatus() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
 
 }

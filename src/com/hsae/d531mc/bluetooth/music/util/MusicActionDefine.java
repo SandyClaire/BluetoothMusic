@@ -57,8 +57,8 @@ public class MusicActionDefine {
     
     static public final int ACTION_SETTING_GET_PAIRED_DEVICES = 80;
     static public final int ACTION_SETTING_UPDATE_BG = 81;
-    static public final int ACTION_SETTING_GET_CAPLAY_STATUS = 82;
-    static public final int ACTION_SETTING_GET_CAPLIFE_STATUS = 83;
+    static public final int ACTION_SETTING_GET_CARPLAY_STATUS = 82;
+    static public final int ACTION_SETTING_GET_CARLIFE_STATUS = 83;
     static public final int ACTION_USB_DISCONNECT = 84;
     
     

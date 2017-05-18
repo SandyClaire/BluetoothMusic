@@ -133,10 +133,14 @@ public interface IBluetoothSettingModel {
 	 */
 	public boolean getCarplayConnectstatus();
 	
+	public boolean getCarLifeConnectstatus();
+	
 	/**
 	 * 更新carplay连接状态
 	 */
 	public void updateCarplayConnectStatus();
+
+	public void updateCarlifeConnectStatus();
 
 	
 }

@@ -62,9 +62,9 @@ public interface IBluetoothSettingView {
 	
 	/**
 	 * 更细显示提示语
-	 * @param conn
+	 * @param i
 	 */
-	public void updateTextTipShow(boolean conn);
+	public void updateTextTipShow(int i);
 
 
 }

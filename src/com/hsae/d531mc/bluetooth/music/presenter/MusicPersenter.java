@@ -42,9 +42,11 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
-		case MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS:
+		case MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS:
 			boolean conn = mIMusicModel.getCarlifeConnectStatus();
+			LogUtil.i(TAG, "getCarlifeConnectStatus" + conn);
 			mIMusicView.updateTextTipShow(conn);
+			mIMusicView.updateViewByConnectStatus(conn?-1:0);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
 			LogUtil.i(TAG, "requestAudioFoucs");
@@ -84,19 +86,19 @@ public class MusicPersenter implements IObserver {
 			LogUtil.i(TAG, "CONTROL_FORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_FASTFORWORD:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD,0);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD, 0);
 			LogUtil.i(TAG, "CONTROL_FASTFORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_REWIND:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND,0);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND, 0);
 			LogUtil.i(TAG, "CONTROL_REWIND");
 			break;
 		case MusicActionDefine.ACTION_A2DP_FASTFORWORD_CANCEL:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD,1);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD, 1);
 			LogUtil.i(TAG, "CONTROL_FASTFORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_REWIND_CANCEL:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND,1);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND, 1);
 			LogUtil.i(TAG, "CONTROL_REWIND");
 			break;
 		case MusicActionDefine.ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE:
@@ -148,6 +150,17 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicModel).attach(this);
 		((ISubject) mIMusicView).attach(this);
 		int status = mIMusicModel.getA2DPConnectStatus();
+		boolean isCarlifeConnected = mIMusicModel.getCarlifeConnectStatus(); 
+		
+		if (isCarlifeConnected) {
+			status = -1;
+		}
+//		else if (!carlifeState && status ==0) {
+//			status = 0;
+//		}else if (!carlifeState && status ==1){
+//			status = 1;
+//		}
+		LogUtil.i(TAG, " --- init +++ status = " + status);
 		mIMusicView.updateViewByConnectStatus(status);
 		initBg();
 		LogUtil.i(TAG, " --- init +++ ");

@@ -84,9 +84,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
 		initView();
 		initMVP();
-		super.onActivityCreated(savedInstanceState);
 	}
 
 	@SuppressLint("InflateParams")
@@ -154,13 +154,19 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 	@Override
 	public void onResume() {
-		getCaplayStatus();
 		super.onResume();
+//		getCaplayStatus();
 	}
 
 	private void getCaplayStatus() {
 		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS;
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
+	private void getCarlifeStatus() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
@@ -234,9 +240,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			// TextView mTextDeviceStatus;
 			LinearLayout mBtnDeviceUpair;
 			ImageView mImageUnpair;
-			TextView  tvDisConnect;
+			TextView tvDisConnect;
 			LinearLayout mLinItem;
-			
+
 			ProgressBar progressBar;
 		}
 
@@ -287,19 +293,18 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				holder.mImageUnpair.setVisibility(View.GONE);
 				holder.tvDisConnect.setVisibility(View.VISIBLE);
 				holder.mBtnDeviceUpair.setBackground(null);
-				
+
 				// holder.mTextDeviceStatus.setVisibility(View.GONE);
 				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connected));
-//				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_disconnect_device));
-				
-				
+				// holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_disconnect_device));
+
 				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.yellow_trans));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
 				holder.progressBar.setVisibility(View.GONE);
 				holder.mImageUnpair.setVisibility(View.VISIBLE);
 				holder.tvDisConnect.setVisibility(View.GONE);
-				
+
 				// holder.mTextDeviceStatus.setVisibility(View.GONE);
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
 				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
@@ -308,18 +313,18 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				holder.progressBar.setVisibility(View.VISIBLE);
 				holder.mImageUnpair.setVisibility(View.GONE);
 				holder.tvDisConnect.setVisibility(View.GONE);
-				
+
 				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
 				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
 				holder.mLinItem.setEnabled(false);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_DISCONNECTING) {
-				
+
 				holder.progressBar.setVisibility(View.GONE);
 				holder.mImageUnpair.setVisibility(View.VISIBLE);
 				holder.tvDisConnect.setVisibility(View.GONE);
-				
+
 				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_disconnecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
@@ -328,7 +333,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			}
 
 			holder.mBtnDeviceUpair.setOnClickListener(new OnClickListener() {
-				
+
 				@Override
 				public void onClick(View v) {
 					LogUtil.i(TAG, "unpairRequest -- status =  " + bean.getStatus());
@@ -367,7 +372,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 			bean.setStatus(BluetoothDevice.DEVICE_CONNECTING);
 			mPairedAdapter.notifyDataSetChanged();
-			
+
 			Message msg = Message.obtain();
 			msg.what = MusicActionDefine.ACTION_SETTING_CONNECT_MOBILE;
 			Bundle mBundle = new Bundle();
@@ -507,7 +512,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				// convertView.findViewById(R.id.tv_devicestatus);
 				mHolder.mLinItem = (LinearLayout) convertView.findViewById(R.id.lin_devcies_list_item);
 				mHolder.progressBar = (ProgressBar) convertView.findViewById(R.id.pro_pairing);
-				
+
 				convertView.setTag(mHolder);
 			} else {
 				mHolder = (ViewHolder) convertView.getTag();
@@ -596,6 +601,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 	@Override
 	public void updateBtEnable(int status) {
+		LogUtil.i(TAG, "updateBtEnable : status = "+status);
+		
 		if (status == MangerConstant.BTPOWER_STATUS_ON) {
 			mLinVis.setVisibility(View.VISIBLE);
 			mTextEnable.setVisibility(View.GONE);
@@ -604,12 +611,40 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			Message msg_stop = Message.obtain();
 			msg_stop.what = MusicActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES;
 			this.notify(msg_stop, FLAG_RUN_MAIN_THREAD);
-		} else {
+		} else if (status == MangerConstant.BTPOWER_STATUS_OFF) {
 			mLinVis.setVisibility(View.GONE);
 			mTextEnable.setVisibility(View.VISIBLE);
 			mListVisible.setVisibility(View.GONE);
 			mBtnSearch.setVisibility(View.INVISIBLE);
-			getCaplayStatus();
+			// getCaplayStatus();
+			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_text));
+			mListPairedDevices.clear();
+			mListVisibleDevices.clear();
+			updatePairListVisible();
+			mVisibleAdapter.notifyDataSetChanged();
+			mPairedAdapter.notifyDataSetChanged();
+		}
+		else if (status == -2) {
+			// carlife is connected
+			mLinVis.setVisibility(View.GONE);
+			mTextEnable.setVisibility(View.VISIBLE);
+			mListVisible.setVisibility(View.GONE);
+			mBtnSearch.setVisibility(View.INVISIBLE);
+			// getCaplayStatus();
+			mTextEnable.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
+			mListPairedDevices.clear();
+			mListVisibleDevices.clear();
+			updatePairListVisible();
+			mVisibleAdapter.notifyDataSetChanged();
+			mPairedAdapter.notifyDataSetChanged();
+		}
+		else if (status == -1) {
+			mLinVis.setVisibility(View.GONE);
+			mTextEnable.setVisibility(View.VISIBLE);
+			mListVisible.setVisibility(View.GONE);
+			mBtnSearch.setVisibility(View.INVISIBLE);
+			// getCaplayStatus();
+			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_carplay_text));
 			mListPairedDevices.clear();
 			mListVisibleDevices.clear();
 			updatePairListVisible();
@@ -635,15 +670,18 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	}
 
 	@Override
-	public void updateTextTipShow(boolean conn) {
+	public void updateTextTipShow(int conn) {
 		if (!isAdded()) {
 			LogUtil.e(TAG, "java.lang.IllegalStateException: Fragment not attached to Activity");
 			return;
 		}
-		if (conn) {
+
+		if (conn == -1) {
 			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_carplay_text));
-		} else {
+		} else if (conn == 0) {
 			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_text));
+		} else if (conn == -2) {
+			mTextEnable.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
 		}
 	}
 

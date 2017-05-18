@@ -44,12 +44,35 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
-		case MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS:
+		case MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS:
 			boolean conn = mBluetoothSettingModel.getCarplayConnectstatus();
-			mIBluetoothSettingView.updateTextTipShow(conn);
+			int status = mBluetoothSettingModel.getBTEnableStatus();
+			if (conn) {
+				status = -1;
+			}
+			mIBluetoothSettingView.updateTextTipShow(status);
+			mIBluetoothSettingView.updateBtEnable(status);
+			break;
+		case MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS:
+			conn = mBluetoothSettingModel.getCarLifeConnectstatus();
+			status = mBluetoothSettingModel.getBTEnableStatus();
+			if (conn) {
+				status = -2;
+			}
+			mIBluetoothSettingView.updateTextTipShow(status);
+			LogUtil.i(TAG, "ACTION_SETTING_GET_CARLIFE_STATUS " + status);
+			mIBluetoothSettingView.updateBtEnable(status);
 			break;
 		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE:
 			int enableStatus = inMessage.getData().getInt("enableStatus");
+			
+			boolean carlifeStatus = mBluetoothSettingModel.getCarLifeConnectstatus();
+			if (carlifeStatus) {
+				enableStatus = -2;
+			} else if (mBluetoothSettingModel.getCarplayConnectstatus()) {
+				enableStatus = -1;
+			}
+			LogUtil.i(TAG, "ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE " + enableStatus);
 			mIBluetoothSettingView.updateBtEnable(enableStatus);
 			if (enableStatus == MangerConstant.BTPOWER_STATUS_ON) {
 				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
@@ -145,8 +168,8 @@ public class BluetoothSettingPresenter implements IObserver {
 	private void connectMoblie(final String address) {
 		int conn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL);
 		int a2dpConn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL);
-		
-		if (conn == MangerConstant.Anw_SUCCESS || a2dpConn  == MangerConstant.Anw_SUCCESS ) {
+
+		if (conn == MangerConstant.Anw_SUCCESS || a2dpConn == MangerConstant.Anw_SUCCESS) {
 			connAddress = address;
 			mBluetoothSettingModel.disconnectMoblie();
 			isConnect = true;
@@ -183,8 +206,16 @@ public class BluetoothSettingPresenter implements IObserver {
 		@SuppressLint("NewApi")
 		@Override
 		protected void onPostExecute(Integer result) {
+			boolean carlifeStatus = mBluetoothSettingModel.getCarLifeConnectstatus();
+			if (carlifeStatus) {
+				result = -2;
+			} else if (mBluetoothSettingModel.getCarplayConnectstatus()) {
+				result = -1;
+			}
+
 			LogUtil.i(TAG, "--- InitBTEnableTask enable = " + result);
 			mIBluetoothSettingView.updateBtEnable(result);
+
 			if (result == MangerConstant.BTPOWER_STATUS_ON) {
 				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);

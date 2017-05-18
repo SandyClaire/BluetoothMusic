@@ -8,10 +8,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -200,13 +198,21 @@ public class BluetoothMusicServcie extends Service {
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
+
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
-							IPodProxy.getInstance().notifyA2dpConnected(mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
+							IPodProxy.getInstance().notifyA2dpConnected(
+									mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
 						}
-
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
 								+ mBluetoothMusicModel.a2dpStatus);
+
+						if (mBluetoothMusicModel.isCarlifeConnected()) {
+							// 通知界面不显示
+//							mBluetoothMusicModel.updateCLConnectStatus();
+							return;
+						}
+
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
 						// getPlayStatus(a2dpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
@@ -214,7 +220,6 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.avrcpStatus = mBundle.getInt("Value");
 						LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
 								+ mBluetoothMusicModel.avrcpStatus);
-
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 					}
 				}
@@ -396,18 +401,17 @@ public class BluetoothMusicServcie extends Service {
 		Soc soc = new Soc();
 		UsbDevices usbDevices = soc.getCurrentDevice();
 		LogUtil.i("BluetoothMusicModel", " autoConnA2dp usbDevices = " + usbDevices.toString());
-		if (usbDevices.equals(UsbDevices.IPOD)) {
-
-			try {
-				LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
-//				if (mBluetoothMusicModel.isCurrentInquiring()) {
-//					mBluetoothMusicModel.inquiryBtStop();
-//				}
-				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
-			} catch (RemoteException e) {
-			}
-
+		// if (usbDevices.equals(UsbDevices.IPOD)
+		// ||usbDevices.equals(UsbDevices.CARLIFE) ) {
+		try {
+			LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
+			// if (mBluetoothMusicModel.isCurrentInquiring()) {
+			// mBluetoothMusicModel.inquiryBtStop();
+			// }
+			mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
+		} catch (RemoteException e) {
 		}
+		// }
 	}
 
 	/**
@@ -576,12 +580,11 @@ public class BluetoothMusicServcie extends Service {
 	private void handleUsbDisconnectAction(int type) {
 		switch (type) {
 		case USB_CONNECTED_CARLIFE:
-			mBluetoothMusicModel.isCarLifeConnected = false;
 			mBluetoothMusicModel.updateCLConnectStatus();
+			autoConnA2dp();
 			LogUtil.i(TAG, "USB_DISCONNECTED_CARLIFE");
 			break;
 		case USB_CONNECTED_CARPLAY:
-			mBluetoothMusicModel.isCarPlayConnected = false;
 			mBluetoothMusicModel.updateCPConnectStatus();
 			LogUtil.i(TAG, "USB_DISCONNECTED_CARPLAY");
 			break;
@@ -594,7 +597,6 @@ public class BluetoothMusicServcie extends Service {
 			mBluetoothMusicModel.onUsbDisConnect();
 			break;
 		}
-		usbType = USB_CONNECTED_UNKNOW;
 	}
 
 	/**
@@ -605,32 +607,46 @@ public class BluetoothMusicServcie extends Service {
 
 		@Override
 		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+
 			switch (msg.what) {
 			case USB_CONNECTED_CARLIFE:
-				mBluetoothMusicModel.isCarLifeConnected = true;
-				mBluetoothMusicModel.updateCLConnectStatus();
-				usbType = USB_CONNECTED_CARLIFE;
+
 				LogUtil.i(TAG, "USB_CONNECTED_CARLIFE");
+				usbType = USB_CONNECTED_CARLIFE;
+				mBluetoothMusicModel.isCarLifeConnected = true;
+				mBluetoothMusicModel.isCarPlayConnected = false;
+				mBluetoothMusicModel.updateCLConnectStatus();
+
 				break;
 			case USB_CONNECTED_CARPLAY:
-				usbType = USB_CONNECTED_CARPLAY;
+
 				LogUtil.i(TAG, "USB_CONNECTED_CARPLAY");
+				usbType = USB_CONNECTED_CARPLAY;
 				mBluetoothMusicModel.isCarPlayConnected = true;
+				mBluetoothMusicModel.isCarLifeConnected = false;
 				mBluetoothMusicModel.updateCPConnectStatus();
 				break;
 			case USB_CONNECTED_IPOD:
-				usbType = USB_CONNECTED_IPOD;
+
 				LogUtil.i(TAG, "USB_CONNECTED_IPOD");
+				usbType = USB_CONNECTED_IPOD;
+				mBluetoothMusicModel.isCarLifeConnected = false;
+				mBluetoothMusicModel.isCarPlayConnected = false;
+
 				break;
 			case USB_CONNECTED_UNKNOW:
+				mBluetoothMusicModel.isCarLifeConnected = false;
+				mBluetoothMusicModel.isCarPlayConnected = false;
 				handleUsbDisconnectAction(usbType);
+				usbType = USB_CONNECTED_UNKNOW;
+
 				break;
 
 			default:
 				break;
 			}
 			disconnBTbyUsbConnectStatus(usbType);
-			super.handleMessage(msg);
 		}
 	};
 

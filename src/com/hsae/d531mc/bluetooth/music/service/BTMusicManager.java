@@ -166,6 +166,13 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		mBluetoothMusicModel.requestAudioFocus(false);
 		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
+	
+	public void playByVr() throws RemoteException {
+		mBluetoothMusicModel.isHandPuse = false;
+		mBluetoothMusicModel.tryToSwitchSource();
+		mBluetoothMusicModel.requestAudioFocus(false);
+		LogUtil.i(TAG, "------------- playByVr ");
+	}
 
 	@Override
 	public void playByName(String arg0) throws RemoteException {
