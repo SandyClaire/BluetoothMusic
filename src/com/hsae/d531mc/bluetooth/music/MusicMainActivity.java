@@ -1022,7 +1022,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (isNormalPrev) {
 			LogUtil.i(TAG, " --- prevup ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_PREV);
-			mHandler.removeMessages(LONG_CLICK_NEXT);
+			mHandler.removeMessages(LONG_CLICK_PREV);
 		}else{
 			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
 		}
