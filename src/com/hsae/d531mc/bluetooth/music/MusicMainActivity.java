@@ -118,10 +118,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private boolean isNormalNext = true;
 	private FrameLayout mFraInfo;
 	private FrameLayout mFraControl;
-	private int fastFowardMiles = 400;
 	RotateDrawable rDrawable;
-	// private ObjectAnimator anim;
-	// private AnimateListener updateListener;
 
 	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
@@ -137,13 +134,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				msgln.what = MusicActionDefine.ACTION_A2DP_FASTFORWORD;
 				MusicMainActivity.this.notify(msgln, FLAG_RUN_SYNC);
 				LogUtil.i(TAG, " --- next long press ---");
-				// if (fastFowardMiles > 70) {
-				// fastFowardMiles -= 40;
-				// }
-				// if (!isNormalNext) {
-				// mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT,
-				// fastFowardMiles);
-				// }
 				break;
 			case LONG_FAST_BACKWORD_CANCLE:
 				Message msgbc = Message.obtain();
@@ -167,13 +157,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				msglp.what = MusicActionDefine.ACTION_A2DP_REWIND;
 				MusicMainActivity.this.notify(msglp, FLAG_RUN_SYNC);
 				LogUtil.i(TAG, " --- prev long press ---");
-				// if (fastFowardMiles > 70) {
-				// fastFowardMiles -= 40;
-				// }
-				// if (!isNormalPrev) {
-				// mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV,
-				// fastFowardMiles);
-				// }
 				break;
 			case SHORT_CLICK_PREV:
 				LogUtil.i(TAG, " --- prev short press --- ");
@@ -1039,6 +1022,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (isNormalPrev) {
 			LogUtil.i(TAG, " --- prevup ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_PREV);
+			mHandler.removeMessages(LONG_CLICK_NEXT);
 		}else{
 			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
 		}
@@ -1083,6 +1067,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (isNormalNext) {
 			LogUtil.i(TAG, " --- nextUp ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
+			mHandler.removeMessages(LONG_CLICK_NEXT);
 		}else{
 			LogUtil.i(TAG, "LONG_CLICK_NEXT --- nextUp ");
 			mHandler.sendEmptyMessage(LONG_FAST_FORWORD_CANCLE);

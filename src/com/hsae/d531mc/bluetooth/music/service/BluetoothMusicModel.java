@@ -1182,10 +1182,15 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
+			
+			
+			LogUtil.i(TAG, "audioSetStreamMode : mode = " +mode);
 			if (soApp != App.BT_MUSIC) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
 			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
 			}
 		} catch (RemoteException e) {
 		}

@@ -705,29 +705,26 @@ public class BluetoothMusicServcie extends Service {
 
 		@Override
 		public void onScreenStateResponse(boolean power) {
-			// if (power) {
-			// Source source = new Source();
-			// if (source.getCurrentSource() == App.BT_MUSIC) {
-			// LogUtil.i(TAG,
-			// "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
-			// try {
-			// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-			// } catch (RemoteException e) {
-			// e.printStackTrace();
-			// }
-			// }
-			// } else {
-			// LogUtil.i(TAG,
-			// "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
-			// try {
-			// if (mBluetoothMusicModel.getStreamMode() !=
-			// MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-			// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-			// }
-			// } catch (RemoteException e) {
-			// e.printStackTrace();
-			// }
-			// }
+			if (power) {
+				Source source = new Source();
+				if (source.getCurrentSource() == App.BT_MUSIC) {
+					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
+					try {
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			} else {
+				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
+				try {
+					if (mBluetoothMusicModel.getStreamMode() != MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+					}
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
