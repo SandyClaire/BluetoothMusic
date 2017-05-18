@@ -16,6 +16,6 @@
     <dimen name="music_switch_pandding_right">35dp</dimen>
     <dimen name="music_switch_text_margin_left">20dp</dimen>
     <dimen name="music_switch_text_size">24dp</dimen>
-    <dimen name="bottom_bar_margin_left">64dp</dimen>
+    <dimen name="bottom_bar_margin_left">170dp</dimen>
     
 </resources>

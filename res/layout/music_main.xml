@@ -208,6 +208,21 @@
                      android:layout_marginLeft="@dimen/music_buttom_button_mergin"
                     android:background="@drawable/btn_music_shulle" />
             </LinearLayout>
+            
+            <LinearLayout
+                android:layout_width="@dimen/bottom_bar_margin_left"
+                android:layout_height="match_parent"
+                android:layout_gravity="bottom|left"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <Button
+                    android:id="@+id/btn_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/btn_home" />
+                
+            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 
