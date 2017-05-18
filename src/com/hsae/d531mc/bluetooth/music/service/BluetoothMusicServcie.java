@@ -76,6 +76,7 @@ public class BluetoothMusicServcie extends Service {
 
 	@Override
 	public void onDestroy() {
+		mBluetoothMusicModel.unbindService();
 		mContext.unregisterReceiver(mReceiver);
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
@@ -90,6 +91,7 @@ public class BluetoothMusicServcie extends Service {
 			if (strAction.equals(MangerConstant.MSG_ACTION_POWER_STATUS)) {
 				if (mBundle != null) {
 					boolean bPowerON = mBundle.getBoolean("Value");
+					LogUtil.i(TAG, "MSG_ACTION_POWER_STATUS ----- bPowerON = " + bPowerON);
 					if (bPowerON) {
 						mBluetoothMusicModel
 								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
@@ -137,7 +139,7 @@ public class BluetoothMusicServcie extends Service {
 					int nPlayStatus = mBundle.getInt("PlayStatus");
 					int nDataType = mBundle.getInt("DataType");
 
-					if (nDataType == 1)// meta data
+					if (nDataType == MangerConstant.Anw_SUCCESS)// meta data
 					{
 						int nId = mBundle.getInt("Attribute_id");
 						String strMetadata = mBundle.getString("MetaData");

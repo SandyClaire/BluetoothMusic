@@ -77,7 +77,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			String pairAddress = inMessage.getData().getString("pairAddress");
 			mIBluetoothSettingView.updateUnpairListByStatus(pairStatus,
 					pairAddress);
-			if (pairStatus == 1) {
+			if (pairStatus == MangerConstant.Anw_SUCCESS) {
 				List<BluetoothDevice> pairedList = mBluetoothSettingModel
 						.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
@@ -147,7 +147,7 @@ public class BluetoothSettingPresenter implements IObserver {
 	private void connectMoblie(final String address) {
 		int conn = mBluetoothSettingModel
 				.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL);
-		if (conn == 1) {
+		if (conn == MangerConstant.Anw_SUCCESS) {
 			connAddress = address;
 			mBluetoothSettingModel.disconnectMoblie();
 			isConnect = true;

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Message;
 
 import com.anwsdk.service.AudioControl;
+import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
@@ -35,9 +36,15 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
+		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
+			mIMusicModel.requestAudioFoucs();
+			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			mIMusicView.updateViewByConnectStatus(conStatus);
+			if (conStatus == MangerConstant.Anw_SUCCESS) {
+				initMusicModel();
+			}
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
 			boolean playStatus = inMessage.getData().getBoolean("playStatus");
@@ -104,7 +111,6 @@ public class MusicPersenter implements IObserver {
 			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, sallowlist,
 					sCurrentMode);
 			break;
-
 		default:
 			break;
 		}
@@ -115,7 +121,7 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicView).attach(this);
 		int status = mIMusicModel.getA2DPConnectStatus();
 		mIMusicView.updateViewByConnectStatus(status);
-		if (status == 1) {
+		if (status == MangerConstant.Anw_SUCCESS) {
 			int playStatus = mIMusicModel.playStatus();
 			LogUtil.i(TAG, "init ---- playStatus = " + playStatus);
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
@@ -131,7 +137,6 @@ public class MusicPersenter implements IObserver {
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 //			mIMusicView.updatePlayBtnByStatus(playStatus);
 		}
-		mIMusicModel.requestAudioFoucs();
 		initMusicModel();
 	}
 

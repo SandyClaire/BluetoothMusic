@@ -208,14 +208,14 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onResume() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
+		this.notify(msg, FLAG_RUN_SYNC);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-//		Message msg = Message.obtain();
-//		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
-//		this.notify(msg, FLAG_RUN_SYNC);
 		super.onPause();
 	}
 
@@ -238,6 +238,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onStop() {
+		
+		super.onStop();
+	}
+	
+	public void finishActivity(){
 		if (mMusicHandler != null)
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		Message msg = Message.obtain();
@@ -245,7 +250,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 		this.detach(mPresenter);
 		this.finish();
-		super.onStop();
 	}
 
 	@Override
@@ -320,6 +324,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);
 			startActivity(intent);
+			finishActivity();
 			break;
 		default:
 			break;

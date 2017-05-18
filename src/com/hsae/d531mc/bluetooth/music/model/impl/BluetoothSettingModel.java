@@ -326,7 +326,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		String name = "";
 		try {
 			name = mBluetoothModel.getDeviceName();
-			Log.e("wangda", "------- local name = " + name);
+			LogUtil.e(TAG, "------- local name = " + name);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -339,8 +339,6 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		try {
 			backCode = mBluetoothModel.getConnectStatus(profile, 0);
 		} catch (RemoteException e) {
-			Log.i(TAG, "--- GetConnectStatus --- RemoteException: "
-					+ e.toString());
 			e.printStackTrace();
 		}
 		return backCode;

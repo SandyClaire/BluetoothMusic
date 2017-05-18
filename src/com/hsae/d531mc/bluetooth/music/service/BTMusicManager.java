@@ -156,7 +156,6 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	private static final int SEEKDOWN_PREV = 0x02;
 	private static final int SEEKUP_FORWARD = 0x03;
 	private static final int SEEKDOWN_BACKWARD = 0x04;
-	
 	private static final int KEY_DOWN = 0x07;
 	
 	private boolean mIsLongPress = false;
@@ -268,7 +267,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	        intent.setPackage("com.hsae.d531mc.bluetooth.music");
 	        intent.setClassName(mContext, "com.hsae.d531mc.bluetooth.music.MusicMainActivity");
 	        mContext.startActivity(intent);
-	        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+//	        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 			LogUtil.i(TAG, "------------- show " );
 	}
 

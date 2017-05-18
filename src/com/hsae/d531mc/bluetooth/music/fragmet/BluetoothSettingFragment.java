@@ -388,7 +388,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	public void updateUnpairListByStatus(int status, String address) {
 		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
 				+ "-- address = " + address);
-		if (status == 1) {
+		if (status == MangerConstant.Anw_SUCCESS) {
 			for (int i = 0; i < mListVisibleDevices.size(); i++) {
 				if (mListVisibleDevices.get(i).getAddress().equals(address)) {
 					mListVisibleDevices.remove(i);
@@ -566,7 +566,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			mLinVis.setVisibility(View.VISIBLE);
 			mTextEnable.setVisibility(View.GONE);
 			mListVisible.setVisibility(View.VISIBLE);
-			mBtnSearch.setEnabled(true);
+			mBtnSearch.setVisibility(View.VISIBLE);
 		}else {
 			mListPairedDevices.clear();
 			mListVisibleDevices.clear();
@@ -574,7 +574,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			mTextEnable.setVisibility(View.VISIBLE);
 			mListVisible.setVisibility(View.GONE);
 			updatePairListVisible();
-			mBtnSearch.setEnabled(false);
+			mBtnSearch.setVisibility(View.INVISIBLE);
 		}
 	}
 

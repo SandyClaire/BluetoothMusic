@@ -131,12 +131,14 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			bundle.putInt("band", 0x01);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
+			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_fm:
 			updateSelectedShow(2);
 			bundle.putInt("band", 0x03);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
+			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_ipod:
 			updateSelectedShow(3);
@@ -148,6 +150,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 					+ isUsbConnected() + " ,  !isIpodConnected == "
 					+ !isIpodConnected());
 			startOtherAPP(app, strPackage, strClass, bundle);
+			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(0);

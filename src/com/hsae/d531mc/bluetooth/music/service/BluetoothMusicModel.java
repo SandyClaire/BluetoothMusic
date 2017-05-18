@@ -951,7 +951,7 @@ public class BluetoothMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-        if (connStatus == 1) {
+        if (connStatus == MangerConstant.Anw_SUCCESS) {
         	if (mBean != null) {
         		BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
         				mBean.getAlbum(), null);
