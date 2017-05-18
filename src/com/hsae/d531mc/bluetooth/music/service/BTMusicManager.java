@@ -16,6 +16,8 @@ import com.hsae.autosdk.hmi.HmiConst;
 
 public class BTMusicManager extends IBTMusicManager.Stub{
 	
+	private static final String TAG = "BTMusicManager";
+	
 	private Context mContext;
 	private static BTMusicManager mManager;
 	private BluetoothMusicModel mBluetoothMusicModel;
@@ -112,7 +114,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 			int hmiIndex = keyEventDispatcher(arg0);
 			msg.what = hmiIndex;
 			mHandler.sendMessage(msg);
-			Log.e("wangda", "------------- msg.what " + msg.what);
+			Log.i("TAG", "------------- KEY UP info = " + msg.what);
 		}
 	}
 	
@@ -163,6 +165,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
+				Log.i("TAG", "------------- SEEKUP_NEXT = " + msg.what);
 				break;
 			case SEEKDOWN_PREV:
 				try {
@@ -170,6 +173,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
+				Log.i("TAG", "------------- SEEKDOWN_PREV = " + msg.what);
 				break;
 			case SEEKUP_FORWARD:
 				try {
@@ -177,6 +181,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
+				Log.i("TAG", "------------- SEEKUP_FORWARD = " + msg.what);
 				break;
 			case SEEKDOWN_BACKWARD:
 				try {
@@ -184,6 +189,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
+				Log.i("TAG", "------------- SEEKDOWN_BACKWARD = " + msg.what);
 				break;
 			case KEY_DOWN:
 				mIsLongPress = true;
@@ -197,12 +203,14 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+		Log.i("TAG", "------------- PAUSE " );
 	}
 
 	@Override
 	public void play() throws RemoteException {
 		mBluetoothMusicModel.requestAudioFocus();
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+		Log.i("TAG", "------------- PLAY " );
 	}
 
 	@Override

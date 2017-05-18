@@ -501,24 +501,41 @@ public class BluetoothMusicModel {
 		mIMusicModel = nMusicModel;
 	}
 	
+	/**
+	 * 更新链接状态
+	 * @param status
+	 */
 	public void updateMsgByConnectStatusChange(int status) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateConnectStatusMsg(status);
 		}
 	}
 	
+	/**
+	 * 跟新播放状态
+	 * @param flag
+	 */
 	public void updatePlayStatus(boolean flag) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updatePlayOrPauseStatus(flag);
 		}
 	}
 	
+	/**
+	 * 更新当前音乐信息
+	 * @param bean
+	 */
 	public void updateCurrentMusicInfo(MusicBean bean) {
 		if (null != mIMusicModel) {
 			mIMusicModel.getCurrentMusicBean(bean);
 		}
 	}
 	
+	/**
+	 * 更新播放进度时间
+	 * @param position
+	 * @param isPlaying
+	 */
 	public void updateCurrentPlayTime(String position , boolean isPlaying) {
 		if (null != mIMusicModel) {
 			mIMusicModel.getCurrentMusicPlayPosition(position,isPlaying);
