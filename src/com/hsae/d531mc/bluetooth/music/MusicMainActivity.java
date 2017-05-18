@@ -374,8 +374,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	protected void onStop() {
-		pauseAnim();
 		super.onStop();
+		pauseAnim();
 	}
 
 	public void finishActivity() {

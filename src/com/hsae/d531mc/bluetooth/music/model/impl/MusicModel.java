@@ -12,6 +12,8 @@ import android.os.RemoteException;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
@@ -93,12 +95,12 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
-	
+
 	@Override
 	public void setAVRCPControl(int command, int isRelease) {
 		try {
-			LogUtil.i(TAG, "AVRCPControlEx: command = "+command +" , isRelease = "+isRelease);
-			mBluetoothMusicModel.AVRCPControlEx(command,isRelease);
+			LogUtil.i(TAG, "AVRCPControlEx: command = " + command + " , isRelease = " + isRelease);
+			mBluetoothMusicModel.AVRCPControlEx(command, isRelease);
 		} catch (RemoteException e) {
 		}
 	}
@@ -252,7 +254,10 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void sendActivityPauseMsg() {
-		mBluetoothMusicModel.mainAudioChanged(false);
+		Source source = new Source();
+		if (source.getCurrentSource() == App.BT_MUSIC) {
+			mBluetoothMusicModel.mainAudioChanged(false);
+		}
 	}
 
 	@Override
@@ -331,7 +336,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void removeAutoPlay() {
-		if (mBluetoothMusicModel!=null) {
+		if (mBluetoothMusicModel != null) {
 			mBluetoothMusicModel.removeAutoPlay();
 		}
 	}

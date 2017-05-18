@@ -543,11 +543,11 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-//		if (!isAudioFocused) {
-//			LogUtil.i(TAG, "未获得焦点、无法操作蓝牙音乐");
-//			return -999;
-//		}
-//		
+		// if (!isAudioFocused) {
+		// LogUtil.i(TAG, "未获得焦点、无法操作蓝牙音乐");
+		// return -999;
+		// }
+		//
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
 			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -1220,10 +1220,10 @@ public class BluetoothMusicModel {
 	 * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
 	 * @param isChanged
 	 */
-	public void mainAudioChanged(boolean isBack) {
-		LogUtil.i(TAG, "requestAudioSource == " + isBack);
+	public void mainAudioChanged(boolean isActivite) {
 		Source source = new Source();
-		source.mainAudioChanged(App.BT_MUSIC, isBack);
+		LogUtil.i(TAG, "mainAudioChanged == " + source.getCurrentSource() +"isActivite = "+isActivite);
+		source.mainAudioChanged(App.BT_MUSIC, isActivite);
 	}
 
 	/**
@@ -1279,7 +1279,7 @@ public class BluetoothMusicModel {
 	int playtimes = 0;
 
 	/** 获取Android音频焦点 */
-	public synchronized void requestAudioFocus(boolean flag) {
+	public void requestAudioFocus(boolean flag) {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
 
@@ -1295,8 +1295,8 @@ public class BluetoothMusicModel {
 					}
 				}
 			} else {
-				LogUtil.i("cruze", "准备抢占焦点");
 				if (!isAudioFocused) {
+					LogUtil.i("cruze", "准备抢占焦点");
 					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
 							AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
@@ -1420,12 +1420,9 @@ public class BluetoothMusicModel {
 			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
 					+ isHandPuse);
 			try {
-				if (isHandPuse) {
-					return;
-				}
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if (!isPlay && !isPauseByCall) {
+					if (!isPlay && !isPauseByCall && !isHandPuse) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
