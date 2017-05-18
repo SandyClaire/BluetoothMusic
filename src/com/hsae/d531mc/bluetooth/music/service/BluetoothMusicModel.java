@@ -1186,9 +1186,9 @@ public class BluetoothMusicModel {
 		Source source = new Source();
 		AutoSettings mAutoSettings = AutoSettings.getInstance();
 		try {
-			if (source.getCurrentSource() != App.BT_MUSIC ||
-					mAutoSettings.isDiagnoseMode()||
-					!mAutoSettings.getPowerState()) {
+//			 source.getCurrentSource() != App.BT_MUSIC || 
+			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + source.getCurrentSource());
+			if (mAutoSettings.isDiagnoseMode()||!mAutoSettings.getPowerState()) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 			}
 		} catch (RemoteException e) {
@@ -1387,6 +1387,7 @@ public class BluetoothMusicModel {
 				}
 			} else {
 				try {
+					LogUtil.i(TAG, "audioSetStreamMode : isAudioFocused" +isAudioFocused);
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 					AVRCPControl(AudioControl.CONTROL_PAUSE);
 				} catch (RemoteException e) {
