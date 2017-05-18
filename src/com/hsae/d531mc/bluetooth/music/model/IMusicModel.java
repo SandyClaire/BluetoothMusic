@@ -100,9 +100,20 @@ public interface IMusicModel {
 	 */
 	public void updataPlayerModel(int nAttrID , int nAttrValue);
 	
+	/**
+	 * 获取播放模式集合
+	 * @param nAttrID
+	 * @param nAllowArray
+	 * @param nArraySize
+	 * @return
+	 */
 	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
 			int nArraySize);
-	
+	/**
+	 * 获取当前模式
+	 * @param nAttrID
+	 * @return
+	 */
 	public int retrieveCurrentPlayerAPSetting(int nAttrID);
 	
 }

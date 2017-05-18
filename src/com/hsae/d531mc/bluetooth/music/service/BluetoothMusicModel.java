@@ -15,6 +15,7 @@ import android.util.Log;
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
@@ -36,6 +37,7 @@ public class BluetoothMusicModel {
 	private int nPowerStatus = MangerConstant.BTPOWER_STATUS_OFF;
 	private static ShowLog mLog;
 	private IMusicModel mIMusicModel;
+	private BTMusicManager mBTMmanager;
 	private static final int errorCode = -1;
 
 	public static BluetoothMusicModel getInstance(Context context) {
@@ -44,6 +46,7 @@ public class BluetoothMusicModel {
 			mInstance = new BluetoothMusicModel();
 		}
 		mLog = new ShowLog();
+		
 		return mInstance;
 	}
 
@@ -623,6 +626,19 @@ public class BluetoothMusicModel {
 		}
 	}
     
+    private void notifyAutroMusicInfo(BTMusicInfo info) {
+    	if (null == mBTMmanager) {
+    		mBTMmanager = BTMusicManager.getInstance(mContext);
+		}
+		try {
+			if (mBTMmanager.mListener != null) {
+				mBTMmanager.mListener.syncBtMusicInfo(info);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+    
     /**
      * 音源焦点变化监听
      */
@@ -648,14 +664,17 @@ public class BluetoothMusicModel {
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
             	isAudioFocused = false;
+            	notifyAutroMusicInfo(null);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
             	isAudioFocused = false;
+            	notifyAutroMusicInfo(null);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
             	isAudioFocused = false;
+            	notifyAutroMusicInfo(null);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                 break;
             }

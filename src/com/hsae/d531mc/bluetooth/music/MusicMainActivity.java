@@ -12,9 +12,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -113,6 +115,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnRepeat.setOnClickListener(this);
 		mBtnShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
+		mDrawerLayout.setOnTouchListener(touchListener);
 
 		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
 
@@ -138,6 +141,23 @@ public class MusicMainActivity extends Activity implements ISubject,
 		isfirst = true;
 	}
 	
+	private OnTouchListener touchListener = new OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			// TODO Auto-generated method stub
+			if(event.getAction() == MotionEvent.ACTION_UP){
+				float x = event.getX();
+				float y = event.getY();
+				if(0<x && x<170 && 610<y && y<720){
+					mBtnHome.performClick();
+				}
+			}
+			return false;
+		}
+	};
+
+	
 	@Override
 	protected void onResume() {
 		Message msg = Message.obtain();
@@ -153,6 +173,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 			isfirst = false;
 		}
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
+	}
+	
+	public void closeMusicSwitch() {
+		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
 
 	@Override

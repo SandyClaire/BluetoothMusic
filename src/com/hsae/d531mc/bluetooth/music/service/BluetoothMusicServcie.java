@@ -172,7 +172,6 @@ public class BluetoothMusicServcie extends Service {
 						}
 					} else {
 						isplaying = false;
-						notifyAutroMusicInfo(null);
 					}
 					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					Log.i(TAG,

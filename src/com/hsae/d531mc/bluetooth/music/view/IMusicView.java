@@ -57,13 +57,13 @@ public interface IMusicView {
 	public void UpdatePlayerModeSetting(int nAttrID,int nAttrValue); 
 	
 	/**
-	 * 更新随机播放模式
+	 * 主动获取随机播放模式
 	 * @param allowList
 	 */
 	public void updateShuffleAllowArray(int[] AllowArray , int num);
 	
 	/**
-	 * 更新顺序播放模式
+	 * 主动获取顺序播放模式
 	 * @param allowList
 	 */
 	public void updateRepeatAllowArray(int[] AllowArray , int num);

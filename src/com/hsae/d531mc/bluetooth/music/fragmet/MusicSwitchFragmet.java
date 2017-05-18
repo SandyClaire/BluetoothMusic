@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.hsae.autosdk.ipod.IPodProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
+import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.R;
 
 /**
@@ -42,6 +44,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private TextView mTextUSB;
 	private TextView mTextSpite;
 	private Context mContext;
+	private Button mBtnClose;
 	private static MusicSwitchFragmet fragment;
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
 	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
@@ -94,6 +97,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		mTextBT = (TextView) mView.findViewById(R.id.text_switch_bluetooth);
 		mTextUSB = (TextView) mView.findViewById(R.id.text_switch_usb);
 		mTextSpite = (TextView) mView.findViewById(R.id.text_switch_spite);
+		mBtnClose = (Button) mView.findViewById(R.id.btn_close_switch);
+		mBtnClose.setOnClickListener(this);
 		mLinAM.setOnClickListener(this);
 		mLinFM.setOnClickListener(this);
 		mLinIpod.setOnClickListener(this);
@@ -133,7 +138,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(0);
 			break;
-
+		case R.id.btn_close_switch:
+			((MusicMainActivity)getActivity()).closeMusicSwitch();
+			break;
 		default:
 			break;
 		}
