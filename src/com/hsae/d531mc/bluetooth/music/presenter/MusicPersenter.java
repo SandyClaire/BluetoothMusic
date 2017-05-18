@@ -49,6 +49,10 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
 			boolean playStatus = inMessage.getData().getBoolean("playStatus");
 			mIMusicView.updatePlayBtnByStatus(playStatus);
+//			LogUtil.i("wangda", "MusicPersenter --- updatePlayBtnByStatus = " + playStatus);
+			break;
+		case MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH:
+			mIMusicView.finishMusicActivity();
 			break;
 		case MusicActionDefine.ACTION_A2DP_PREV:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_BACKWARD);

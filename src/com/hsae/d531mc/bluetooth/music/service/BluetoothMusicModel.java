@@ -804,6 +804,12 @@ public class BluetoothMusicModel {
 		}
 	}
 	
+	public void finishActivity(){
+		if (null != mIMusicModel) {
+			mIMusicModel.finishMusicActivity();
+		}
+	}
+	
 	/**
 	 * 跟新播放状态
 	 * @param flag
@@ -811,6 +817,8 @@ public class BluetoothMusicModel {
 	public void updatePlayStatus(boolean flag) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updatePlayOrPauseStatus(flag);
+			LogUtil.i("wangda",
+					"updatePlayStatus -- flag = " + flag);
 		}
 	}
 	

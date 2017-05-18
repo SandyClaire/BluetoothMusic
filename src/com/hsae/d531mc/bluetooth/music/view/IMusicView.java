@@ -67,5 +67,10 @@ public interface IMusicView {
 	 * @param allowList
 	 */
 	public void updateRepeatAllowArray(int[] AllowArray , int num);
+	
+	/**
+	 * finish Music Activity
+	 */
+	public void finishMusicActivity();
 
 }

@@ -39,6 +39,7 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT = 52;
     
     static public final int ACTION_A2DP_ACTIVITY_PAUSE = 60;
+    static public final int ACTION_A2DP_ACTIVITY_FINISH = 61;
     
     
     // settings page

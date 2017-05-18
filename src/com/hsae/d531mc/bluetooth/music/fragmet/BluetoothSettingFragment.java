@@ -145,11 +145,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private void updateSearchBtnShow(boolean flag) {
 		if (flag) {
 			isSearching = true;
-			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);;
+			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);
 			mProSearch.setVisibility(View.VISIBLE);
 		} else {
 			isSearching = false;
-			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);;
+			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
 			mProSearch.setVisibility(View.INVISIBLE);
 		}
 	}

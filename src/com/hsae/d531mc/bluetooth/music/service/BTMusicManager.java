@@ -89,9 +89,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 
 	@Override
 	public void hide() throws RemoteException {
-//		Intent intent = new Intent();
-//		intent.setAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
-//		mContext.sendBroadcast(intent);
+		mBluetoothMusicModel.finishActivity();
 		LogUtil.e(TAG , "------------------ hide");
 	}
 

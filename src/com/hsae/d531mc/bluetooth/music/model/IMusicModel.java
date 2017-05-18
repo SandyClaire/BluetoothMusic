@@ -128,4 +128,9 @@ public interface IMusicModel {
 	 */
 	public void setDeviceVol(boolean flag, int vol);
 	
+	/**
+	 * finish music activity
+	 */
+	public void finishMusicActivity();
+	
 }

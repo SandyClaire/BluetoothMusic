@@ -15,7 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -330,12 +330,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 			break;
 		}
 	}
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			finishActivity();
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 
 	@Override
 	public void updateViewByConnectStatus(int status) {
 		if (status == 0) {
-			// Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
-			// .show();
 			updateViewShow(false);
 			mTextTitle.setText(getResources().getString(
 					R.string.music_bluetooth_disconnect));
@@ -354,8 +360,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 		} else if (status == 1) {
-			// Toast.makeText(this, "connected A2DP",
-			// Toast.LENGTH_SHORT).show();
 			updateViewShow(true);
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
@@ -378,7 +382,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void updatePlayBtnByStatus(boolean flag) {
-		LogUtil.i(TAG, "Bluetooth A2DP updatePlayBtnByStatus -- flag = " + flag);
+		LogUtil.i(TAG, "Activity updatePlayBtnByStatus -- flag = " + flag);
 		if (flag) {
 			ismPlaying = true;
 			mBtnPlay.setBackground(getResources().getDrawable(
@@ -394,7 +398,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateMusicDataInfo(MusicBean bean, boolean isSupport) {
 		isSupportMetadata = isSupport;
-		LogUtil.i(TAG, "Bluetooth A2DP updateMusicDataInfo -- isSupport = "
+		LogUtil.i(TAG, "Activity updateMusicDataInfo -- isSupport = "
 				+ isSupport);
 		if (isSupport && null != bean) {
 			mTextTitle.setText(bean.getTitle());
@@ -503,20 +507,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
+		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
 		if (isPlaying && (mMusicHandler != null)) {
-			Log.i("wangda", "updateMusicPlayCurrentTime");
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
 		}
-		if (isPlaying) {
-			ismPlaying = true;
-			mBtnPlay.setBackground(getResources().getDrawable(
-					R.drawable.btn_music_pause));
-		} else {
-			ismPlaying = false;
+		if (!isPlaying) {
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setBackground(getResources().getDrawable(
-					R.drawable.btn_music_play));
 		}
 	}
 
@@ -626,6 +623,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		} else {
 			mBtnRepeat.setVisibility(View.VISIBLE);
 		}
+	}
+
+	@Override
+	public void finishMusicActivity() {
+		finishActivity();
 	}
 
 	// private BroadcastReceiver mReceiver = new BroadcastReceiver() {

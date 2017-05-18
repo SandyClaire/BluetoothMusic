@@ -91,7 +91,8 @@ public class BluetoothMusicServcie extends Service {
 			if (strAction.equals(MangerConstant.MSG_ACTION_POWER_STATUS)) {
 				if (mBundle != null) {
 					boolean bPowerON = mBundle.getBoolean("Value");
-					LogUtil.i(TAG, "MSG_ACTION_POWER_STATUS ----- bPowerON = " + bPowerON);
+					LogUtil.i(TAG, "MSG_ACTION_POWER_STATUS ----- bPowerON = "
+							+ bPowerON);
 					if (bPowerON) {
 						mBluetoothMusicModel
 								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
@@ -189,7 +190,7 @@ public class BluetoothMusicServcie extends Service {
 							mBluetoothMusicModel.updateCurrentPlayTime(
 									mTimePosition, isplaying);
 							LogUtil.i(TAG,
-									"MSG_ACTION_A2DP_PLAYSTATUS -- mPosition = "
+									"updateCurrentPlayTime -- mPosition = "
 											+ mTimePosition);
 						}
 					} else {
@@ -197,7 +198,8 @@ public class BluetoothMusicServcie extends Service {
 					}
 					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					getAudioSource();
-					LogUtil.i(TAG,"--MSG_ACTION_A2DP_PLAYSTATUS--nPlayStatus = "
+					LogUtil.i(TAG,
+							"--MSG_ACTION_A2DP_PLAYSTATUS--nPlayStatus = "
 									+ nPlayStatus);
 				}
 			} else if (strAction
@@ -223,6 +225,10 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
+						isplaying = true;
+						mBluetoothMusicModel.updatePlayStatus(true);
+						mBluetoothMusicModel.updateCurrentPlayTime(
+								mTimePosition, isplaying);
 						break;
 					}
 				}
@@ -244,14 +250,14 @@ public class BluetoothMusicServcie extends Service {
 					switch (nAttrID) {
 					case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
 						mBluetoothMusicModel.updateRepeatModel(AllowList);
-						LogUtil.i("wangda",
+						LogUtil.i(TAG,
 								"PLAYER_ATTRIBUTE_REPEAT AllowList size = "
 										+ AllowList.size());
 
 						break;
 					case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
 						mBluetoothMusicModel.updateShuffleModel(AllowList);
-						LogUtil.i("wangda",
+						LogUtil.i(TAG,
 								"PLAYER_ATTRIBUTE_SHUFFLE AllowList size = "
 										+ AllowList.size());
 						break;

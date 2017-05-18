@@ -89,7 +89,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", flag);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "--- updatePlayOrPauseStatus = " + flag);
+		LogUtil.i(TAG, "--- ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE = " + flag);
 	}
 
 	@Override
@@ -238,6 +238,13 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void finishMusicActivity() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH;
+		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
 }
