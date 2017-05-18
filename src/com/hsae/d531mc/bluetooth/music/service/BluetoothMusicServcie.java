@@ -148,9 +148,7 @@ public class BluetoothMusicServcie extends Service {
 						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum,
 								mTotalTIme);
 						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
-						BTMusicInfo info = new BTMusicInfo(mTitle, mAtrist,
-								mAlbum, null);
-						notifyAutroMusicInfo(info);
+						
 						Log.i(TAG, "-- nPlayStatus = " + nPlayStatus
 								+ " --- mTitle = " + mTitle + " --- mAtrist = "
 								+ mAtrist + " --- mTotalTIme = " + mTotalTIme);
@@ -232,14 +230,5 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
-	private void notifyAutroMusicInfo(BTMusicInfo info) {
-		try {
-			if (mBTMmanager.mListener != null) {
-				mBTMmanager.mListener.syncBtMusicInfo(info);
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-	}
 
 }

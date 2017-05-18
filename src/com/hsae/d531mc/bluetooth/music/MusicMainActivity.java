@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
@@ -49,6 +50,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private MusicPersenter mPresenter;
 
 	private Button mBtnMusicSwith;
+//	private Button mBtnSettings;
 	private Button mBtnPrev;
 	private Button mBtnPlay;
 	private Button mBtnNext;
@@ -73,6 +75,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		//透明状态栏  
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);  
+        //透明导航栏  
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 		setContentView(R.layout.music_main);
 		initView();
 		initMvp();
@@ -87,9 +93,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
-
 	private void initView() {
-		mBtnMusicSwith = (Button) findViewById(R.id.btn_bt_settings);
+		mBtnMusicSwith = (Button) findViewById(R.id.btn_source_settings);
+//		mBtnSettings = (Button) findViewById(R.id.btn_bt_settings);
 		mBtnPrev = (Button) findViewById(R.id.btn_prev);
 		mBtnPlay = (Button) findViewById(R.id.btn_play);
 		mBtnNext = (Button) findViewById(R.id.btn_next);
@@ -115,6 +121,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnRepeat.setOnClickListener(this);
 		mBtnShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
+//		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
 
 		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
@@ -214,9 +221,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void onClick(View v) {
 		
 		switch (v.getId()) {
-		case R.id.btn_bt_settings:
+		case R.id.btn_source_settings:
 			showFram();
 			break;
+//		case R.id.btn_bt_settings:
+//			showFram();
+//			break;
 		case R.id.btn_prev:
 			Message msgp = Message.obtain();
 			msgp.what = MusicActionDefine.ACTION_A2DP_PREV;
@@ -240,7 +250,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			Message msgr = Message.obtain();
 			msgr.what = MusicActionDefine.ACTION_A2DP_REPEAT_MODEL;
 			Bundle rBundle = new Bundle();
-			rBundle.putInt("currentRepeatModel", m_RepeatMode);
+			rBundle.putInt("currentRepeatModel", mRepeatMode);
 			rBundle.putIntegerArrayList("repeatList", mRepeatAllowedlist);
 			msgr.setData(rBundle);
 			this.notify(msgr, FLAG_RUN_MAIN_THREAD);
@@ -249,7 +259,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			Message msgs = Message.obtain();
 			msgs.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL;
 			Bundle sBundle = new Bundle();
-			sBundle.putInt("currentShuffleModel", m_ShuffleMode);
+			sBundle.putInt("currentShuffleModel", mShuffleMode);
 			sBundle.putIntegerArrayList("shuffleList", mShuffleAllowedlist);
 			msgs.setData(sBundle);
 			this.notify(msgs, FLAG_RUN_MAIN_THREAD);
@@ -473,8 +483,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 	}
 	
-	int m_ShuffleMode =AudioControl.PLAYER_SHUFFLE_OFF;
-	int m_RepeatMode =AudioControl.PLAYER_REPEAT_MODE_OFF;
+	int mShuffleMode =AudioControl.PLAYER_SHUFFLE_OFF;
+	int mRepeatMode =AudioControl.PLAYER_REPEAT_MODE_OFF;
 
 	@Override
 	public void UpdatePlayerModeSetting(int nAttrID, int nAttrValue) {
@@ -482,9 +492,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		{
 	
 		case AudioControl.PLAYER_ATTRIBUTE_REPEAT://2
-			if(m_RepeatMode != nAttrValue)
+			if(mRepeatMode != nAttrValue)
 			{
-				m_RepeatMode = nAttrValue ;
+				mRepeatMode = nAttrValue ;
 				switch(nAttrValue)
 				{
 				case AudioControl.PLAYER_REPEAT_MODE_OFF:
@@ -504,9 +514,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 			break;
 		case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE://3
 			
-			if(m_ShuffleMode != nAttrValue)
+			if(mShuffleMode != nAttrValue)
 			{
-				m_ShuffleMode = nAttrValue;
+				mShuffleMode = nAttrValue;
 				switch(nAttrValue)
 				{
 				case AudioControl.PLAYER_SHUFFLE_OFF:

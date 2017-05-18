@@ -514,6 +514,9 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateConnectStatusMsg(status);
 		}
+		if (status != 1) {
+			notifyAutroMusicInfo(null);
+		}
 	}
 	
 	/**
@@ -526,12 +529,15 @@ public class BluetoothMusicModel {
 		}
 	}
 	
+	private MusicBean mBean;
+	
 	/**
 	 * 更新当前音乐信息
 	 * @param bean
 	 */
 	public void updateCurrentMusicInfo(MusicBean bean) {
 		if (null != mIMusicModel) {
+			mBean = bean;
 			mIMusicModel.getCurrentMusicBean(bean);
 		}
 	}
@@ -604,6 +610,15 @@ public class BluetoothMusicModel {
             Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;
             mainAudioChanged(isAudioFocused);
+            if (mBean != null) {
+            	BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
+            			mBean.getAlbum(), null);
+            	notifyAutroMusicInfo(info);
+			} else {
+				BTMusicInfo info = new BTMusicInfo("", "",
+            			"", null);
+            	notifyAutroMusicInfo(info);
+			}
         } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
             Log.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");
             isAudioFocused = false;
