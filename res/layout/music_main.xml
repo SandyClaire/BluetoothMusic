@@ -24,10 +24,9 @@
 
                 <Button
                     android:id="@+id/btn_bt_settings"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="音频切换"
-                    android:textSize="20dp" />
+                    android:background="@drawable/btn_bluetoothswitch"/>
             </LinearLayout>
 
             <LinearLayout
