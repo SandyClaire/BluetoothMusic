@@ -3,20 +3,16 @@ package com.hsae.d531mc.bluetooth.music;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
-import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RotateDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -29,6 +25,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -44,6 +42,7 @@ import com.hsae.d531mc.bluetooth.music.observer.IObserver;
 import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
+import com.hsae.d531mc.bluetooth.music.util.AnimateListener;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.util.MySeekBar;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
@@ -61,7 +60,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	private ImageView mBtnMusicSwith;
 	private ImageView mBtnSettings;
-	private ImageView mCover;
+	private ImageView ivAlbumCut;
+	private Animation operatingAnim;
+	// private ImageView mCover;
 	private ImageButton mBtnPrev;
 	private ImageView mBtnPlay;
 	private ImageButton mBtnNext;
@@ -94,9 +95,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private FrameLayout mFraInfo;
 	private FrameLayout mFraControl;
 	private int fastFowardMiles = 400;
+	RotateDrawable rDrawable;
+	// private ObjectAnimator anim;
+	// private AnimateListener updateListener;
 
 	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
-		
+
 		@Override
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
@@ -110,7 +114,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				MusicMainActivity.this.notify(msgln, FLAG_RUN_SYNC);
 				LogUtil.i(TAG, " --- next long press ---");
 				if (fastFowardMiles > 70) {
-					fastFowardMiles -=40;
+					fastFowardMiles -= 40;
 				}
 				if (!isNormalNext) {
 					mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, fastFowardMiles);
@@ -140,9 +144,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				Message msgp = Message.obtain();
 				msgp.what = MusicActionDefine.ACTION_A2DP_PREV;
 				MusicMainActivity.this.notify(msgp, FLAG_RUN_MAIN_THREAD);
-				break;
-
-			default:
 				break;
 			}
 			return false;
@@ -175,6 +176,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private void initView() {
 		mBtnMusicSwith = (ImageView) findViewById(R.id.btn_source_settings);
 		mBtnSettings = (ImageView) findViewById(R.id.btn_bt_settings);
+		ivAlbumCut = (ImageView) findViewById(R.id.music_defaultcover);
 		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
 		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
 		mBtnNext = (ImageButton) findViewById(R.id.btn_next);
@@ -193,7 +195,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
-		mCover = (ImageView) findViewById(R.id.music_cover);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment.getInstance(this);
 		mFragmentManager = getFragmentManager();
@@ -207,10 +208,65 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
 		mDrawerLayout.setDrawerListener(mDrawerListener);
-		// mFragmentManager.beginTransaction()
-		// .replace(R.id.bluetooth_music_frame, mFragmet).commit();
 
+		// anim = ObjectAnimator.ofFloat(ivAlbumCut, "rotation", 0, 360);
+		// anim.setDuration(20000);
+		// LinearInterpolator lin = new LinearInterpolator();
+		// anim.setInterpolator(lin);
+		// anim.setRepeatCount(ValueAnimator.INFINITE);
+		// updateListener = new AnimateListener(anim);
+		// anim.addUpdateListener(updateListener);
+
+		rDrawable = (RotateDrawable) ivAlbumCut.getBackground();
+		rDrawable.setLevel(0);
 	}
+
+	int level = 0;
+	Handler handler = new Handler() {
+		public void handleMessage(Message msg) {
+			if (level >= 10000) {
+				level = 0;
+			}
+			rDrawable.setLevel(level);
+			level += 10;
+			handler.sendEmptyMessageDelayed(0, 20);
+		};
+	};
+
+	private void resetAnim() {
+		level = 0;
+//		startAnim();
+	}
+
+	private void startAnim() {
+		if (!handler.hasMessages(0)) {
+			handler.sendEmptyMessage(0);
+		}
+	}
+
+	private void pauseAnim() {
+		if (handler.hasMessages(0)) {
+			handler.removeMessages(0);
+		}
+	}
+
+	// public void startAnimate() {
+	// if (updateListener.isPause) {
+	// updateListener.play();
+	// } else {
+	// anim.start();
+	// }
+	// }
+	//
+	// public void stopAnimate() {
+	// updateListener.play();
+	// anim.cancel();
+	// anim.end();
+	// }
+	//
+	// public void pauseAnimate() {
+	// updateListener.pause();
+	// }
 
 	DrawerListener mDrawerListener = new DrawerListener() {
 
@@ -260,12 +316,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-		setWallPaperAlbumScreenbg();
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
+		pauseAnim();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -305,11 +361,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	protected void onStop() {
-
+		pauseAnim();
 		super.onStop();
 	}
 
 	public void finishActivity() {
+		// stopAnimate();
 		if (mMusicHandler != null)
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		Message msg = Message.obtain();
@@ -417,7 +474,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
-			mHandler.sendEmptyMessageDelayed(111,500);
+			mHandler.sendEmptyMessageDelayed(111, 500);
 		} else if (status == 1) {
 			updateViewShow(true);
 			if (isFramShow) {
@@ -455,14 +512,15 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (flag) {
 			ismPlaying = true;
 			mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_pause));
+				startAnim();
 		} else {
+			pauseAnim();
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_play));
 		}
 	}
 
-	private int isNameChange = 0;
 	private String musicName = "";
 
 	@Override
@@ -473,16 +531,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			if ("".equals(bean.getTitle())) {
 				mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
 			} else {
-				if (musicName.equals(bean.getTitle())) {
-					isNameChange++;
-				} else {
-					isNameChange = 0;
-				}
-				if (isNameChange == 0) {
+				if (!musicName.equals(bean.getTitle())) {
 					musicName = bean.getTitle();
+					resetAnim();
 					mTextTitle.setText(bean.getTitle());
+				} else {
 				}
-
 			}
 			if ("".equals(bean.getAtrist())) {
 				mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
@@ -574,7 +628,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				mSeekBar.setProgress(0);
 				mTextCurTime.setText("00:00");
 			} else {
-
 				if (mSeekBar.getMax() > 0 && isSupportPlaybackpos) {
 					int iPlayTime = mSeekBar.getProgress();
 					mSeekBar.setProgress(iPlayTime + 1);
@@ -679,7 +732,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				case AudioControl.PLAYER_SHUFFLE_GROUP:
 					mImageShuffle.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_shuffle_open));
 					break;
-
 				}
 			}
 			break;
@@ -863,7 +915,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (bg != null) {
 			Drawable drawable = new BitmapDrawable(bg);
 			mImageBg.setBackgroundDrawable(drawable);
-			setWallPaperAlbumScreenbg();
+			// setWallPaperAlbumScreenbg();
 		} else {
 			mImageBg.setBackgroundResource(R.drawable.bg_music_main);
 		}
@@ -876,48 +928,5 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		} else {
 			mTextTip.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
 		}
-
-	}
-
-	private void setWallPaperAlbumScreenbg() {
-
-		WallpaperManager wManager = WallpaperManager.getInstance(this);
-		BitmapDrawable bd = (BitmapDrawable) wManager.getDrawable();
-		if (bd != null && bd.getBitmap() != null) {
-			Bitmap tempBitmap = bd.getBitmap();
-			float scale = Math.max(235f / tempBitmap.getWidth(), 235f / tempBitmap.getHeight());
-			Matrix matrix = new Matrix();
-			matrix.postScale(scale, scale); // 长和宽放大缩小的比例
-			LogUtil.i(TAG, "resetAlbumScreenbg:" + tempBitmap.getWidth());
-			Bitmap resizeBmp = Bitmap.createBitmap(tempBitmap, 0, 0, tempBitmap.getWidth(), tempBitmap.getHeight(),
-					matrix, true);
-			try {
-				mCover.setPadding(0, 0, 0, 0);
-				mCover.setImageBitmap(createCircleImage(resizeBmp, 235));
-
-			} catch (Exception e) {
-				e.printStackTrace();
-				mCover.setPadding(0, 0, 0, 0);
-				mCover.setImageBitmap(null);
-				return;
-			}
-			resizeBmp.recycle();
-		} else {
-			mCover.setPadding(0, 0, 0, 0);
-			mCover.setImageBitmap(null);
-		}
-
-	}
-
-	private Bitmap createCircleImage(Bitmap source, int min) {
-		final Paint paint = new Paint();
-		paint.setAntiAlias(true);
-		Bitmap target = Bitmap.createBitmap(min, min, Config.ARGB_8888);
-		Canvas canvas = new Canvas(target);
-		canvas.drawCircle(min / 2, min / 2, min / 2, paint);
-		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
-		canvas.drawBitmap(source, 0, 0, paint);
-		// source.recycle();
-		return target;
 	}
 }

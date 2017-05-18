@@ -93,12 +93,13 @@
             android:text="@string/music_matedate_unsupport"
             android:textSize="32sp" />
 
-        <ImageView
+     <!--    <ImageView
             android:layout_width="461dp"
             android:layout_height="403dp"
             android:layout_gravity="top|right"
             android:layout_marginTop="10dp"
             android:background="@drawable/icon_music_main" />
+        
         
         <ImageView
             android:id="@+id/music_cover"
@@ -106,7 +107,34 @@
             android:layout_height="240dp"
             android:layout_gravity="top|right"
             android:layout_marginRight="140dp"
-            android:layout_marginTop="95dp" />
+            android:layout_marginTop="95dp" /> -->
+            
+            
+            <ImageView
+            android:id="@+id/music_defaultcover"
+            android:layout_width="406dp"
+            android:layout_height="406dp"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="60dp"
+            android:background="@drawable/rotate" 
+            />
+        
+     <!--    <ImageView
+            android:id="@+id/music_albumcover"
+            android:layout_width="406dp"
+            android:layout_height="406dp"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="60dp"
+            android:visibility="gone"/> -->
+
+        <ImageView
+            android:layout_width="173dp"
+            android:layout_height="334dp"
+            android:layout_gravity="top|right"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/album_util"/>
     </FrameLayout>
 
     <FrameLayout
