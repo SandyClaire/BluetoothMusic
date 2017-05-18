@@ -545,6 +545,7 @@ public class BluetoothMusicModel {
 		}
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
+			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
@@ -897,26 +898,34 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	private static final int MSG_SETSTREAM_MODE = 0X2;
+	private static final int MSG_SETSTREAM_MODE = 2;
+	private static final int MSG_AUTOPLAY = 3;
 
 	Handler handler = new Handler() {
 		public void handleMessage(final android.os.Message msg) {
 
 			switch (msg.what) {
 			case MSG_SETSTREAM_MODE:
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							audioSetStreamMode(msg.getData().getInt("mode"));
-						} catch (RemoteException e) {
-						}
+				try {
+					audioSetStreamMode(msg.getData().getInt("mode"));
+				} catch (RemoteException e) {
+				}
+				break;
+			case MSG_AUTOPLAY:
+				if (!isPlay && playtimes < 4) {
+					playtimes++;
+					LogUtil.i(TAG, "MSG_AUTOPLAY op_code = " + playtimes);
+					try {
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+					} catch (RemoteException e) {
 					}
-				}).start();
+					handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+				} else {
+					playtimes = 0;
+					handler.removeMessages(MSG_AUTOPLAY);
+				}
 				break;
 			}
-
 		};
 	};
 
@@ -1228,7 +1237,9 @@ public class BluetoothMusicModel {
 			}
 
 			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
-			if (soApp != App.BT_MUSIC && !isDisByIpod && (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE)) {
+			if (soApp != App.BT_MUSIC
+					&& !isDisByIpod
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE || mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE)) {
 				Bundle data = new Bundle();
 				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				Message msg = Message.obtain();
@@ -1236,14 +1247,24 @@ public class BluetoothMusicModel {
 				msg.setData(data);
 				handler.sendMessage(msg);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
-			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE )) {
-				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-				Message msg = Message.obtain();
-				msg.what = MSG_SETSTREAM_MODE;
-				msg.setData(data);
-				handler.sendMessage(msg);
-				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
+			} else if (soApp == App.BT_MUSIC) {
+				if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+					Bundle data = new Bundle();
+					data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					Message msg = Message.obtain();
+					msg.what = MSG_SETSTREAM_MODE;
+					msg.setData(data);
+					handler.sendMessage(msg);
+					LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
+				} else if (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE) {
+					Bundle data = new Bundle();
+					data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+					Message msg = Message.obtain();
+					msg.what = MSG_SETSTREAM_MODE;
+					msg.setData(data);
+					handler.sendMessage(msg);
+					LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_UNMUTE");
+				}
 			}
 		} catch (RemoteException e) {
 		}
@@ -1264,23 +1285,9 @@ public class BluetoothMusicModel {
 				autoConnectA2DP();
 				if (!isHandPuse) {
 					AVRCPControl(AudioControl.CONTROL_PLAY);
-
-					handler.postDelayed(new Runnable() {
-						@Override
-						public void run() {
-							try {
-								if (!isPlay && playtimes < 3) {
-									playtimes++;
-									AVRCPControl(AudioControl.CONTROL_PLAY);
-									handler.postDelayed(this, 1500);
-								} else {
-									playtimes = 0;
-									handler.removeCallbacks(this);
-								}
-							} catch (RemoteException e) {
-							}
-						}
-					}, 1500);
+					if (!handler.hasMessages(MSG_AUTOPLAY)) {
+						handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+					}
 				}
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
@@ -1482,7 +1489,6 @@ public class BluetoothMusicModel {
 		if (mIMusicModel != null) {
 			mIMusicModel.onUsbDisConnect();
 		}
-
 	}
 
 	public void setPrevClicked() {
@@ -1504,5 +1510,15 @@ public class BluetoothMusicModel {
 		}
 		Log.i(TAG, "isCARLIFEConnected = " + soc.getCurrentDevice());
 		return isConnected;
+	}
+
+	/***
+	 * 取消自动执行播放的动作
+	 */
+	public void removeAutoPlay() {
+		if (handler.hasMessages(MSG_AUTOPLAY)) {
+			playtimes = 0;
+			handler.removeMessages(MSG_AUTOPLAY);
+		}
 	}
 }

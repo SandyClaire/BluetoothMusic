@@ -2,7 +2,6 @@ package com.hsae.d531mc.bluetooth.music.model.impl;
 
 import java.util.ArrayList;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -94,7 +93,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
-	
 	
 	@Override
 	public void setAVRCPControl(int command, int isRelease) {
@@ -331,5 +329,10 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
-
+	@Override
+	public void removeAutoPlay() {
+		if (mBluetoothMusicModel!=null) {
+			mBluetoothMusicModel.removeAutoPlay();
+		}
+	}
 }

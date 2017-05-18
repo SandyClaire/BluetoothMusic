@@ -179,4 +179,6 @@ public interface IMusicModel {
 
 	public void setNextClicked();
 
+	public void removeAutoPlay();
+
 }

@@ -73,6 +73,7 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_PAUSE:
 			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_PAUSE);
+			mIMusicModel.removeAutoPlay();
 			LogUtil.i(TAG, "CONTROL_PAUSE");
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY:

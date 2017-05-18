@@ -57,7 +57,7 @@ public class MangerConstant
 	public static final int DATATYPE_CC = 7;	
 	public static final int DATATYPE_SPD = 8;	
 	public static final int DATATYPE_FAV = 9;	
-
+	
 	
 	//Use in ANWBT_GetContacts - Memetype
 	public static final int PBK_MEMTYPE_ME = 0x0001;
@@ -118,10 +118,10 @@ public class MangerConstant
 	public static final String MSG_ACTION_INCOMINGEMAIL = "android.bluetooth.anw.action.INCOMINGEMAIL";
 	
 	//A2DP
-//	public static final int AUDIO_STREAM_MODE_UNMUTE 	= 0;
-//	public static final int AUDIO_STREAM_MODE_MUTE		= 1;
-	public static final int AUDIO_STREAM_MODE_ENABLE 	= 0;
-	public static final int AUDIO_STREAM_MODE_DISABLE	= 1;
+	public static final int AUDIO_STREAM_MODE_UNMUTE 	= 0;
+	public static final int AUDIO_STREAM_MODE_MUTE		= 1;
+	public static final int AUDIO_STREAM_MODE_ENABLE 	= 2;
+	public static final int AUDIO_STREAM_MODE_DISABLE	= 3;
 	
 	public static final int SMS_PROPERTY_DELETE = 0;
 	public static final int SMS_PROPERTY_READ = 1;
