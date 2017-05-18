@@ -418,7 +418,7 @@ public class BluetoothMusicServcie extends Service {
 		} else {
 			try {
 				LogUtil.i(TAG, "btmusic is connected playMusic fail");
-				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+//				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 				mBluetoothMusicModel
 						.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
