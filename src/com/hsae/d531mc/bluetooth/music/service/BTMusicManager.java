@@ -94,8 +94,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public boolean isConnected() throws RemoteException {
-		// TODO Auto-generated method stub
-		return false;
+		return mBluetoothMusicModel.a2dpStatus ==1;
 	}
 
 	boolean isFrist = true;

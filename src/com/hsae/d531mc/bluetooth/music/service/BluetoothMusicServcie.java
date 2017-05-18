@@ -231,7 +231,7 @@ public class BluetoothMusicServcie extends Service {
 					boolean bSupport_PlayStatus = mBundle.getBoolean("PlayStatus");
 
 					LogUtil.i(TAG, "-- bSupport_Metadata = " + bSupport_Metadata + "-- bSupport_PlayStatus = "
-							+ bSupport_PlayStatus);
+							+ bSupport_PlayStatus); 
 				}
 				/* 蓝牙音乐数据信息 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_METADATA)) {

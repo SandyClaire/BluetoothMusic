@@ -102,7 +102,6 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE:
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			MusicBean bean = (MusicBean) inMessage.getData().getSerializable("musicBean");
-			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:

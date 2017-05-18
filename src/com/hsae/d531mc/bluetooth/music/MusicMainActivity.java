@@ -701,6 +701,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		isSupportMetadata = isSupport;
 		LogUtil.i(TAG, "Activity updateMusicDataInfo -- isSupport = " + isSupport);
 		if (null != bean) {
+			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
 			if ("".equals(bean.getTitle())) {
 				mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
 			} else {

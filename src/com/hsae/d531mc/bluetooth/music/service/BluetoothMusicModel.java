@@ -42,7 +42,7 @@ import com.hsae.d531mc.bluetooth.music.util.Util;
 /**
  * 
  * @author wangda
- *
+ *	
  */
 public class BluetoothMusicModel {
 
@@ -1223,6 +1223,7 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
+			
 
 			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
 			if (soApp != App.BT_MUSIC && !isDisByIpod) {
@@ -1283,8 +1284,7 @@ public class BluetoothMusicModel {
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
 				if (!isAudioFocused) {
-					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
-							AudioManager.AUDIOFOCUS_GAIN);
+					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 						LogUtil.i("cruze", "requestAudioFo cus == 获取音频焦点成功");
 						isAudioFocused = true;
