@@ -198,7 +198,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		ivAM = (ImageView) findViewById(R.id.btn_source_am);
 		ivUSB = (ImageView) findViewById(R.id.btn_source_usb);
 		ivBT = (ImageView) findViewById(R.id.btn_source_bt);
-		ivBT.setSelected(true);
 		ivList = (ImageView) findViewById(R.id.btn_playlist);
 		
 		ivAlbumCut = (ImageView) findViewById(R.id.music_defaultcover);
@@ -316,6 +315,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	protected void onResume() {
+		ivBT.setSelected(true);
 		boolean isUsb = isUsbConnected() || !isIpodConnected();
 		ivUSB.setImageResource(isUsb?R.drawable.selector_source_usb:R.drawable.selector_source_ipod);
 		Message msg = Message.obtain();

@@ -293,7 +293,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 //				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_disconnect_device));
 				
 				
-				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.yellow));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.yellow_trans));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
 				holder.progressBar.setVisibility(View.GONE);
@@ -302,7 +302,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				
 				// holder.mTextDeviceStatus.setVisibility(View.GONE);
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTING) {
 				holder.progressBar.setVisibility(View.VISIBLE);
@@ -312,7 +312,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
 				holder.mLinItem.setEnabled(false);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_DISCONNECTING) {
 				
@@ -323,12 +323,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_disconnecting));
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
-				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
 				holder.mLinItem.setEnabled(false);
 			}
 
 			holder.mBtnDeviceUpair.setOnClickListener(new OnClickListener() {
-
+				
 				@Override
 				public void onClick(View v) {
 					LogUtil.i(TAG, "unpairRequest -- status =  " + bean.getStatus());

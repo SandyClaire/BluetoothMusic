@@ -72,5 +72,10 @@
     <color name="dialog_bg">#75052245</color>
     <color name="bian">#081520</color>
     <color name="item_bg">#20FFFFFF</color>
+    
+    <!-- 透明 -->
+    <color name="white_trans">#C0FFFFFF</color>
+    <color name="yellow_trans">#c0ff9c00</color>
+    
 
 </resources>

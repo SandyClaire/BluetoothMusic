@@ -21,7 +21,7 @@
         android:layout_height="match_parent" >
 
         <ImageView
-            android:id="@+id/btn_source_am"
+            android:id="@+id/btn_source_fm"
             android:layout_width="80dp"
             android:layout_height="100dp"
             android:layout_gravity="start|top"
@@ -31,10 +31,10 @@
             android:paddingEnd="19dp"
             android:paddingStart="20dp"
             android:paddingTop="20dp"
-            android:src="@drawable/selector_source_am" />
+            android:src="@drawable/selector_source_fm" />
 
         <ImageView
-            android:id="@+id/btn_source_fm"
+            android:id="@+id/btn_source_am"
             android:layout_width="80dp"
             android:layout_height="100dp"
             android:layout_gravity="start|top"
@@ -44,7 +44,7 @@
             android:paddingLeft="18dp"
             android:paddingRight="18dp"
             android:paddingTop="18dp"
-            android:src="@drawable/selector_source_fm" />
+            android:src="@drawable/selector_source_am" />
 
         <ImageView
             android:id="@+id/btn_source_usb"
@@ -70,7 +70,7 @@
             android:paddingEnd="18dp"
             android:paddingStart="17dp"
             android:paddingTop="15dp"
-            android:src="@drawable/selector_source_bt" />
+            android:src="@drawable/ic_item_bt_music_down" />
 
         <ImageView
             android:id="@+id/btn_playlist"
