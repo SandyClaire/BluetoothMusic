@@ -1182,13 +1182,13 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
-			
-			
-			LogUtil.i(TAG, "audioSetStreamMode : mode = " +mode);
+
+			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
 			if (soApp != App.BT_MUSIC) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
-			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+			} else if (soApp == App.BT_MUSIC
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
 			}
@@ -1196,8 +1196,10 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	public boolean isAudioFocused = false;
+	Handler handler = new Handler();
 
+	public boolean isAudioFocused = false;
+	 int playtimes = 0;
 	/** 获取Android音频焦点 */
 	public synchronized void requestAudioFocus(boolean flag) {
 		Source source = new Source();
@@ -1207,11 +1209,23 @@ public class BluetoothMusicModel {
 			if (source.getCurrentSource() == App.BT_MUSIC) {
 				mainAudioChanged(flag);
 				// 如果手动点击停止，不进行播放；
+				autoConnectA2DP();
 				if (!isHandPuse) {
-					try {
-						AVRCPControl(AudioControl.CONTROL_PLAY);
-					} catch (RemoteException e) {
-					}
+					handler.post(new Runnable() {
+						@Override
+						public void run() {
+							try {
+								if (!isPlay && playtimes<5) {
+									AVRCPControl(AudioControl.CONTROL_PLAY);
+									handler.postDelayed(this, 1000);
+								}else{
+									playtimes = 0;
+									handler.removeCallbacks(this);
+								}
+							} catch (RemoteException e) {
+							}
+						}
+					});
 				}
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
