@@ -120,6 +120,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			bundle.putInt("band", 0x01);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
+			((MusicMainActivity) getActivity()).closeMusicSwitch();
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_fm:
@@ -127,6 +128,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			bundle.putInt("band", 0x03);
 			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 					bundle);
+			((MusicMainActivity) getActivity()).closeMusicSwitch();
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_ipod:
@@ -139,10 +141,12 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 					+ isUsbConnected() + " ,  !isIpodConnected == "
 					+ !isIpodConnected());
 			startOtherAPP(app, strPackage, strClass, bundle);
+			((MusicMainActivity) getActivity()).closeMusicSwitch();
 			((MusicMainActivity)getActivity()).finishActivity();
 			break;
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(SOURCE_BT);
+			((MusicMainActivity) getActivity()).closeMusicSwitch();
 			break;
 		case R.id.btn_close_switch:
 			((MusicMainActivity) getActivity()).closeMusicSwitch();

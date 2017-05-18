@@ -1,6 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -10,7 +11,6 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
+
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
@@ -116,7 +117,7 @@ public class BluetoothMusicServcie extends Service {
 								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);
 					}
 				}
-				/* 蓝牙连接装填 */
+				/* 蓝牙连接状态 */
 			} else if (strAction
 					.equals(MangerConstant.MSG_ACTION_CONNECT_STATUS)) {
 				if (mBundle != null) {
@@ -133,6 +134,7 @@ public class BluetoothMusicServcie extends Service {
 										+ mConnectStatus);
 						mBluetoothMusicModel
 								.updateMsgByConnectStatusChange(mConnectStatus);
+						getPlayStatus(mConnectStatus);
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
 
@@ -140,13 +142,7 @@ public class BluetoothMusicServcie extends Service {
 								"PROFILE_AUDIO_CONTROL_CHANNEL --- mConnectStatus = "
 										+ mConnectStatus);
 						notifyAutoCoreConnectStatus(mConnectStatus);
-						if (mConnectStatus == 1) {
-							try {
-								mBluetoothMusicModel.getPlayStatus();
-							} catch (RemoteException e) {
-								e.printStackTrace();
-							}
-						}
+						getPlayStatus(mConnectStatus);
 					}
 				}
 				/* 蓝牙音乐数据支持状态 */
@@ -304,9 +300,18 @@ public class BluetoothMusicServcie extends Service {
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
 			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
-				
 				autoConnA2dp();
 				LogUtil.i(TAG, "--------- autoConnA2dp ----------");
+			}
+		}
+	}
+	
+	private void getPlayStatus(int status){
+		if (status == 1) {
+			try {
+				mBluetoothMusicModel.getPlayStatus();
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 		}
 	}

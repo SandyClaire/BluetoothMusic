@@ -1,6 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
+
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
@@ -10,9 +11,11 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
+
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
@@ -971,14 +974,6 @@ public class BluetoothMusicModel {
 		Source source = new Source();
 		source.mainAudioChanged(App.BT_MUSIC, isChanged);
 		LogUtil.i(TAG, "requestAudioSource == " + isChanged);
-		if (source.getCurrentSource() == App.BT_MUSIC) {
-			try {
-				getPlayStatus();
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	/**
@@ -1003,8 +998,13 @@ public class BluetoothMusicModel {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
 		if (source.getCurrentSource() == App.BT_MUSIC) {
+			mainAudioChanged(flag);
+			//audioStreamEnable();
+			//如果手动点击停止，不进行播放；
+			if (isHandPuse) {
+				return;
+			}
 			try {
-				mainAudioChanged(flag);
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -1037,12 +1037,33 @@ public class BluetoothMusicModel {
 		notifyLauncherInfo();
 		if (isAudioFocused) {
 			try {
+				audioStreamEnable();
+				if (isHandPuse) {
+					return;
+				}
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	private void audioStreamEnable(){
+		mHandler.postDelayed(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					getPlayStatus();
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}, 300);
+	}
+	
+	private Handler mHandler = new Handler();
 	
 	/**
 	 * 通知launcher 音乐信息
@@ -1133,20 +1154,20 @@ public class BluetoothMusicModel {
 					+ source.getCurrentSource());
 			
 			if (isAudioFocused) {
-				//如果是手动暂停 不执行播放
-				if (isHandPuse) {
-					return;
-				}
 				try {
-					AVRCPControl(AudioControl.CONTROL_PLAY);
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					//如果是手动暂停 不执行播放
+					if (isHandPuse) {
+						return;
+					}
+					AVRCPControl(AudioControl.CONTROL_PLAY);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			} else {
 				try {
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

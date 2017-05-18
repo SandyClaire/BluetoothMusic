@@ -156,6 +156,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			mProSearch.setVisibility(View.INVISIBLE);
 		}
 	}
+	
+	@Override
+	public void onDetach() {
+		stopDeviceSearching();
+		super.onDetach();
+	}
 
 	@Override
 	public void onClick(View v) {
