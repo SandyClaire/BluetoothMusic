@@ -1,21 +1,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hsae.d531mc.bluetooth.music"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="VA1606XM_BTMUSIC_S400_20170106" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="11"
         android:targetSdkVersion="21" />
+    
+    <!-- 系统设置修改权限 -->
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 壁纸设置权限 -->
+    <permission android:name="com.hsae.permission.systemsetting.provide"/>
+    <uses-permission android:name="com.hsae.permission.systemsetting.provide"/>
+    <uses-permission android:name="android.permission.GET_TASKS"/>
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Black.NoTitleBar" >
+        android:theme="@style/AppTheme" >
         <activity
             android:name=".MusicMainActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTask"
+            android:exported="true"
+            android:launchMode="singleInstance"
             android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,7 +32,8 @@
             </intent-filter>
         </activity>
         
-        <service android:name=".service.BluetoothMusicServcie" >
+        <service android:name="com.hsae.d531mc.bluetooth.music.service.BluetoothMusicServcie"
+            android:exported="true" >
             <intent-filter>
                 <action android:name="com.hsae.auto.BT_MUSIC_SERVICE" />
             </intent-filter>
