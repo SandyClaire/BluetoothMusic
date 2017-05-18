@@ -55,7 +55,8 @@
         android:layout_height="420dp"
         android:layout_gravity="top"
         android:layout_marginLeft="160dp"
-        android:layout_marginTop="115dp" >
+        android:layout_marginTop="115dp" 
+        android:visibility="invisible">
 
         <TextView
             android:id="@+id/music_title"
@@ -101,7 +102,8 @@
         android:layout_height="480dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="bottom"
-        android:layout_marginLeft="0dp" >
+        android:layout_marginLeft="0dp" 
+        android:visibility="invisible">
 
         <FrameLayout
             android:id="@+id/frame_seekbar"
@@ -272,7 +274,6 @@
         android:gravity="center"
         android:text="@string/music_bluetooth_disconnect_tip"
         android:textColor="@android:color/white"
-        android:textSize="45sp"
-        android:visibility="gone" />
+        android:textSize="45sp" />
 
 </FrameLayout>
