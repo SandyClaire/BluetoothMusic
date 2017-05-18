@@ -797,6 +797,18 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_GetDeviceName();
 	}
 
+	public String getLocalAddr() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return "";
+		}
+		return mIAnwPhoneLink.ANWBT_ReadLocalAddr();
+	}
+
+	
 	/**
 	 * 设置手机声音
 	 * 

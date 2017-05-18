@@ -311,13 +311,22 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	@Override
 	public String getLocalName() {
 		String name = "";
+		String address= "";
+		String subAddress= "";
 		try {
+			address =mBluetoothModel.getLocalAddr();
+			if (!address.equals("")) {
+				subAddress = address.substring(12);
+			}
 			name = mBluetoothModel.getDeviceName();
-			LogUtil.e(TAG, "getLocalName -- name = " + name);
+			LogUtil.i(TAG, "getLocalName --- name = " + name+"getLocalAddr = "+address);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		return name;
+		if (name.equals("")) {
+			return "";
+		}
+		return name+"_"+subAddress;
 	}
 
 	@Override
