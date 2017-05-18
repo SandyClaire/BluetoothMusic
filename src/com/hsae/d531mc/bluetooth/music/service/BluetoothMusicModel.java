@@ -956,12 +956,6 @@ public class BluetoothMusicModel {
 		}
     }
     
-    public void releaseAudioFocus() {
-    	if (audioManager != null) {
-    		audioManager.abandonAudioFocus(mAFCListener);
-		}
-	}
-    
     public void notifyAutroMusicInfo(BTMusicInfo info) {
     	if (null == mBTMmanager) {
     		mBTMmanager = BTMusicManager.getInstance(mContext);
@@ -1017,6 +1011,8 @@ public class BluetoothMusicModel {
                 LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
                 break;
             }
+		    Source source = new Source();
+		    LogUtil.i(TAG, "-------------- BT mAFCListener getCurrentSource" + source.getCurrentSource());
 		    if (isAudioFocused) {
 				try {
 					AVRCPControl(AudioControl.CONTROL_PLAY);

@@ -76,10 +76,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//透明状态栏  
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);  
-        //透明导航栏  
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+		// 透明状态栏
+		getWindow()
+				.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+		// 透明导航栏
+		getWindow().addFlags(
+				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 		setContentView(R.layout.music_main);
 		initView();
 		initMvp();
@@ -114,7 +116,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
 		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
-		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment.getInstance(this);
+		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
+				.getInstance(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
@@ -148,17 +151,17 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 		});
 	}
-	
+
 	private OnTouchListener touchListener = new OnTouchListener() {
-		
+
 		@SuppressLint("ClickableViewAccessibility")
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			// TODO Auto-generated method stub
-			if(event.getAction() == MotionEvent.ACTION_UP){
+			if (event.getAction() == MotionEvent.ACTION_UP) {
 				float x = event.getX();
 				float y = event.getY();
-				if(0<x && x<170 && 610<y && y<720){
+				if (0 < x && x < 170 && 610 < y && y < 720) {
 					mBtnHome.performClick();
 				}
 			}
@@ -166,7 +169,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 	};
 
-	
 	@Override
 	protected void onResume() {
 		Message msg = Message.obtain();
@@ -174,7 +176,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 		super.onResume();
 	}
-	
+
 	@Override
 	protected void onPause() {
 		Message msg = Message.obtain();
@@ -184,20 +186,21 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	private void showFram(boolean flag) {
-//		if (isfirst) {
-			if (flag) {
-				mFragmentManager.beginTransaction()
-				.replace(R.id.bluetooth_music_frame, mFragmet).commit();
-			}else {
-				mFragmentManager.beginTransaction()
-				.replace(R.id.bluetooth_music_frame, mSettingFragment).commit();
-			}
-			
-//			isfirst = false;
-//		}
+		// if (isfirst) {
+		if (flag) {
+			mFragmentManager.beginTransaction()
+					.replace(R.id.bluetooth_music_frame, mFragmet).commit();
+		} else {
+			mFragmentManager.beginTransaction()
+					.replace(R.id.bluetooth_music_frame, mSettingFragment)
+					.commit();
+		}
+
+		// isfirst = false;
+		// }
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
-	
+
 	public void closeMusicSwitch() {
 		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
@@ -235,7 +238,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void onClick(View v) {
-		
+
 		switch (v.getId()) {
 		case R.id.btn_source_settings:
 			showFram(true);
@@ -285,6 +288,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);
 			startActivity(intent);
+//			this.finish();
 			break;
 		default:
 			break;
@@ -294,8 +298,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateViewByConnectStatus(int status) {
 		if (status == 0) {
-//			Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
-//					.show();
+			// Toast.makeText(this, "disconnected A2DP", Toast.LENGTH_SHORT)
+			// .show();
 			updateViewShow(false);
 			mTextTitle.setText(getResources().getString(
 					R.string.music_bluetooth_disconnect));
@@ -306,13 +310,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
 			mSeekBar.setMax(0);
-			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,AudioControl.PLAYER_REPEAT_MODE_OFF);
-			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,AudioControl.PLAYER_SHUFFLE_OFF);
+			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
+					AudioControl.PLAYER_REPEAT_MODE_OFF);
+			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
+					AudioControl.PLAYER_SHUFFLE_OFF);
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 		} else if (status == 1) {
-//			Toast.makeText(this, "connected A2DP", Toast.LENGTH_SHORT).show();
+			// Toast.makeText(this, "connected A2DP",
+			// Toast.LENGTH_SHORT).show();
 			updateViewShow(true);
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
@@ -351,7 +358,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateMusicDataInfo(MusicBean bean, boolean isSupport) {
 		isSupportMetadata = isSupport;
-		LogUtil.i(TAG, "Bluetooth A2DP updateMusicDataInfo -- isSupport = " + isSupport);
+		LogUtil.i(TAG, "Bluetooth A2DP updateMusicDataInfo -- isSupport = "
+				+ isSupport);
 		if (isSupport && null != bean) {
 			mTextTitle.setText(bean.getTitle());
 			mTextArtist.setText(bean.getAtrist());
@@ -476,9 +484,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 	}
 
-	
-	private ArrayList<Integer> mRepeatAllowedlist= new ArrayList<Integer>(); 
-	private ArrayList<Integer> mShuffleAllowedlist= new ArrayList<Integer>(); 
+	private ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
+	private ArrayList<Integer> mShuffleAllowedlist = new ArrayList<Integer>();
 
 	@Override
 	public void updateRepeatAllowList(ArrayList<Integer> allowList) {
@@ -486,9 +493,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mRepeatAllowedlist.addAll(allowList);
 		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setVisibility(View.GONE);;
-		}else {
-			mBtnRepeat.setVisibility(View.VISIBLE);;
+			mBtnRepeat.setVisibility(View.GONE);
+			;
+		} else {
+			mBtnRepeat.setVisibility(View.VISIBLE);
+			;
 		}
 	}
 
@@ -496,106 +505,109 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateShuffleAllowList(ArrayList<Integer> allowList) {
 		mShuffleAllowedlist.clear();
 		mShuffleAllowedlist.addAll(allowList);
-		LogUtil.i(TAG, "mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
+		LogUtil.i(TAG,
+				"mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
 			mBtnShuffle.setVisibility(View.GONE);
-		}else {
+		} else {
 			mBtnShuffle.setVisibility(View.VISIBLE);
 		}
 	}
-	
-	int mShuffleMode =AudioControl.PLAYER_SHUFFLE_OFF;
-	int mRepeatMode =AudioControl.PLAYER_REPEAT_MODE_OFF;
+
+	int mShuffleMode = AudioControl.PLAYER_SHUFFLE_OFF;
+	int mRepeatMode = AudioControl.PLAYER_REPEAT_MODE_OFF;
 
 	@Override
 	public void UpdatePlayerModeSetting(int nAttrID, int nAttrValue) {
-		switch(nAttrID)
-		{
-	
-		case AudioControl.PLAYER_ATTRIBUTE_REPEAT://2
-			if(mRepeatMode != nAttrValue)
-			{
-				mRepeatMode = nAttrValue ;
-				switch(nAttrValue)
-				{
+		switch (nAttrID) {
+
+		case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
+			if (mRepeatMode != nAttrValue) {
+				mRepeatMode = nAttrValue;
+				switch (nAttrValue) {
 				case AudioControl.PLAYER_REPEAT_MODE_OFF:
-					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
+					mImageRepeat
+							.setBackgroundResource(R.drawable.btn_music_repeat_order);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK:
-					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
+					mImageRepeat
+							.setBackgroundResource(R.drawable.btn_music_repeat_singel);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_ALL_TRACK:
-					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					mImageRepeat
+							.setBackgroundResource(R.drawable.btn_music_repeat_all);
 					break;
 				case AudioControl.PLAYER_REPEAT_MODE_GROUP:
-					mImageRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
-					break;				
-				}			
+					mImageRepeat
+							.setBackgroundResource(R.drawable.btn_music_repeat_all);
+					break;
+				}
 			}
 			break;
-		case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE://3
-			
-			if(mShuffleMode != nAttrValue)
-			{
+		case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
+
+			if (mShuffleMode != nAttrValue) {
 				mShuffleMode = nAttrValue;
-				switch(nAttrValue)
-				{
+				switch (nAttrValue) {
 				case AudioControl.PLAYER_SHUFFLE_OFF:
-					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
+					mImageShuffle
+							.setBackgroundResource(R.drawable.btn_music_shuffle_close);
 					break;
 				case AudioControl.PLAYER_SHUFFLE_ALL_TRACK:
-					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					mImageShuffle
+							.setBackgroundResource(R.drawable.btn_music_shuffle_open);
 					break;
 				case AudioControl.PLAYER_SHUFFLE_GROUP:
-					mImageShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
+					mImageShuffle
+							.setBackgroundResource(R.drawable.btn_music_shuffle_open);
 					break;
-		
-				}	
+
+				}
 			}
 			break;
 		}
 	}
 
 	@Override
-	public void updateShuffleAllowArray(int[] AllowArray , int num) {
+	public void updateShuffleAllowArray(int[] AllowArray, int num) {
 		mShuffleAllowedlist.clear();
 		for (int i = 0; i < num; i++) {
 			mShuffleAllowedlist.add(AllowArray[i]);
 		}
 		if (mShuffleAllowedlist.size() <= 0) {
 			mBtnShuffle.setVisibility(View.GONE);
-		}else {
+		} else {
 			mBtnShuffle.setVisibility(View.VISIBLE);
 		}
 	}
 
 	@Override
-	public void updateRepeatAllowArray(int[] AllowArray , int num) {
+	public void updateRepeatAllowArray(int[] AllowArray, int num) {
 		mRepeatAllowedlist.clear();
 		for (int i = 0; i < num; i++) {
 			mRepeatAllowedlist.add(AllowArray[i]);
 		}
 		if (mRepeatAllowedlist.size() <= 0) {
 			mBtnRepeat.setVisibility(View.GONE);
-		}else {
+		} else {
 			mBtnRepeat.setVisibility(View.VISIBLE);
 		}
 	}
-	
-//	private BroadcastReceiver mReceiver = new BroadcastReceiver() {
-//		
-//		@Override
-//		public void onReceive(Context context, Intent intent) {
-//			MusicMainActivity.this.unregisterReceiver(mReceiver);
-//			MusicMainActivity.this.finish();
-//			Log.e("wangda", "finish");
-//		}
-//	};
-	
-//	private void registBroadcast(){
-//		IntentFilter intent = new IntentFilter();
-//		intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
-//		this.registerReceiver(mReceiver, intent);
-//	}
+
+	// private BroadcastReceiver mReceiver = new BroadcastReceiver() {
+	//
+	// @Override
+	// public void onReceive(Context context, Intent intent) {
+	// MusicMainActivity.this.unregisterReceiver(mReceiver);
+	// MusicMainActivity.this.finish();
+	// Log.e("wangda", "finish");
+	// }
+	// };
+
+	// private void registBroadcast(){
+	// IntentFilter intent = new IntentFilter();
+	// intent.addAction(MusicActionDefine.ACTION_A2DP_FINISH_ACTIVITY);
+	// this.registerReceiver(mReceiver, intent);
+	// }
 
 }
