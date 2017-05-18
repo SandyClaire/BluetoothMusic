@@ -198,7 +198,7 @@ public class BluetoothMusicServcie extends Service {
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
-						
+
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
 							IPodProxy.getInstance().notifyA2dpConnected(
@@ -231,12 +231,11 @@ public class BluetoothMusicServcie extends Service {
 					boolean bSupport_PlayStatus = mBundle.getBoolean("PlayStatus");
 
 					LogUtil.i(TAG, "-- bSupport_Metadata = " + bSupport_Metadata + "-- bSupport_PlayStatus = "
-							+ bSupport_PlayStatus); 
+							+ bSupport_PlayStatus);
 				}
 				/* 蓝牙音乐数据信息 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_METADATA)) {
 				if (mBundle != null) {
-					int nPlayStatus = mBundle.getInt("PlayStatus");
 					int nDataType = mBundle.getInt("DataType");
 
 					if (nDataType == MangerConstant.Anw_SUCCESS)// meta data
@@ -265,9 +264,6 @@ public class BluetoothMusicServcie extends Service {
 
 						BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
 						mBluetoothMusicModel.notifyAutroMusicInfo(info);
-
-						LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = "
-								+ mAtrist + ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
 					}
 				}
 				/* 蓝牙音乐播放状态 */
@@ -299,6 +295,8 @@ public class BluetoothMusicServcie extends Service {
 					}
 					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 					mBluetoothMusicModel.setMusicStreamMute();
+					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
+							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
 
 				}
 				/* 蓝牙音乐播放当前时间信息 */
