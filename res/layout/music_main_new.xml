@@ -28,8 +28,8 @@
                 android:layout_height="0dp"
                 android:paddingLeft="@dimen/music_contents_panding_lift"
             	android:paddingRight="@dimen/music_contents_panding_right"
+            	android:visibility="gone"
                 android:gravity="center"
-                android:visibility="gone"
                 android:layout_weight="1"
                 android:orientation="horizontal" >
 
@@ -57,6 +57,7 @@
                             android:focusableInTouchMode="true"
                             android:marqueeRepeatLimit="-1"
                             android:singleLine="true"
+                            android:layout_marginTop="@dimen/text_artist_margin_top"
                             android:text="@string/music_bluetooth_disconnect"
                             android:textStyle="bold" />
 
@@ -68,12 +69,6 @@
                             android:layout_marginTop="@dimen/text_artist_margin_top"
                             android:text="@string/music_bluetooth_disconnect_summery" />
 
-                        <TextView
-                            android:id="@+id/music_album"
-                            style="@style/musicArtistText"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:visibility="gone" />
                     </LinearLayout>
 
                     <RelativeLayout
@@ -110,7 +105,8 @@
                             android:layout_width="480dp"
                             android:layout_height="wrap_content"
                             android:layout_below="@id/frame_seekbar"
-                            android:orientation="horizontal" >
+                            android:orientation="horizontal"
+                            android:paddingTop="0dp" >
 
                             <TextView
                                 android:id="@+id/music_currenttime"
@@ -146,6 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/music_bottombar_higth"
                 android:layout_gravity="bottom"
+                android:visibility="gone"
                 android:background="@drawable/bg_bottom_bar" >
 
                 <View
@@ -277,7 +274,8 @@
                 android:orientation="horizontal" >
 
                 <TextView
-                    style="@style/musicArtistText"
+                    android:textColor="@color/white"
+            		android:textSize="45dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/music_bluetooth_disconnect_tip" />
