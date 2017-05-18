@@ -74,7 +74,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 						+ System.currentTimeMillis());
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.music_main);
-		// InitService();
 		initView();
 		initMvp();
 		Log.e("wangda",
@@ -91,11 +90,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
-	// private void InitService() {
-	// Intent mIntent = new Intent(MusicMainActivity.this,
-	// BluetoothMusicServcie.class);
-	// this.startService(mIntent);
-	// }
 
 	private void initView() {
 		mBtnMusicSwith = (Button) findViewById(R.id.btn_bt_settings);

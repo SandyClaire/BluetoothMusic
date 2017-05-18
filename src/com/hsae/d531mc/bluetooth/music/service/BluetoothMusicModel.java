@@ -547,7 +547,7 @@ public class BluetoothMusicModel {
      */
     private void mainAudioChanged(boolean isChanged) {
     	Source source = new Source();
-    	source.mainAudioChanged(App.BT_PHONE, isChanged);
+    	source.mainAudioChanged(App.BT_MUSIC, isChanged);
         Log.i(TAG, "requestAudioSource == " + isChanged);
     }
     

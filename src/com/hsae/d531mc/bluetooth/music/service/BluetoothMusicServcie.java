@@ -324,8 +324,7 @@ public class BluetoothMusicServcie extends Service {
 		
 		@Override
 		public void prev() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
 		}
 		
 		@Override
@@ -341,13 +340,13 @@ public class BluetoothMusicServcie extends Service {
 		
 		@Override
 		public void play() throws RemoteException {
-			
+			mBluetoothMusicModel.requestAudioFocus();
+			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 		}
 		
 		@Override
 		public void pause() throws RemoteException {
-			// TODO Auto-generated method stub
-			
+			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 		}
 		
 		@Override
@@ -358,7 +357,7 @@ public class BluetoothMusicServcie extends Service {
 		
 		@Override
 		public void next() throws RemoteException {
-			
+			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
 		}
 		
 		@Override
@@ -374,7 +373,6 @@ public class BluetoothMusicServcie extends Service {
 		
 		@Override
 		public String getTrackName() throws RemoteException {
-			// TODO Auto-generated method stub
 			return null;
 		}
 		
