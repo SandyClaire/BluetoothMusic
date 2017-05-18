@@ -276,7 +276,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
 			holder.mImageUnpair.setVisibility(View.VISIBLE);
 			if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTED) {
-				holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
+				holder.mTextDeviceStatus.setVisibility(View.GONE);
 				;
 				holder.mTextDeviceStatus.setText(getResources().getString(
 						R.string.bluetooth_status_connected));

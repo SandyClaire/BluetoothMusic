@@ -79,7 +79,9 @@ public class BluetoothMusicServcie extends Service {
 								&& mBluetoothMusicModel.avrcpStatus == 1) {
 							playMusic();
 							notifyAutoCoreConnectStatus(true);
-						} else {
+						} else if (mBluetoothMusicModel.avrcpStatus == 0
+								&& mBluetoothMusicModel.a2dpStatus == 0
+								&& mBluetoothMusicModel.hfpStatus == 0) {
 							if (isTicker) {
 								setTimingEnd();
 							}
@@ -87,6 +89,14 @@ public class BluetoothMusicServcie extends Service {
 							mAtrist = "";
 							mAlbum = "";
 							notifyAutoCoreConnectStatus(false);
+						} else {
+							if (isTicker) {
+								setTimingEnd();
+							}
+							mTitle = "";
+							mAtrist = "";
+							mAlbum = "";
+							
 						}
 						break;
 					default:
@@ -193,6 +203,7 @@ public class BluetoothMusicServcie extends Service {
 								.updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
 						LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　"
 								+ mBluetoothMusicModel.hfpStatus);
+						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle
@@ -762,9 +773,7 @@ public class BluetoothMusicServcie extends Service {
 					e.printStackTrace();
 				}
 			}
-
 		}
-
 	}
 
 }
