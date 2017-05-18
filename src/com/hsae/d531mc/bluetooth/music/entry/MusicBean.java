@@ -13,9 +13,12 @@ public class MusicBean implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	//歌曲名称
 	private String title;
+	//歌手姓名
 	private String atrist;
 	private String album;
+	//歌曲总时间
 	private String totalTime;
 
 	public MusicBean() {

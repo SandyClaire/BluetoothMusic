@@ -57,11 +57,12 @@ public class BluetoothMusicServcie extends Service {
 	private BTMusicManager mBTMmanager;
 	private String mTimePosition = "-1";
 	private Soc mSoc;
+	// power 状态监听
 	private PowerListener mPowerListener = new PowerListener();
 	private AutoSettings mAutoSettings;
+	private int hfpStatus = 0;
 	private int a2dpStatus = 0;
 	private int avrcpStatus = 0;
-	private int hfpStatus = 0;
 
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
 	/**
@@ -79,17 +80,17 @@ public class BluetoothMusicServcie extends Service {
 					case BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE:
 						if (a2dpStatus == 1 && avrcpStatus == 1) {
 							playMusic();
+							notifyAutoCoreConnectStatus(true);
 						} else {
 							if (isTicker) {
 								setTimingEnd();
 							}
+							notifyAutoCoreConnectStatus(false);
 						}
 						break;
-
 					default:
 						break;
 					}
-
 					return false;
 				}
 
@@ -97,6 +98,10 @@ public class BluetoothMusicServcie extends Service {
 
 	private Handler stepTimeHandler = new Handler();
 	private Ticker mTicker;
+
+	/**
+	 * 计时器是否正在工作
+	 */
 	private boolean isTicker = false;
 
 	@Override
@@ -199,7 +204,7 @@ public class BluetoothMusicServcie extends Service {
 						LogUtil.i(TAG,
 								"PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
 										+ avrcpStatus);
-						notifyAutoCoreConnectStatus(avrcpStatus);
+
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 					}
 				}
@@ -308,11 +313,6 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_STREAMING:
 						isplaying = true;
 						mBluetoothMusicModel.updatePlayStatus(true);
-						try {
-							mBluetoothMusicModel.getPlayStatus();
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
 						break;
 					}
 				}
@@ -372,27 +372,14 @@ public class BluetoothMusicServcie extends Service {
 	private void playMusic() {
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-
 			LogUtil.i(TAG, "btmusic is connected playMusic  sussecc");
-			mHandler.postDelayed(new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						mBluetoothMusicModel
-								.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-						mBluetoothMusicModel
-								.AVRCPControl(AudioControl.CONTROL_PLAY);
-						getPlayStatus(1);
-						mBluetoothMusicModel.updatePlayStatus(true);
-					} catch (RemoteException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}, 400);
-			if (!isTicker) {
-				setTimingBegins();
+			try {
+				mBluetoothMusicModel
+						.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+				mBluetoothMusicModel.updatePlayStatus(true);
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
 
 		} else {
@@ -408,20 +395,6 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
-	/**
-	 * 根据状态获取音乐信息
-	 * 
-	 * @param status
-	 */
-	private void getPlayStatus(int status) {
-		if (status == MangerConstant.Anw_SUCCESS) {
-			try {
-				mBluetoothMusicModel.getPlayStatus();
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 	/**
 	 * 如果A2DP单独断开情况下，自动连接蓝牙音乐；
@@ -439,10 +412,10 @@ public class BluetoothMusicServcie extends Service {
 			if (hfpStatus == 1 && a2dpStatus != 1) {
 
 				try {
+					mBluetoothMusicModel.getPlayStatus();
 					mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
 					mBluetoothMusicModel
 							.AVRCPControl(AudioControl.CONTROL_PLAY);
-					mBluetoothMusicModel.getPlayStatus();
 					LogUtil.i("BluetoothMusicModel",
 							"--------- autoConnA2dp if HFP connected = "
 									+ getConnectedDevice());
@@ -476,9 +449,9 @@ public class BluetoothMusicServcie extends Service {
 	 * 
 	 * @param connectStatus
 	 */
-	private void notifyAutoCoreConnectStatus(int connectStatus) {
+	private void notifyAutoCoreConnectStatus(boolean conn) {
 		Source mSource = new Source();
-		if (connectStatus == MangerConstant.Anw_SUCCESS) {
+		if (conn) {
 			mSource.notifyBtState(true);
 		} else {
 			mSource.notifyBtState(false);
@@ -503,8 +476,8 @@ public class BluetoothMusicServcie extends Service {
 		if (stepTimeHandler != null) {
 			stepTimeHandler.removeCallbacks(mTicker);
 			mTicker = null;
+			isTicker = false;
 		}
-		isTicker = false;
 	}
 
 	/**

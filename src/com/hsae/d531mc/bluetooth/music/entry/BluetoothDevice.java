@@ -10,21 +10,50 @@ import java.io.Serializable;
 public class BluetoothDevice implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	/**
+	 * 设备名称
+	 */
 	private String deviceName;
+	/**
+	 * 设备地址
+	 */
 	private String address;
 	private String strCOD;
 	private int nRSSI;
+	/**
+	 * 设备状态
+	 */
 	private int status;
-	public static final String PREFERENCE_NAME = "D531_preference" ;
-	public static final String CURRENT_BLUETOOTHDEVICE_ADDRESS = "lastDeviceAddress" ;
-	
-	public static final int DEVICE_UNPAIR = 0 ;
-	public static final int DEVICE_PAIRED = 1 ;
-	public static final int DEVICE_CONNECTED = 2 ;
-	public static final int DEVICE_PAIRING = 4 ;
-	public static final int DEVICE_UNPAIRING = 5 ;
-	public static final int DEVICE_CONNECTING = 6 ;
-	public static final int DEVICE_DISCONNECTING =7 ;
+
+	/**
+	 * 未配对（可用设备）
+	 */
+	public static final int DEVICE_UNPAIR = 0;
+	/**
+	 * 已配对
+	 */
+	public static final int DEVICE_PAIRED = 1;
+	/**
+	 * 已连接
+	 */
+	public static final int DEVICE_CONNECTED = 2;
+	/**
+	 * 正在配对
+	 */
+	public static final int DEVICE_PAIRING = 4;
+	/**
+	 * 正在取消配对
+	 */
+	public static final int DEVICE_UNPAIRING = 5;
+	/**
+	 * 正在连接
+	 */
+	public static final int DEVICE_CONNECTING = 6;
+	/**
+	 * 正在断开连接
+	 */
+	public static final int DEVICE_DISCONNECTING = 7;
+
 
 	public BluetoothDevice(String deviceName, String address, String strCOD,
 			int nRSSI, int status) {

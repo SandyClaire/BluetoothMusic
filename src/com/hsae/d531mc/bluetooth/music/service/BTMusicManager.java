@@ -107,6 +107,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	long downTime = System.currentTimeMillis();
 	long upTime = System.currentTimeMillis();
 
+	/**
+	 * 方控上一首下一首按键
+	 */
 	@Override
 	public void onHmiChanged(int hmiIndex, boolean down) {
 		LogUtil.i("onHmiChanged", "down == " + down + ", hmiIndex == "

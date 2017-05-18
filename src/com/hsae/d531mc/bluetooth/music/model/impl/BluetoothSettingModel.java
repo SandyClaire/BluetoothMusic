@@ -269,8 +269,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	@Override
 	public void disconnectMoblie() {
 		try {
-			mBluetoothModel.disconnectMobiel();
 			mBluetoothModel.a2dpDisconnect();
+			mBluetoothModel.disconnectMobiel();
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -377,8 +377,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			mBundle.putSerializable("devciesbean", bean);
 			msg_search.setData(mBundle);
 			this.notify(msg_search, FLAG_RUN_SYNC);
-			LogUtil.i(TAG,
-					"getVisibleDevices --- devicesName = "
+			LogUtil.i(TAG, "getVisibleDevices Name = "
 							+ bean.getDeviceName());
 		}
 	}

@@ -49,16 +49,23 @@ public class BluetoothMusicModel {
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = -1;
+	
+	// 壁纸缓存
+	private LruCache<String, Bitmap> mMemoryCache;
+	
+	// 获取应用程序最大可用内存
+	int cacheSize = (int) Runtime.getRuntime().maxMemory() / 8;
+	
+	// 缓存可用设备列表
+	public List<BluetoothDevice> mListDevices = new ArrayList<BluetoothDevice>();
+	
+	// 手动暂停标识
 	public boolean isHandPuse = false;
 	
-	/**
-	 * carplay 是否连接
-	 */
+	// carplay 是否连接
 	public boolean isCarPlayConnected = false;
 	
-	/**
-	 * carlife 是否连接
-	 */
+	// carlife 是否连接
 	public boolean isCarLifeConnected = false;
 
 	public static BluetoothMusicModel getInstance(Context context) {
@@ -737,6 +744,7 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode);
 		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
 	}
 
@@ -833,11 +841,6 @@ public class BluetoothMusicModel {
 	}
 	
 	/**
-	 * 缓存可用设备列表
-	 */
-	public List<BluetoothDevice> mListDevices = new ArrayList<BluetoothDevice>();
-	
-	/**
 	 * 搜索蓝牙设备主调
 	 */
 	public void getBluetoothVisibleDevices() {
@@ -912,6 +915,11 @@ public class BluetoothMusicModel {
 		}
 	};
 	
+	/**
+	 * 更新缓存列表状态
+	 * @param status
+	 * @param address
+	 */
 	public void updateUnpairListByStatus(int status, String address) {
 		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
 				+ "-- address = " + address);
@@ -1185,7 +1193,7 @@ public class BluetoothMusicModel {
 		}
 	}
 	
-	private void audioStreamEnable(){
+	public void audioStreamEnable(){
 		mHandler.postDelayed(new Runnable() {
 			
 			@Override
@@ -1198,6 +1206,7 @@ public class BluetoothMusicModel {
 				}
 			}
 		}, 300);
+		LogUtil.i(TAG, "audioStreamEnable --- play");
 	}
 	
 	private Handler mHandler = new Handler();
@@ -1229,7 +1238,7 @@ public class BluetoothMusicModel {
 			mBTMmanager = BTMusicManager.getInstance(mContext);
 		}
 		try {
-			if (mBTMmanager.mListener != null) {
+			if (null != mBTMmanager.mListener) {
 				mBTMmanager.mListener.syncBtMusicInfo(info);
 			}
 			
@@ -1312,6 +1321,9 @@ public class BluetoothMusicModel {
 		}
 	};
 	
+	/**
+	 * 清除缓存壁纸
+	 */
 	public void deleteWallpaperCache(){
 		mMemoryCache = getCache();
 		if(getWallPaperBitmap() != null){
@@ -1320,8 +1332,10 @@ public class BluetoothMusicModel {
 		}
 	}
 	
-	private LruCache<String, Bitmap> mMemoryCache;
-	
+	/**
+	 * 添加壁纸缓存
+	 * @param bitmap
+	 */
 	public void addWallPaperToCache(Bitmap bitmap) {
 		mMemoryCache = getCache();
 		
@@ -1334,14 +1348,19 @@ public class BluetoothMusicModel {
 		}
 	}
 
+	/**
+	 * 获取缓存壁纸
+	 * @return
+	 */
 	public Bitmap getWallPaperBitmap() {
 		mMemoryCache = getCache();
 		return mMemoryCache.get(Util.MC_WALLPAPER);
 	}
 	
-	// 获取应用程序最大可用内存
-	int cacheSize = (int) Runtime.getRuntime().maxMemory() / 8;
-		
+	/**
+	 * 初始化壁纸缓存
+	 * @return
+	 */
 	public LruCache<String, Bitmap> getCache(){
 		if(mMemoryCache == null){
 			mMemoryCache = new LruCache<String, Bitmap>(cacheSize) {
