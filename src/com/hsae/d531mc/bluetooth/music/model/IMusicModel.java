@@ -116,4 +116,9 @@ public interface IMusicModel {
 	 */
 	public int retrieveCurrentPlayerAPSetting(int nAttrID);
 	
+	/**
+	 * 播放界面不在最前端
+	 */
+	public void sendActivityPauseMsg();
+	
 }

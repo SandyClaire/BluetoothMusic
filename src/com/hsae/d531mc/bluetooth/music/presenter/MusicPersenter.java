@@ -36,6 +36,9 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
+		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE:
+			mIMusicModel.sendActivityPauseMsg();
+			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			// if (conStatus == 1) {
@@ -190,7 +193,6 @@ public class MusicPersenter implements IObserver {
 							.setCurrentPlayerAPSettings(nAttriID, nNextMode);
 				}
 			}
-
 		}
 	}
 

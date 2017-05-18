@@ -9,6 +9,7 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
+import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
 import com.hsae.autosdk.hmi.HmiConst;
@@ -215,6 +216,7 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 	public void play() throws RemoteException {
 		mBluetoothMusicModel.tryToSwitchSource();
 		mBluetoothMusicModel.requestAudioFocus();
+		mBluetoothMusicModel.mainAudioChanged(false);
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 		Log.i(TAG, "------------- PLAY " );
 	}
@@ -273,6 +275,11 @@ public class BTMusicManager extends IBTMusicManager.Stub{
 			throws RemoteException {
 		// TODO Auto-generated method stub
 		
+	}
+
+	public BTMusicInfo getBtMusicInfo() throws RemoteException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 }

@@ -13,12 +13,14 @@ import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
+import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
+import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.util.ShowLog;
 
@@ -38,6 +40,7 @@ public class BluetoothMusicModel {
 	private static ShowLog mLog;
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
+	private IBluetoothSettingModel nIBluetoothSettingModel;
 	private static final int errorCode = -1;
 
 	public static BluetoothMusicModel getInstance(Context context) {
@@ -481,7 +484,7 @@ public class BluetoothMusicModel {
 	 * music playing.
 	 * 
 	 * @param op_code
-	 *            [in] Please reference AVRCP_Operation_ID for detail command
+	 *        [in] Please reference AVRCP_Operation_ID for detail command
 	 *            information.
 	 * @return Returns Anw_SUCCESS on success or returns an error code on
 	 *         failure.
@@ -499,11 +502,235 @@ public class BluetoothMusicModel {
 	}
 	
 	/**
+	 * This function is used to inquiry remote Bluetooth mobile devices in the
+	 * nearby area.
+	 * 
+	 * run in thread
+	 * 
+	 * @throws RemoteException
+	 */
+	public int inquiryBtDevices(IAnwInquiryCallBackEx mInquiryCallBack)
+			throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack);
+	}
+	
+	/**
+	 * This function cancels the current inquiry operation.
+	 * 
+	 * @return
+	 * @throws RemoteException
+	 */
+	public int inquiryBtStop() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// TODO:
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_DeviceInquiryStop();
+	}
+	
+	/**
+	 * This function is used to pair with Bluetooth remote device.
+	 * 
+	 * @param address
+	 *            The Bluetooth address of remote device
+	 * @param pin_code
+	 *            The PIN code for synchronizing the stack driver and Bluetooth
+	 *            mobile
+	 * @param cod
+	 *            The cod of remote device, -1 means unknown.
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int pair(String address, String pin_code, int cod)
+			throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_DevicePair(address, pin_code, cod);
+	}
+	
+	/**
+	 * Use this function to retrieve the current status of inquiry.
+	 * 
+	 * @return
+	 * @throws RemoteException
+	 */
+	public boolean isCurrentInquiring() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return false;
+		}
+		return mIAnwPhoneLink.ANWBT_IsCurrentInquiring();
+	}
+	
+	/**
+	 * This function retrieves the paired list.
+	 * 
+	 * @param nCount
+	 *            [out] How many paired information return back to application.
+	 *            The maximum count of paired list is 16.
+	 * @param Name
+	 *            [out] Name of paired device.
+	 * @param Address
+	 *            [out] Address of paired device.
+	 * @param cod
+	 *            [out] COD of paired device.-1 means unknown.
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int getPairedList(int[] nCount, String[] Name, String[] Address,
+			int[] cod) throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+
+		return mIAnwPhoneLink.ANWBT_GetPairedList(nCount, Name, Address, cod);
+	}
+
+	/**
+	 * This function is used to disconnect a previous connected Bluetooth
+	 * device.
+	 * 
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int disconnectMobiel() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_DisconnectMobile();
+	}
+	
+	/**
+	 * This function is used to disconnect a previous connected Bluetooth
+	 * device.
+	 * 
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int a2dpDisconnect() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_A2DPDisconnect();
+	}
+	
+	/**
+	 * This function is used to un-pair the Bluetooth device which is already
+	 * paired.
+	 * 
+	 * @param address
+	 *            The Bluetooth address of remote device
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int unPair(String address) throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_DeviceUnPair(address);
+	}
+	
+	/**
+	 * Use this function to establish the Bluetooth connection with the paired
+	 * device. It connects to the HF profile and the profile that can retrieves
+	 * PIM data.
+	 * 
+	 * This function returns immediately. You must use registerReceiver to
+	 * register a BroadcastReceiver with action MSG_ACTION_CONNECT_STATUS .
+	 * Phonelink SDK will broadcast message to notify the device connected or
+	 * not.
+	 * 
+	 * @param address
+	 *            The Bluetooth address of remote device
+	 * @return Returns Anw_SUCCESS on success or returns an error code on
+	 *         failure.
+	 * @throws RemoteException
+	 */
+	public int connectMobile(String address) throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return errorCode;
+		}
+		return mIAnwPhoneLink.ANWBT_ConnectMobile(address);
+	}
+	
+	/**
+	 * 获取本机名称
+	 * @return
+	 * @throws RemoteException
+	 */
+	public String getDeviceName() throws RemoteException{
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return "";
+		}
+		return mIAnwPhoneLink.ANWBT_GetDeviceName();
+	}
+	
+
+	/**
+	 * 注册Blutooth Setting 监听
+	 * 
+	 * @param mBluetoothSettingModel
+	 */
+	public void registBluetoothSettingListener(
+			IBluetoothSettingModel mBluetoothSettingModel) {
+		nIBluetoothSettingModel = mBluetoothSettingModel;
+	}
+	
+	/**
+	 * 取消Blutooth Setting 监听
+	 */
+	public void unregistBluetoothSettingListener() {
+		nIBluetoothSettingModel = null;
+	}
+
+	
+	/**
 	 * regist music status listener
 	 * @param nMusicModel
 	 */
 	public void registMusicListener(IMusicModel nMusicModel) {
 		mIMusicModel = nMusicModel;
+		Log.i("wangda", "registMusicListener");
 	}
 	
 	/**
@@ -575,6 +802,7 @@ public class BluetoothMusicModel {
 	 * unregist music status listener
 	 */
 	public void unregistMusicListener() {
+		Log.i("wangda", "unregistMusicListener");
 		mIMusicModel = null;
 	}
 	
@@ -584,7 +812,7 @@ public class BluetoothMusicModel {
 	 */
 	public boolean tryToSwitchSource() {
 		Source source = new Source();
-        boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC, true);
+        boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
         return isSwitch;
     }
 	
@@ -592,7 +820,7 @@ public class BluetoothMusicModel {
      * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
      * @param isChanged
      */
-    private void mainAudioChanged(boolean isChanged) {
+     public void mainAudioChanged(boolean isChanged) {
     	Source source = new Source();
     	source.mainAudioChanged(App.BT_MUSIC, isChanged);
         Log.i(TAG, "requestAudioSource == " + isChanged);
@@ -609,7 +837,6 @@ public class BluetoothMusicModel {
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;
-            mainAudioChanged(isAudioFocused);
             if (mBean != null) {
             	BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
             			mBean.getAlbum(), null);
@@ -664,17 +891,14 @@ public class BluetoothMusicModel {
 		    switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
             	isAudioFocused = true;
-            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
             	isAudioFocused = true;
-            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
             	isAudioFocused = true;
-            	mainAudioChanged(isAudioFocused);
                 Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:

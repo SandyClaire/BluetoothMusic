@@ -172,6 +172,14 @@ public class MusicMainActivity extends Activity implements ISubject,
 		this.notify(msg, FLAG_RUN_SYNC);
 		super.onResume();
 	}
+	
+	@Override
+	protected void onPause() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
+		this.notify(msg, FLAG_RUN_SYNC);
+		super.onPause();
+	}
 
 	private void showFram() {
 		if (isfirst) {
@@ -440,6 +448,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
 		if (isPlaying && (mMusicHandler != null)) {
+			Log.i("wangda", "updateMusicPlayCurrentTime");
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
 		}

@@ -36,6 +36,23 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_REPEAT_ATTRIBUTE = 51;
     static public final int ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT = 52;
     
+    static public final int ACTION_A2DP_ACTIVITY_PAUSE = 60;
+    
+    
+    // settings page
+    static public final int ACTION_SETTING_INQUIRY = 70;
+    static public final int ACTION_SETTING_STOP_INQUIRY = 71;
+    static public final int ACTION_SETTING_PAIR = 72;
+    static public final int ACTION_SETTING_UNPAIR = 73;
+    static public final int ACTION_SETTING_INQUIRY_DEVICES = 74;
+    static public final int ACTION_SETTING_INQUIRY_FINISH = 75;
+    static public final int ACTION_SETTING_CONNECT_STATUS_CHANGE = 76;
+    static public final int ACTION_SETTING_PAIR_STATUS_CHANGE = 77;
+    static public final int ACTION_SETTING_DISCONNECT_MOBILE = 78;
+    static public final int ACTION_SETTING_CONNECT_MOBILE = 79;
+    
+    static public final int ACTION_SETTING_GET_PAIRED_DEVICES = 80;
+    
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     

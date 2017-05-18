@@ -233,7 +233,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	public void startOtherAPP(App app, String appId, String activityName,
 			Bundle bundle) {
 		Source source = new Source();
-		boolean tryToSwitchSource = source.tryToSwitchSource(app, true);
+		boolean tryToSwitchSource = source.tryToSwitchSource(app);
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getActivity(), appId)) {
@@ -253,7 +253,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 				getActivity().finish();
 			}
 		} else {
-			source.tryToSwitchSource(app, false);
+			source.tryToSwitchSource(app);
 		}
 	}
 

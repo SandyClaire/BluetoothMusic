@@ -157,6 +157,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	@Override
 	public void requestAudioFoucs() {
 		mBluetoothMusicModel.requestAudioFocus();
+		mBluetoothMusicModel.mainAudioChanged(true);
 	}
 
 	@Override
@@ -215,6 +216,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 
 		return attrID;
+	}
+
+	@Override
+	public void sendActivityPauseMsg() {
+		mBluetoothMusicModel.mainAudioChanged(false);
 	}
 
 }

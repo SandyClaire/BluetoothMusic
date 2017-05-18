@@ -9,12 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
-import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -60,10 +58,10 @@ public class BluetoothMusicServcie extends Service {
 		IntentFilter filter = new IntentFilter();
 		mReceiver = new BTBroadcastReceiver();
 		filter.addAction(MangerConstant.MSG_ACTION_POWER_STATUS);
+		filter.addAction(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS);
 		filter.addAction(MangerConstant.MSG_ACTION_CONNECT_STATUS);
 		filter.addAction(MangerConstant.MSG_ACTION_A2DP_FEATURE_SUPPORT);
 		filter.addAction(MangerConstant.MSG_ACTION_A2DP_METADATA);
-		filter.addAction(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS);
 		filter.addAction(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS);
 		filter.addAction(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS);
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT);
