@@ -556,7 +556,6 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack);
 	}
 
-	
 	/**
 	 * This function cancels the current inquiry operation.
 	 * 
@@ -1185,8 +1184,7 @@ public class BluetoothMusicModel {
 			}
 			if (soApp != App.BT_MUSIC) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-			} else if (soApp == App.BT_MUSIC
-					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (RemoteException e) {
@@ -1205,9 +1203,12 @@ public class BluetoothMusicModel {
 				mainAudioChanged(flag);
 				// 如果手动点击停止，不进行播放；
 				if (!isHandPuse) {
-					AVRCPControl(AudioControl.CONTROL_PLAY);
+					try {
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+					} catch (RemoteException e) {
+					}
 				}
-			}else {
+			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
 				if (!isAudioFocused) {
 					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,

@@ -64,7 +64,7 @@ public class BluetoothMusicServcie extends Service {
 	/**
 	 * 背景监听
 	 */
-//	private WallContentObserver mObserver;
+	// private WallContentObserver mObserver;
 
 	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
@@ -197,14 +197,15 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
 						LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　" + mBluetoothMusicModel.hfpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
-							
+
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
-							IPodProxy.getInstance().notifyA2dpConnected(mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
+							IPodProxy.getInstance().notifyA2dpConnected(
+									mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
 						}
-						
+
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
 								+ mBluetoothMusicModel.a2dpStatus);
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
@@ -353,6 +354,7 @@ public class BluetoothMusicServcie extends Service {
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
 			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
+
 				autoConnA2dp();
 				LogUtil.i("BluetoothMusicModel", " autoConnA2dp");
 			}
@@ -367,7 +369,7 @@ public class BluetoothMusicServcie extends Service {
 	private void playMusic() {
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-			LogUtil.i(TAG, "btmusic is connected playMusic  sussecc");
+			LogUtil.i(TAG, "btmusic is connected playMusic  success");
 			try {
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 				mBluetoothMusicModel.getPlayStatus();
@@ -375,7 +377,6 @@ public class BluetoothMusicServcie extends Service {
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 			} catch (RemoteException e) {
 			}
-
 		} else {
 			try {
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
@@ -401,6 +402,9 @@ public class BluetoothMusicServcie extends Service {
 
 			try {
 				LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
+				if (mBluetoothMusicModel.isCurrentInquiring()) {
+					mBluetoothMusicModel.inquiryBtStop();
+				}
 				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
 			} catch (RemoteException e) {
 			}
@@ -480,40 +484,40 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
-//	/**
-//	 * 注册背景数据库监听
-//	 */
-//	public void registerContentObserver() {
-//		Uri uri = Uri.parse(Util.WALL_CONTENT_URI + "/" + Util.WALLPAPER_SET);
-//		if (mObserver == null) {
-//			mObserver = new WallContentObserver(new Handler());
-//		}
-//		getContentResolver().registerContentObserver(uri, false, mObserver);
-//	}
-//
-//	/**
-//	 * 注销背景数据库监听
-//	 */
-//	public void unRegisterContentObserver() {
-//		if (mObserver != null) {
-//			getContentResolver().unregisterContentObserver(mObserver);
-//		}
-//	}
-//
-//	class WallContentObserver extends ContentObserver {
-//
-//		public WallContentObserver(Handler handler) {
-//			super(handler);
-//			// TODO Auto-generated constructor stub
-//		}
-//
-//		@Override
-//		public void onChange(boolean selfChange) {
-//			super.onChange(selfChange);
-//			LogUtil.i(TAG, "wall paperchanged");
-//			initBackground();
-//		}
-//	}
+	// /**
+	// * 注册背景数据库监听
+	// */
+	// public void registerContentObserver() {
+	// Uri uri = Uri.parse(Util.WALL_CONTENT_URI + "/" + Util.WALLPAPER_SET);
+	// if (mObserver == null) {
+	// mObserver = new WallContentObserver(new Handler());
+	// }
+	// getContentResolver().registerContentObserver(uri, false, mObserver);
+	// }
+	//
+	// /**
+	// * 注销背景数据库监听
+	// */
+	// public void unRegisterContentObserver() {
+	// if (mObserver != null) {
+	// getContentResolver().unregisterContentObserver(mObserver);
+	// }
+	// }
+	//
+	// class WallContentObserver extends ContentObserver {
+	//
+	// public WallContentObserver(Handler handler) {
+	// super(handler);
+	// // TODO Auto-generated constructor stub
+	// }
+	//
+	// @Override
+	// public void onChange(boolean selfChange) {
+	// super.onChange(selfChange);
+	// LogUtil.i(TAG, "wall paperchanged");
+	// initBackground();
+	// }
+	// }
 
 	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
 
@@ -701,26 +705,29 @@ public class BluetoothMusicServcie extends Service {
 
 		@Override
 		public void onScreenStateResponse(boolean power) {
-			if (power) {
-				Source source = new Source();
-				if (source.getCurrentSource() == App.BT_MUSIC) {
-					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
-					try {
-						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
-				try {
-					if (mBluetoothMusicModel.getStreamMode() != MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
+			// if (power) {
+			// Source source = new Source();
+			// if (source.getCurrentSource() == App.BT_MUSIC) {
+			// LogUtil.i(TAG,
+			// "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
+			// try {
+			// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			// } catch (RemoteException e) {
+			// e.printStackTrace();
+			// }
+			// }
+			// } else {
+			// LogUtil.i(TAG,
+			// "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
+			// try {
+			// if (mBluetoothMusicModel.getStreamMode() !=
+			// MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+			// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+			// }
+			// } catch (RemoteException e) {
+			// e.printStackTrace();
+			// }
+			// }
 		}
 	}
 

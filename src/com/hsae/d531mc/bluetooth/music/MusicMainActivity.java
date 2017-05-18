@@ -108,8 +108,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private boolean isSupportMetadata = false;
 	private static final int LONG_CLICK_PREV = 1;
 	private static final int LONG_CLICK_NEXT = 2;
+	private static final int LONG_FAST_FORWORD_CANCLE = 5;
+	private static final int LONG_FAST_BACKWORD_CANCLE = 6;
+
 	private static final int SHORT_CLICK_PREV = 3;
 	private static final int SHORT_CLICK_NEXT = 4;
+
 	private boolean isNormalPrev = true;
 	private boolean isNormalNext = true;
 	private FrameLayout mFraInfo;
@@ -133,12 +137,23 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				msgln.what = MusicActionDefine.ACTION_A2DP_FASTFORWORD;
 				MusicMainActivity.this.notify(msgln, FLAG_RUN_SYNC);
 				LogUtil.i(TAG, " --- next long press ---");
-				if (fastFowardMiles > 70) {
-					fastFowardMiles -= 40;
-				}
-				if (!isNormalNext) {
-					mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, fastFowardMiles);
-				}
+				// if (fastFowardMiles > 70) {
+				// fastFowardMiles -= 40;
+				// }
+				// if (!isNormalNext) {
+				// mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT,
+				// fastFowardMiles);
+				// }
+				break;
+			case LONG_FAST_BACKWORD_CANCLE:
+				Message msgbc = Message.obtain();
+				msgbc.what = MusicActionDefine.ACTION_A2DP_REWIND_CANCEL;
+				MusicMainActivity.this.notify(msgbc, FLAG_RUN_SYNC);
+				break;
+			case LONG_FAST_FORWORD_CANCLE:
+				Message msgfc = Message.obtain();
+				msgfc.what = MusicActionDefine.ACTION_A2DP_FASTFORWORD_CANCEL;
+				MusicMainActivity.this.notify(msgfc, FLAG_RUN_SYNC);
 				break;
 			case SHORT_CLICK_NEXT:
 				LogUtil.i(TAG, " --- next short press ---");
@@ -152,12 +167,13 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				msglp.what = MusicActionDefine.ACTION_A2DP_REWIND;
 				MusicMainActivity.this.notify(msglp, FLAG_RUN_SYNC);
 				LogUtil.i(TAG, " --- prev long press ---");
-				if (fastFowardMiles > 70) {
-					fastFowardMiles -= 40;
-				}
-				if (!isNormalPrev) {
-					mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV, fastFowardMiles);
-				}
+				// if (fastFowardMiles > 70) {
+				// fastFowardMiles -= 40;
+				// }
+				// if (!isNormalPrev) {
+				// mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV,
+				// fastFowardMiles);
+				// }
 				break;
 			case SHORT_CLICK_PREV:
 				LogUtil.i(TAG, " --- prev short press --- ");
@@ -325,7 +341,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-		
+
 		boolean isUsb = isUsbConnected() || !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 		super.onResume();
@@ -1015,13 +1031,16 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * 上一首抬起
 	 */
 	private void prevUp() {
-		if (mHandler.hasMessages(LONG_CLICK_PREV)) {
-			mHandler.removeMessages(LONG_CLICK_PREV);
-			fastFowardMiles = 500;
-		}
+//		if (mHandler.hasMessages(LONG_CLICK_PREV)) {
+//			mHandler.removeMessages(LONG_CLICK_PREV);
+//			fastFowardMiles = 500;
+//			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
+//		}
 		if (isNormalPrev) {
 			LogUtil.i(TAG, " --- prevup ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_PREV);
+		}else{
+			mHandler.sendEmptyMessage(LONG_FAST_BACKWORD_CANCLE);
 		}
 		isNormalPrev = true;
 	}
@@ -1030,6 +1049,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
+			LogUtil.i(TAG, "OnTouchListener " + event.getAction());
 			switch (event.getAction()) {
 			case MotionEvent.ACTION_DOWN:
 				nextDown();
@@ -1055,13 +1075,17 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * 下一曲抬起
 	 */
 	private void nextUp() {
-		if (mHandler.hasMessages(LONG_CLICK_NEXT)) {
-			mHandler.removeMessages(LONG_CLICK_NEXT);
-			fastFowardMiles = 500;
-		}
+//		if (mHandler.hasMessages(LONG_CLICK_NEXT)) {
+//			
+//		}
+		
+		LogUtil.i(TAG, "nextUp --- nextUp "); 
 		if (isNormalNext) {
 			LogUtil.i(TAG, " --- nextUp ");
 			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
+		}else{
+			LogUtil.i(TAG, "LONG_CLICK_NEXT --- nextUp ");
+			mHandler.sendEmptyMessage(LONG_FAST_FORWORD_CANCLE);
 		}
 		isNormalNext = true;
 	}

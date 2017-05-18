@@ -84,11 +84,19 @@ public class MusicPersenter implements IObserver {
 			LogUtil.i(TAG, "CONTROL_FORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_FASTFORWORD:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD,0);
 			LogUtil.i(TAG, "CONTROL_FASTFORWARD");
 			break;
 		case MusicActionDefine.ACTION_A2DP_REWIND:
-			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND);
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND,0);
+			LogUtil.i(TAG, "CONTROL_REWIND");
+			break;
+		case MusicActionDefine.ACTION_A2DP_FASTFORWORD_CANCEL:
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_FASTFORWARD,1);
+			LogUtil.i(TAG, "CONTROL_FASTFORWARD");
+			break;
+		case MusicActionDefine.ACTION_A2DP_REWIND_CANCEL:
+			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_REWIND,1);
 			LogUtil.i(TAG, "CONTROL_REWIND");
 			break;
 		case MusicActionDefine.ACTION_A2DP_SUPPORT_MATE_DATA_STATUS_CHANGE:

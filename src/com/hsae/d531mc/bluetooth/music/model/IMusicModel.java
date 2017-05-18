@@ -33,6 +33,8 @@ public interface IMusicModel {
 	 * set avrcp control command
 	 */
 	public void setAVRCPControl(int command);
+	
+	public void setAVRCPControl(int command,int isRelease);
 
 	/**
 	 * update play or pause status

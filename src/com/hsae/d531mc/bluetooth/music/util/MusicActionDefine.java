@@ -27,6 +27,8 @@ public class MusicActionDefine {
     static public final int ACTION_A2DP_NEXT = 23;
     static public final int ACTION_A2DP_FASTFORWORD = 24;
     static public final int ACTION_A2DP_REWIND = 25;
+    static public final int ACTION_A2DP_FASTFORWORD_CANCEL = 26;
+    static public final int ACTION_A2DP_REWIND_CANCEL = 27;
     
     //MODEL 
     static public final int ACTION_A2DP_REPEAT_MODEL = 30;

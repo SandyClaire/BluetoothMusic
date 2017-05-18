@@ -227,6 +227,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void unregisterBTMusicListener(IBTMusicListener arg0) throws RemoteException {
 		mListener = null;
+		System.gc();
 	}
 
 	public BTMusicInfo getBtMusicInfo() throws RemoteException {

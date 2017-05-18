@@ -91,6 +91,16 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
+	
+	
+	@Override
+	public void setAVRCPControl(int command, int isRelease) {
+		try {
+			LogUtil.i(TAG, "AVRCPControlEx: command = "+command +" , isRelease = "+isRelease);
+			mBluetoothMusicModel.AVRCPControlEx(command,isRelease);
+		} catch (RemoteException e) {
+		}
+	}
 
 	@Override
 	public void updatePlayOrPauseStatus(boolean flag) {
@@ -317,5 +327,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
+
 
 }
