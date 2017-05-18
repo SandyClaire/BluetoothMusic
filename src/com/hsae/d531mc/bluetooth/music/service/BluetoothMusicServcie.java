@@ -318,7 +318,7 @@ public class BluetoothMusicServcie extends Service {
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
 						mBluetoothMusicModel.isPlay = true;
-						mBluetoothMusicModel.updatePlayStatus(true);
+//						mBluetoothMusicModel.updatePlayStatus(true);
 						break;
 					}
 				}
