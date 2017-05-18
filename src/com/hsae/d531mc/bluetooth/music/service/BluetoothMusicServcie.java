@@ -169,11 +169,12 @@ public class BluetoothMusicServcie extends Service {
 									+ strMetadata);
 							break;
 						default:
-							MusicBean bean = new MusicBean(mTitle, mAtrist,
-									mAlbum, mTotalTIme);
-							mBluetoothMusicModel.updateCurrentMusicInfo(bean);
 							break;
 						}
+						
+						MusicBean bean = new MusicBean(mTitle, mAtrist,
+								mAlbum, mTotalTIme);
+						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
 
 						Log.e(TAG,
 								"MSG_ACTION_A2DP_METADATA -- nPlayStatus = "

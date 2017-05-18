@@ -277,7 +277,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextAlbum.setText(bean.getAlbum());
 			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 			Log.e("wangda", "~~~~~~~~~~~~~~~~~~~~~~~~ totaltime = "
-					+ getTotalTime(bean.getTotalTime()));
+					+ bean.getTotalTime());
 		} else {
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
