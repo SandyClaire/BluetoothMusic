@@ -139,6 +139,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		LogUtil.i("wangda", "MusicMainActivity -- onCreate starTime = " + System.currentTimeMillis());
 		// 透明状态栏
 		getWindow()
 				.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
@@ -148,6 +149,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		setContentView(R.layout.music_main_new);
 		initView();
 		initMvp();
+		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
 	}
 
 	private void initMvp() {

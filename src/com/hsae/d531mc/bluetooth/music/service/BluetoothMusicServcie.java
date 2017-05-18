@@ -16,6 +16,8 @@ import android.os.SystemClock;
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
+import com.hsae.autosdk.os.Soc;
+import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
@@ -80,7 +82,6 @@ public class BluetoothMusicServcie extends Service {
 
 	@Override
 	public void onDestroy() {
-		mBluetoothMusicModel.unbindService();
 		mContext.unregisterReceiver(mReceiver);
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
@@ -258,6 +259,8 @@ public class BluetoothMusicServcie extends Service {
 				if (mBundle != null) {
 					int nAttrID = mBundle.getInt("AttributeID");
 					int nAttrValue = mBundle.getInt("Value");
+					LogUtil.i(TAG,
+							"current model nAttrID = " + nAttrID + " --- nAttrValue = " + nAttrValue);
 
 					mBluetoothMusicModel.updatePlayerModelSetting(nAttrID,
 							nAttrValue);
@@ -292,6 +295,7 @@ public class BluetoothMusicServcie extends Service {
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
 			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
+				
 				autoConnA2dp();
 				LogUtil.i(TAG, "--------- autoConnA2dp ----------");
 			}
@@ -304,17 +308,22 @@ public class BluetoothMusicServcie extends Service {
 	private void autoConnA2dp(){
 		int hfpStatus = 0;
 		int a2dpStatus = 0;
-		try {
-			hfpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL, 0);
-			a2dpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
-			if (hfpStatus == 1 && a2dpStatus != 1) {
-				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
-				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
-				mBluetoothMusicModel.getPlayStatus();
-				LogUtil.i(TAG, "--------- autoConnA2dp if HFP connected = " + getConnectedDevice());
+		Soc soc = new Soc();
+		UsbDevices usbDevices = soc.getCurrentDevice();
+		LogUtil.i(TAG, "--------- autoConnA2dp usbDevices = " + usbDevices.toString());
+		if (usbDevices.equals(UsbDevices.IPOD)) {
+			try {
+				hfpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL, 0);
+				a2dpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+				if (hfpStatus == 1 && a2dpStatus != 1) {
+					mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
+					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+					mBluetoothMusicModel.getPlayStatus();
+					LogUtil.i(TAG, "--------- autoConnA2dp if HFP connected = " + getConnectedDevice());
+				}
+			} catch (RemoteException e) {
+				e.printStackTrace();
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
 		}
 	}
 	

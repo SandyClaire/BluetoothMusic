@@ -56,10 +56,6 @@ public class BluetoothMusicModel {
 		mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 	}
 
-	public void unbindService() {
-		mContext.unbindService(mConnection);
-	}
-
 	private class BluetoothConnection implements ServiceConnection {
 
 		@Override

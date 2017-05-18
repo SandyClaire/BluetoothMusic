@@ -13,6 +13,7 @@ import android.util.Log;
 import com.anwsdk.service.BT_ADV_DATA;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.bt.phone.BtPhoneProxy;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
@@ -203,6 +204,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		}
 		return false;
 	}
+	
+	private static final int PAIRED_DEVICES_MAX_NUM = 5;
 
 	/**
 	 * 获取配对列表
@@ -224,17 +227,34 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			mBluetoothModel.getPairedList(nCount, Name, Address, COD);
 			for (int i = 0; i < nCount[0]; i++) {
 				BluetoothDevice bean;
-				if (null != Address[i] && Address[i].equals(strAddress[0])) {
-					bean = new BluetoothDevice(Name[i], Address[i],
-							String.valueOf(COD[i]), 0,
-							BluetoothDevice.DEVICE_CONNECTED);
-					mListPairedBeans.add(bean);
+				if (nCount[0] < PAIRED_DEVICES_MAX_NUM) {
+					if (null != Address[i] && Address[i].equals(strAddress[0])) {
+						bean = new BluetoothDevice(Name[i], Address[i],
+								String.valueOf(COD[i]), 0,
+								BluetoothDevice.DEVICE_CONNECTED);
+						mListPairedBeans.add(bean);
+					} else {
+						bean = new BluetoothDevice(Name[i], Address[i],
+								String.valueOf(COD[i]), 0,
+								BluetoothDevice.DEVICE_PAIRED);
+						mListPairedBeans.add(bean);
+					}
+				} else if( i < nCount[0] && i >= (nCount[0] - PAIRED_DEVICES_MAX_NUM)){
+					if (null != Address[i] && Address[i].equals(strAddress[0])) {
+						bean = new BluetoothDevice(Name[i], Address[i],
+								String.valueOf(COD[i]), 0,
+								BluetoothDevice.DEVICE_CONNECTED);
+						mListPairedBeans.add(bean);
+					} else {
+						bean = new BluetoothDevice(Name[i], Address[i],
+								String.valueOf(COD[i]), 0,
+								BluetoothDevice.DEVICE_PAIRED);
+						mListPairedBeans.add(bean);
+					}
 				} else {
-					bean = new BluetoothDevice(Name[i], Address[i],
-							String.valueOf(COD[i]), 0,
-							BluetoothDevice.DEVICE_PAIRED);
-					mListPairedBeans.add(bean);
+					mBluetoothModel.unPair(Address[i]);
 				}
+				LogUtil.i(TAG, "Name[i] = " + Name[i]);
 			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -312,7 +332,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 				}
 			}
 		}, conDelayTime);
-
+		//停止自动连接功能
+		BtPhoneProxy.getInstance().settingStartBtConnect();
 	}
 
 	@Override
