@@ -224,10 +224,10 @@
                 android:layout_gravity="top|left"
                 android:layout_marginLeft="956dp"
                 android:layout_marginTop="18dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="35dp"
-                android:paddingRight="35dp"
-                android:paddingTop="15dp"
+                android:paddingBottom="10dp"
+                android:paddingLeft="31dp"
+                android:paddingRight="37dp"
+                android:paddingTop="19dp"
                 android:src="@drawable/btn_music_repeat_singel" />
 
             <ImageView
@@ -245,10 +245,10 @@
                 android:layout_gravity="top|left"
                 android:layout_marginLeft="1127dp"
                 android:layout_marginTop="18dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="35dp"
+                android:paddingBottom="11dp"
+                android:paddingLeft="33dp"
                 android:paddingRight="35dp"
-                android:paddingTop="15dp"
+                android:paddingTop="17dp"
                 android:src="@drawable/btn_music_shuffle_close" />
         </FrameLayout>
     </FrameLayout>
@@ -272,7 +272,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="@string/music_bluetooth_disconnect_tip"
         android:textColor="@android:color/white"
         android:textSize="45sp" />
 

@@ -76,6 +76,7 @@
                 android:layout_marginLeft="@dimen/setting_title_text_margin_left"
                 android:text="@string/bluetooth_enable_text"
                 android:textColor="@color/white"
+                android:visibility="gone"
                 android:textSize="@dimen/text_size_28" />
         </FrameLayout>
     </LinearLayout>
