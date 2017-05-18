@@ -429,7 +429,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			if (mList.size() == 0) {
 				mListPairedDevices.clear();
 			} else {
-				mListPairedDevices = mList;
+				mListPairedDevices.clear();
+				mListPairedDevices.addAll(mList);
 				moveConnectedDeviceToFirst(mListPairedDevices);
 			}
 			updatePairListVisible();
