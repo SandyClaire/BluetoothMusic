@@ -28,6 +28,7 @@
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>
     <string name="bluetooth_status_pairing">Pairing...</string>
     <string name="bluetooth_enable_text">Please turn on bluetooth function</string>
+    <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
     
     <string name="music_switch_split">/</string>
     
