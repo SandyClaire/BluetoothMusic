@@ -469,22 +469,14 @@ public class BluetoothMusicServcie extends Service {
 	 */
 	private class Ticker implements Runnable {
 
-		public Ticker() {
-		}
-
 		@Override
 		public void run() {
 			try {
 				mBluetoothMusicModel.getPlayStatus();
+				stepTimeHandler.postDelayed(this, 1000);
 			} catch (RemoteException e) {
-				e.printStackTrace();
 			}
-
-			long now = SystemClock.uptimeMillis();
-			long next = now + (1000 - now % 1000);
-			stepTimeHandler.postAtTime(this, next);
 		}
-
 	}
 
 	/**

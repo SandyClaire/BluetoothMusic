@@ -319,6 +319,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 				@Override
 				public void onClick(View v) {
+					LogUtil.i(TAG, "unpairRequest -- status =  "+bean.getStatus());
 					if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTED) {
 						disconnectRequest(bean);
 					} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
@@ -366,6 +367,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	private void unpairRequest(BluetoothDevice bean) {
+		LogUtil.i(TAG, "unpairRequest -- name =  "+bean.getDeviceName());
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_SETTING_UNPAIR;
 		Bundle mBundle = new Bundle();
