@@ -23,6 +23,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private static BTMusicManager mManager;
 	private BluetoothMusicModel mBluetoothMusicModel;
 	public IBTMusicListener mListener;
+	
 
 	private BTMusicManager(Context mContext) {
 		super();
@@ -232,6 +233,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void disconnectA2dp() throws RemoteException {
 		LogUtil.i(TAG, "--------- disconnectA2dp ");
+		mBluetoothMusicModel.isDisByIpod = true;
 		mBluetoothMusicModel.a2dpDisconnect();
 	}
 

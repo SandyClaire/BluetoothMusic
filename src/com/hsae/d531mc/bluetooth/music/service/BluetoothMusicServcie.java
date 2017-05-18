@@ -24,6 +24,7 @@ import android.util.Log;
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
+import com.hsae.autosdk.ipod.IPodProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.Soc.SocListener;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
@@ -199,6 +200,11 @@ public class BluetoothMusicServcie extends Service {
 							
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
+						if (mBluetoothMusicModel.isDisByIpod) {
+							mBluetoothMusicModel.isDisByIpod = false;
+							IPodProxy.getInstance().notifyA2dpConnected(mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
+						}
+						
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
 								+ mBluetoothMusicModel.a2dpStatus);
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);

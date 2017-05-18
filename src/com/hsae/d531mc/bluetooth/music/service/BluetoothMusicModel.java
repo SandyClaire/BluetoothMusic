@@ -53,6 +53,7 @@ public class BluetoothMusicModel {
 	public int hfpStatus = 0;
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
+	public boolean isDisByIpod = false;
 
 	// 壁纸缓存
 	private LruCache<String, Bitmap> mMemoryCache;
@@ -555,6 +556,7 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack);
 	}
 
+	
 	/**
 	 * This function cancels the current inquiry operation.
 	 * 

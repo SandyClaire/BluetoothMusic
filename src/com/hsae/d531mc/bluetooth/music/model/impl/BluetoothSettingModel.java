@@ -297,13 +297,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	 * @param address
 	 */
 	private void connect(String address) {
-		
-		//TODO 
-		
-		
 		try {
 			mBluetoothModel.connectMobile(address);
-			mBluetoothModel.a2dpConnect(address);
 			LogUtil.i(TAG, "connect --- address = " + address);
 		} catch (RemoteException e) {
 			e.printStackTrace();
