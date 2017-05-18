@@ -224,7 +224,8 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 				"com.hsae.d531mc.bluetooth.music.MusicMainActivity");
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
-		mBluetoothMusicModel.requestAudioFocus(true);
+		
+//		mBluetoothMusicModel.requestAudioFocus(true);
 		LogUtil.i(TAG, "------------- show ");
 	}
 

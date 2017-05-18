@@ -178,7 +178,10 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 		// 透明导航栏
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+		
+		
 		setContentView(R.layout.music_main);
+		
 		initView();
 		initMvp();
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
@@ -188,6 +191,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		MusicModel model = new MusicModel(this);
 		mPresenter = new MusicPersenter(this, model);
 		this.attach(mPresenter);
+		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_LAUNCHED;
 		this.notify(msg, FLAG_RUN_SYNC);

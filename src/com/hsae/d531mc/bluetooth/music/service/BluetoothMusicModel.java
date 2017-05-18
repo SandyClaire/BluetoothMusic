@@ -1130,6 +1130,7 @@ public class BluetoothMusicModel {
 	 * @return
 	 */
 	public boolean tryToSwitchSource() {
+		LogUtil.i(TAG,"tryToSwitchSource");
 		Source source = new Source();
 		boolean isSwitch = source.tryToSwitchSource(App.BT_MUSIC);
 		return isSwitch;
@@ -1154,9 +1155,10 @@ public class BluetoothMusicModel {
 	 * @param isChanged
 	 */
 	public void mainAudioChanged(boolean isBack) {
+		LogUtil.i(TAG, "requestAudioSource == " + isBack);
 		Source source = new Source();
 		source.mainAudioChanged(App.BT_MUSIC, isBack);
-		LogUtil.i(TAG, "requestAudioSource == " + isBack);
+	
 	}
 
 	/**
@@ -1191,6 +1193,7 @@ public class BluetoothMusicModel {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
 		if (source.getCurrentSource() == App.BT_MUSIC) {
+			
 			mainAudioChanged(flag);
 			// 如果手动点击停止，不进行播放；
 			if (isHandPuse) {
