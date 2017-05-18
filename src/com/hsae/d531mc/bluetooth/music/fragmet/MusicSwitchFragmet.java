@@ -189,6 +189,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		Log.i(TAG, "isIPodConnected = " + soc.getCurrentDevice());
 		return isConnected;
 	}
+	
+	
+	
 
 	/**
 	 * 更新按钮状态

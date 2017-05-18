@@ -16,7 +16,7 @@
         android:id="@+id/bluetooth_music_frame"
         android:layout_width="@dimen/music_left_slide_width"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:layout_gravity="end"
         android:layout_marginBottom="@dimen/music_bottombar_higth" />
 
 </android.support.v4.widget.DrawerLayout>

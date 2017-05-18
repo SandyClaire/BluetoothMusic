@@ -281,7 +281,6 @@ public class BluetoothMusicServcie extends Service {
 							try {
 								mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 							} catch (RemoteException e) {
-								e.printStackTrace();
 							}
 						}
 					}

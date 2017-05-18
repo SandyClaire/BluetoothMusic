@@ -24,7 +24,7 @@
     <string name="pair_fail">Pair fail</string>
     <string name="pair_success">Pair success</string>
     <string name="bluetooth_connect">Bluetooth connect</string>
-    <string name="bluetooth_disconnect">Disconnect</string>
+    <string name="bluetooth_disconnect">断开</string>
     <string name="bluetooth_status_connected">Connected</string>
     <string name="bluetooth_status_connecting">Connecting...</string>
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>

@@ -6,7 +6,11 @@ import java.util.regex.Pattern;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -17,6 +21,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.DrawerLayout.DrawerListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -30,6 +35,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.anwsdk.service.AudioControl;
+import com.hsae.autosdk.os.Soc;
+import com.hsae.autosdk.os.SocConst.UsbDevices;
+import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.fragmet.BluetoothSettingFragment;
@@ -51,14 +60,26 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 @SuppressLint("NewApi")
 public class MusicMainActivity extends Activity implements ISubject, IMusicView, OnClickListener {
 
+	enum Media {
+		fm, am, usb, bt, ipod;
+	}
 	private static final String TAG = "MusicMainActivity";
+
+	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
+	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
+	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
+	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
+	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
+	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
+
 
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
 
 	private MusicPersenter mPresenter;
 
-	private ImageView mBtnMusicSwith;
-	private ImageView mBtnSettings;
+	private ImageView ivFM, ivAM, ivUSB, ivBT,ivList;
+	// private ImageView mBtnSettings;
+
 	private ImageView ivAlbumCut;
 	private Animation operatingAnim;
 	// private ImageView mCover;
@@ -173,8 +194,13 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	private void initView() {
-		mBtnMusicSwith = (ImageView) findViewById(R.id.btn_source_settings);
-		mBtnSettings = (ImageView) findViewById(R.id.btn_bt_settings);
+		ivFM = (ImageView) findViewById(R.id.btn_source_fm);
+		ivAM = (ImageView) findViewById(R.id.btn_source_am);
+		ivUSB = (ImageView) findViewById(R.id.btn_source_usb);
+		ivBT = (ImageView) findViewById(R.id.btn_source_bt);
+		ivBT.setSelected(true);
+		ivList = (ImageView) findViewById(R.id.btn_playlist);
+		
 		ivAlbumCut = (ImageView) findViewById(R.id.music_defaultcover);
 		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
 		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
@@ -197,14 +223,19 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment.getInstance(this);
 		mFragmentManager = getFragmentManager();
-		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnTouchListener(prevListener);
 		mBtnPlay.setOnClickListener(this);
 		mBtnNext.setOnTouchListener(nextListener);
 		mImageRepeat.setOnClickListener(this);
 		mImageShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
-		mBtnSettings.setOnClickListener(this);
+
+		ivAM.setOnClickListener(this);
+		ivFM.setOnClickListener(this);
+		ivUSB.setOnClickListener(this);
+		ivBT.setOnClickListener(this);
+		ivList.setOnClickListener(this);
+
 		mDrawerLayout.setOnTouchListener(touchListener);
 		mDrawerLayout.setDrawerListener(mDrawerListener);
 
@@ -285,6 +316,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	@Override
 	protected void onResume() {
+		boolean isUsb = isUsbConnected() || !isIpodConnected();
+		ivUSB.setImageResource(isUsb?R.drawable.selector_source_usb:R.drawable.selector_source_ipod);
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -318,11 +351,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			LogUtil.w(TAG, "activity is not on focus now ");
 			return;
 		}
-		
+
 		if (flag) {
 			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mFragmet).commitAllowingStateLoss();
 		} else {
-			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mSettingFragment).commitAllowingStateLoss();
+			mFragmentManager.beginTransaction().replace(R.id.bluetooth_music_frame, mSettingFragment)
+					.commitAllowingStateLoss();
 		}
 		isFramShow = true;
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
@@ -377,12 +411,29 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-		case R.id.btn_source_settings:
-			showFram(true);
+
+		case R.id.btn_source_fm:
+			switchSource(Media.fm);
 			break;
-		case R.id.btn_bt_settings:
+		case R.id.btn_source_am:
+			switchSource(Media.am);
+			break;
+		case R.id.btn_source_usb:
+			switchSource(Media.usb);
+			break;
+		case R.id.btn_source_bt:
+			switchSource(Media.bt);
+			break;
+		case R.id.btn_playlist:
 			showFram(false);
 			break;
+
+		// case R.id.btn_source_settings:
+		// showFram(true);
+		// break;
+		// case R.id.btn_bt_settings:
+		// showFram(false);
+		// break;
 		case R.id.btn_play:
 			Message msgl = Message.obtain();
 			if (ismPlaying) {
@@ -419,6 +470,131 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		default:
 			break;
 		}
+	}
+
+	/****
+	 * 切换音源
+	 * 
+	 * @param source
+	 */
+	private void switchSource(Media source) {
+		Bundle bundle = new Bundle();
+		LogUtil.i(TAG, "switchSource :source is " + source);
+		if (source.equals(Media.am)) {
+			ivAM.setSelected(true);
+			ivFM.setSelected(false);
+			ivUSB.setSelected(false);
+			ivBT.setSelected(false);
+			bundle.putInt("band", 0x01);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
+			closeMusicSwitch();
+			finishActivity();
+		} else if (source.equals(Media.fm)) {
+			ivAM.setSelected(false);
+			ivFM.setSelected(true);
+			ivUSB.setSelected(false);
+			ivBT.setSelected(false);
+			bundle.putInt("band", 0x03);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
+			closeMusicSwitch();
+			finishActivity();
+		} else if (source.equals(Media.usb)) {
+			ivAM.setSelected(false);
+			ivFM.setSelected(false);
+			ivUSB.setSelected(true);
+			ivBT.setSelected(false);
+			
+			boolean isUsb = isUsbConnected() || !isIpodConnected();
+			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
+			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
+			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
+			startOtherAPP(app, strPackage, strClass, bundle);
+			closeMusicSwitch();
+			finishActivity();
+		} else if (source.equals(Media.bt)) {
+			ivAM.setSelected(false);
+			ivFM.setSelected(false);
+			ivUSB.setSelected(false);
+			ivBT.setSelected(true);
+			closeMusicSwitch();
+		}
+	}
+
+	/**
+	 * @Description: 判断USB是否连接
+	 * @return
+	 */
+	private boolean isUsbConnected() {
+		boolean isConnected = false;
+		Soc soc = new Soc();
+		UsbDevices deivce = soc.getCurrentDevice();
+		if (deivce != null) {
+			if (deivce == UsbDevices.UDISK) {
+				isConnected = true;
+			}
+		}
+		Log.i(TAG, "isUsbConnected = " + soc.getCurrentDevice());
+		return isConnected;
+	}
+
+	/**
+	 * @Description: 判断Ipod是否连接
+	 * @return
+	 */
+	private boolean isIpodConnected() {
+		boolean isConnected = false;
+		Soc soc = new Soc();
+		UsbDevices deivce = soc.getCurrentDevice();
+		if (deivce != null) {
+			if (deivce == UsbDevices.IPOD) {
+				isConnected = true;
+			}
+		}
+		Log.i(TAG, "isIPodConnected = " + soc.getCurrentDevice());
+		return isConnected;
+	}
+
+	public void startOtherAPP(App app, String appId, String activityName, Bundle bundle) {
+		Source source = new Source();
+		boolean tryToSwitchSource = source.tryToSwitchSource(app);
+		LogUtil.i(TAG, "tryToSwitchSource == " + tryToSwitchSource);
+		if (tryToSwitchSource) {
+
+			if (isAppInstalled(getApplicationContext(), appId)) {
+				Intent intent = new Intent();
+				ComponentName comp = new ComponentName(appId, activityName);
+				intent.setComponent(comp);
+
+				int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK;
+				intent.setFlags(launchFlags);
+				intent.setAction("android.intent.action.VIEW");
+				if (bundle != null) {
+					intent.putExtras(bundle);
+				}
+
+				startActivity(intent);
+				finish();
+			}
+		}
+	}
+
+	/**
+	 * @Description: 判断应用是否安装
+	 * @param context
+	 * @param packagename
+	 * @return
+	 */
+	private boolean isAppInstalled(Context context, String packagename) {
+		PackageInfo packageInfo;
+		try {
+			packageInfo = context.getPackageManager().getPackageInfo(packagename, 0);
+		} catch (NameNotFoundException e) {
+			packageInfo = null;
+			e.printStackTrace();
+		}
+
+		boolean isInstalled = (packageInfo == null) ? false : true;
+		return isInstalled;
 	}
 
 	@Override
@@ -460,7 +636,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
 	}
-	
+
 	private void updateViewShow(boolean flag) {
 		mBtnPrev.setEnabled(flag);
 		mBtnPlay.setEnabled(flag);

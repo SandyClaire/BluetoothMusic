@@ -26,7 +26,7 @@
     <dimen name="framelayout_left_slide_width">425dp</dimen>
     <dimen name="left_fram_list_width">380dp</dimen>
     <dimen name="left_fram_back">45dp</dimen>
-    <dimen name="devices_discribe_text_pandding_left">20dp</dimen>
+    <dimen name="devices_discribe_text_pandding_left">10dp</dimen>
     <dimen name="devices_discribe_progressbar_margin">15dp</dimen>
     <dimen name="setting_layout_pandding_right">40dp</dimen>
     <dimen name="setting_title_layout_pandding">10dp</dimen>
@@ -39,7 +39,7 @@
     <dimen name="text_size_24">24dp</dimen>
     <dimen name="text_size_26">26dp</dimen>
     <dimen name="text_size_28">28dp</dimen>
-      <dimen name="text_size_30">30dp</dimen>
+    <dimen name="text_size_30">30dp</dimen>
     <dimen name="text_size_38">38dp</dimen>
 
     <!-- devices item -->
