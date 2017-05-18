@@ -50,6 +50,10 @@ public class BluetoothMusicModel {
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = -1;
 	
+	public int hfpStatus = 0;
+	public int a2dpStatus = 0;
+	public int avrcpStatus = 0;
+	
 	// 壁纸缓存
 	private LruCache<String, Bitmap> mMemoryCache;
 	
@@ -1220,9 +1224,7 @@ public class BluetoothMusicModel {
 							+ "BluetoothMusicModel获取音频焦点成功");
 			isAudioFocused = true;
 			mainAudioChanged(flag);
-			if (mIMusicModel != null) {
-				mIMusicModel.autoConnectA2DP();
-			}
+			autoConnectA2DP();
 		} else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
 			LogUtil.i(TAG, "requestAudioFocus---"
 					+ "BluetoothMusicModel获取音频焦点失败");
@@ -1244,6 +1246,21 @@ public class BluetoothMusicModel {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * 自动连接蓝牙音乐
+	 */
+	private void autoConnectA2DP(){
+		if (hfpStatus == 1 && a2dpStatus != 1) {
+			LogUtil.i("BluetoothMusicModel",
+					"autoConnA2dp hfpStatus = " + hfpStatus
+							+ " --- a2dpStatus = " + a2dpStatus);
+			if (mIMusicModel != null) {
+				mIMusicModel.autoConnectA2DP();
+				return;
 			}
 		}
 	}
