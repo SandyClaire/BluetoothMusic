@@ -57,7 +57,7 @@ public class BluetoothMusicModel {
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = 0;
-
+	
 	public int hfpStatus = 0;
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
@@ -1223,25 +1223,25 @@ public class BluetoothMusicModel {
 			int mode = getStreamMode();
 			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
 			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
 
 			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
 			if (soApp != App.BT_MUSIC
 					&& !isDisByIpod
-					&& (mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE)) {
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE)) {
 				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_MUTE);
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				Message msg = Message.obtain();
 				msg.what = MSG_SETSTREAM_MODE;
 				msg.setData(data);
 				handler.sendMessage(msg);
-				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
+				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_MUTE");
 			} else if (soApp == App.BT_MUSIC
-					&& (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE)) {
 				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 				Message msg = Message.obtain();
 				msg.what = MSG_SETSTREAM_MODE;
 				msg.setData(data);

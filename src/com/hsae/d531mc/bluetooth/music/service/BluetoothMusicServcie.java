@@ -385,7 +385,7 @@ public class BluetoothMusicServcie extends Service {
 			try {
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();
@@ -725,7 +725,7 @@ public class BluetoothMusicServcie extends Service {
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
 					try {
-						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
@@ -733,8 +733,8 @@ public class BluetoothMusicServcie extends Service {
 			} else {
 				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
 				try {
-					if (mBluetoothMusicModel.getStreamMode() != MangerConstant.AUDIO_STREAM_MODE_MUTE) {
-						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
+					if (mBluetoothMusicModel.getStreamMode() != MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
