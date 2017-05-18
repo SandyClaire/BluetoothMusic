@@ -5,24 +5,27 @@ import java.util.regex.Pattern;
 import android.annotation.SuppressLint;
 import android.app.ActionBar.LayoutParams;
 import android.app.Activity;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
+import android.support.v4.widget.DrawerLayout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
+import com.hsae.d531mc.bluetooth.music.fragmet.MusicSwitchFragmet;
 import com.hsae.d531mc.bluetooth.music.model.impl.MusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.IObserver;
 import com.hsae.d531mc.bluetooth.music.observer.ISubject;
@@ -32,6 +35,7 @@ import com.hsae.d531mc.bluetooth.music.service.BluetoothMusicServcie;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
+@SuppressLint("NewApi")
 public class MusicMainActivity extends Activity implements ISubject,
 		IMusicView, OnClickListener {
 
@@ -49,7 +53,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private TextView mTextCurTime;
 	private TextView mTextTotalTime;
 	private SeekBar mSeekBar;
+	private DrawerLayout mDrawerLayout;
+	private FrameLayout mFrameLayout;
+	private FragmentManager mFragmentManager;
+	private MusicSwitchFragmet mFragmet;
 	private boolean isPlaying = false;
+	private boolean isfirst = false;
 	private static final int MUSIC_PALYING = 1;
 	private static final int MUSIC_PAUSE = 2;
 	private static final int MUSIC_STOP = 0;
@@ -91,6 +100,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextAlbum = (TextView) findViewById(R.id.music_album);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
+		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
+		mFragmet = new MusicSwitchFragmet(this);
+		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
 		mBtnPlay.setOnClickListener(this);
@@ -119,6 +132,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 				return false;
 			}
 		});
+		isfirst = true;
+	}
+	
+	private void showFram() {
+		if (isfirst) {
+			mFragmentManager
+			.beginTransaction()
+			.replace(R.id.bluetooth_music_frame,
+					mFragmet).commit();
+			isfirst = false;
+		}
+		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
 
 	@Override
@@ -157,7 +182,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Message msg = Message.obtain();
 		switch (v.getId()) {
 		case R.id.btn_bt_settings:
-
+			showFram();
 			break;
 		case R.id.btn_prev:
 			msg.what = MusicActionDefine.ACTION_A2DP_PREV;
@@ -385,7 +410,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		repeatWindow.setFocusable(true);
 		repeatWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_repeat),
-				Gravity.BOTTOM | Gravity.RIGHT, 112, 47);
+				Gravity.BOTTOM | Gravity.RIGHT, 165, 80);
 	}
 
 	private View mShuffleView;
@@ -412,7 +437,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		shuffleWindow.setFocusable(true);
 		shuffleWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_shuffle),
-				Gravity.BOTTOM | Gravity.RIGHT, 38, 47);
+				Gravity.BOTTOM | Gravity.RIGHT, 0, 80);
 	}
 
 	private OnClickListener playModeListener = new OnClickListener() {
