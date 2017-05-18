@@ -209,7 +209,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="@dimen/music_buttom_button_mergin"
                     android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_shuffle_open" />
+                    android:background="@drawable/btn_music_shuffle_close" />
             </LinearLayout>
 
             <LinearLayout
