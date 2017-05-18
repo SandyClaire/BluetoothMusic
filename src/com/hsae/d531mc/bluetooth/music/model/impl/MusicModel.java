@@ -139,6 +139,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putSerializable("musicBean", bean);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "--- getCurrentMusicBean = " + bean.getTitle());
 	}
 
 	@Override
@@ -150,6 +151,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		mBundle.putBoolean("playStatus", isPlaying);
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
+		LogUtil.i(TAG, "--- getCurrentMusicPlayPosition  position = " + position +  "-- isPlaying = " + isPlaying);
 	}
 
 	@Override

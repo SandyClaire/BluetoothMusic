@@ -910,11 +910,19 @@ public class BluetoothMusicModel {
     
     /** 获取Android音频焦点 */
     public void requestAudioFocus(boolean flag) {
+    	Source source = new Source();
+    	LogUtil.i(TAG, "-------------- BT getCurrentSource" + source.getCurrentSource());
+    	if (source.getCurrentSource() == App.BT_MUSIC) {
+    		try {
+				AVRCPControl(AudioControl.CONTROL_PLAY);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
         LogUtil.i(TAG, "requestAudioFocus---request audio focus");
         audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); //STREAM_MUSIC
         int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-        Source source = new Source();
-        LogUtil.i(TAG, "-------------- BT getCurrentSource" + source.getCurrentSource());
         if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
             LogUtil.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "BluetoothMusicModel获取音频焦点成功");
             isAudioFocused = true;

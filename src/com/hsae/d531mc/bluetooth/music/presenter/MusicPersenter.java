@@ -35,9 +35,6 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
-		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE:
-			mIMusicModel.sendActivityPauseMsg();
-			break;
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			mIMusicView.updateViewByConnectStatus(conStatus);
@@ -76,10 +73,6 @@ public class MusicPersenter implements IObserver {
 			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
 			LogUtil.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
-			break;
-		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
-			mIMusicModel.requestAudioFoucs();
-			initMusicModel();
 			break;
 		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
 			ArrayList<Integer> allowRepeatList = inMessage.getData()
@@ -136,11 +129,14 @@ public class MusicPersenter implements IObserver {
 					.getCurrentDataAttributes(AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS);
 			MusicBean bean = new MusicBean(title, atrist, album, totalTime);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
-			// mIMusicView.updatePlayBtnByStatus(playStatus);
+//			mIMusicView.updatePlayBtnByStatus(playStatus);
 		}
+		mIMusicModel.requestAudioFoucs();
+		initMusicModel();
 	}
 
 	private void exit() {
+		mIMusicModel.sendActivityPauseMsg();
 		mIMusicModel.releaseModel();
 		((ISubject) mIMusicModel).detach(this);
 		((ISubject) mIMusicModel).detach(this);

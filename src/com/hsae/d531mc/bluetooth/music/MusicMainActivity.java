@@ -7,6 +7,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -36,6 +40,7 @@ import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
+import com.hsae.d531mc.bluetooth.music.util.Util;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
 /**
@@ -72,6 +77,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private ImageView mImageShuffle;
 	private ImageView mImageRepeat;
 	private BluetoothSettingFragment mSettingFragment;
+	private LinearLayout mLinBg;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -115,6 +121,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome = (Button) findViewById(R.id.btn_home);
 		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
 		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
+		mLinBg = (LinearLayout) findViewById(R.id.lin_music_bg);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
 				.getInstance(this);
@@ -128,6 +135,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome.setOnClickListener(this);
 		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
+//		mFragmentManager.beginTransaction()
+//		.replace(R.id.bluetooth_music_frame, mFragmet).commit();
 
 		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
 
@@ -150,8 +159,36 @@ public class MusicMainActivity extends Activity implements ISubject,
 				return false;
 			}
 		});
+		initBackground();
 	}
+	
+	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
 
+		@Override
+		protected Bitmap doInBackground(Bundle... params) {
+			byte[] in = params[0].getByteArray(Util.VALUE);
+			return BitmapFactory.decodeByteArray(in, 0, in.length);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap result) {
+			BitmapDrawable newDrawable = new BitmapDrawable(
+					getResources(), result);
+			mLinBg.setBackground(newDrawable);
+		}
+
+	}
+	
+	public void initBackground() {
+		LogUtil.i(TAG, "initBackground");
+		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI,
+				Util.METHOD_GET_VALUE_WALL, Util.WALLPAPER_SET, null);
+		if (bd != null) {
+			BitmapWorkerTask mTask = new BitmapWorkerTask();
+			mTask.execute(bd);
+		}
+	}
+	
 	private OnTouchListener touchListener = new OnTouchListener() {
 
 		@SuppressLint("ClickableViewAccessibility")
@@ -171,22 +208,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onResume() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
-		this.notify(msg, FLAG_RUN_SYNC);
 		super.onResume();
 	}
 
 	@Override
 	protected void onPause() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
-		this.notify(msg, FLAG_RUN_SYNC);
+//		Message msg = Message.obtain();
+//		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
+//		this.notify(msg, FLAG_RUN_SYNC);
 		super.onPause();
 	}
 
 	private void showFram(boolean flag) {
-		// if (isfirst) {
 		if (flag) {
 			mFragmentManager.beginTransaction()
 					.replace(R.id.bluetooth_music_frame, mFragmet).commit();
@@ -196,8 +229,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 					.commit();
 		}
 
-		// isfirst = false;
-		// }
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
 
@@ -209,15 +240,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 	protected void onStop() {
 		if (mMusicHandler != null)
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_APP_EXIT;
+		this.notify(msg, FLAG_RUN_SYNC);
+		this.detach(mPresenter);
+		this.finish();
 		super.onStop();
 	}
 
 	@Override
 	protected void onDestroy() {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_APP_EXIT;
-		this.notify(msg, FLAG_RUN_SYNC);
-		this.detach(mPresenter);
 		super.onDestroy();
 	}
 
@@ -288,7 +320,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);
 			startActivity(intent);
-//			this.finish();
 			break;
 		default:
 			break;
@@ -494,10 +525,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
 			mBtnRepeat.setVisibility(View.GONE);
-			;
 		} else {
 			mBtnRepeat.setVisibility(View.VISIBLE);
-			;
 		}
 	}
 
