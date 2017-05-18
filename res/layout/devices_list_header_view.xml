@@ -69,7 +69,6 @@
 
         <ProgressBar
             android:id="@+id/pro_search2"
-            style="?android:attr/progressBarStyleSmall"
             android:layout_width="26px"
             android:layout_marginRight="35px"
             android:layout_height="26px"

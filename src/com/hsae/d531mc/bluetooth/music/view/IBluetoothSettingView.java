@@ -66,4 +66,5 @@ public interface IBluetoothSettingView {
 	 */
 	public void updateTextTipShow(boolean conn);
 
+
 }

@@ -171,4 +171,6 @@ public interface IMusicModel {
 	 */
 	public boolean initPlayStatus();
 
+	public void onUsbDisConnect();
+
 }

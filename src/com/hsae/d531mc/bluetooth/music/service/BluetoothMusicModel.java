@@ -1449,5 +1449,12 @@ public class BluetoothMusicModel {
 		return mMemoryCache;
 	}
 
+	public void onUsbDisConnect() {
+		if (mIMusicModel!= null) {
+			mIMusicModel.onUsbDisConnect();
+		}
+		
+	}
+
 
 }

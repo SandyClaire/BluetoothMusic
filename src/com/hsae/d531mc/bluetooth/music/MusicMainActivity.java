@@ -1082,4 +1082,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mTextTip.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
 		}
 	}
+
+	@Override
+	public void onUsbDesconnet() {
+		ivUSB.setImageResource(R.drawable.selector_source_usb);
+	}
 }

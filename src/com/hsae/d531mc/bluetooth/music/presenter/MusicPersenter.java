@@ -36,6 +36,9 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_LAUNCHED:
 			init();
 			break;
+		case MusicActionDefine.ACTION_USB_DISCONNECT:
+			mIMusicView.onUsbDesconnet();
+			break;
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;

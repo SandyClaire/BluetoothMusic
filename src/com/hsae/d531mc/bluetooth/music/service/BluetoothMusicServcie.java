@@ -581,8 +581,11 @@ public class BluetoothMusicServcie extends Service {
 			break;
 		case USB_CONNECTED_IPOD:
 			LogUtil.i(TAG, "USB_DISCONNECTED_IPOD");
+			mBluetoothMusicModel.onUsbDisConnect();
 			break;
 		default:
+			LogUtil.i(TAG, "onUsbDisConnect");
+			mBluetoothMusicModel.onUsbDisConnect();
 			break;
 		}
 		usbType = USB_CONNECTED_UNKNOW;

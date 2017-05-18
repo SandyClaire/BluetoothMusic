@@ -137,5 +137,6 @@ public interface IBluetoothSettingModel {
 	 * 更新carplay连接状态
 	 */
 	public void updateCarplayConnectStatus();
+
 	
 }

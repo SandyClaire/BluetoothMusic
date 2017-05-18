@@ -297,4 +297,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		return mBluetoothMusicModel.isPlay;
 	}
 
+	@Override
+	public void onUsbDisConnect() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_USB_DISCONNECT;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
 }

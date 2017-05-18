@@ -387,4 +387,5 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
+
 }

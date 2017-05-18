@@ -645,4 +645,5 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			mTextEnable.setText(getResources().getString(R.string.bluetooth_enable_text));
 		}
 	}
+
 }
