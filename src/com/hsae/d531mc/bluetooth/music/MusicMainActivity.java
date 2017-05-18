@@ -286,6 +286,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	protected void onPause() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
+		this.notify(msg, FLAG_RUN_SYNC);
 		super.onPause();
 	}
 
@@ -476,10 +479,24 @@ public class MusicMainActivity extends Activity implements ISubject,
 		isSupportMetadata = isSupport;
 		LogUtil.i(TAG, "Activity updateMusicDataInfo -- isSupport = "
 				+ isSupport);
-		if (isSupport && null != bean) {
-			mTextTitle.setText(bean.getTitle());
-			mTextArtist.setText(bean.getAtrist());
-			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
+		if (null != bean) {
+			if ("".equals(bean.getTitle())) {
+				mTextTitle.setText(getResources().getString(
+						R.string.music_matedate_unsupport));
+			} else {
+				mTextTitle.setText(bean.getTitle());
+			}
+			if ("".equals(bean.getAtrist())) {
+				mTextArtist.setText(getResources().getString(
+						R.string.music_matedate_unsupport));
+			} else {
+				mTextArtist.setText(bean.getAtrist());
+			}
+			if ("".equals(bean.getTotalTime())) {
+				mTextTotalTime.setText("00:00");
+			} else {
+				mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
+			}
 		} else {
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
@@ -609,9 +626,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mRepeatAllowedlist.addAll(allowList);
 		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setVisibility(View.GONE);
+			mBtnRepeat.setEnabled(false);
+			mImageRepeat.setEnabled(false);
 		} else {
-			mBtnRepeat.setVisibility(View.VISIBLE);
+			mBtnRepeat.setEnabled(true);
+			mImageRepeat.setEnabled(true);
 		}
 	}
 
@@ -622,9 +641,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG,
 				"mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setVisibility(View.GONE);
+			mBtnShuffle.setEnabled(false);
+			mImageShuffle.setEnabled(false);
 		} else {
-			mBtnShuffle.setVisibility(View.VISIBLE);
+			mBtnShuffle.setEnabled(true);
+			mImageShuffle.setEnabled(true);
 		}
 	}
 
@@ -689,9 +710,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mShuffleAllowedlist.add(AllowArray[i]);
 		}
 		if (mShuffleAllowedlist.size() <= 0) {
-			mBtnShuffle.setVisibility(View.GONE);
+			mBtnShuffle.setEnabled(false);
+			mImageShuffle.setEnabled(false);
 		} else {
-			mBtnShuffle.setVisibility(View.VISIBLE);
+			mBtnShuffle.setEnabled(true);
+			mImageShuffle.setEnabled(true);
 		}
 	}
 
@@ -702,9 +725,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mRepeatAllowedlist.add(AllowArray[i]);
 		}
 		if (mRepeatAllowedlist.size() <= 0) {
-			mBtnRepeat.setVisibility(View.GONE);
+			mBtnRepeat.setEnabled(false);
+			mImageRepeat.setEnabled(false);
 		} else {
-			mBtnRepeat.setVisibility(View.VISIBLE);
+			mBtnRepeat.setEnabled(true);
+			mImageRepeat.setEnabled(true);
 		}
 	}
 

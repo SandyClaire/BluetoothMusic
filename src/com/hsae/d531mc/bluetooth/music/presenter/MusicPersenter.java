@@ -124,6 +124,9 @@ public class MusicPersenter implements IObserver {
 			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, sallowlist,
 					sCurrentMode);
 			break;
+		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE :
+			mIMusicModel.sendActivityPauseMsg();
+			break;
 		default:
 			break;
 		}

@@ -1006,6 +1006,7 @@ public class BluetoothMusicModel {
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
 		if (source.getCurrentSource() == App.BT_MUSIC) {
 			try {
+				mainAudioChanged(flag);
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();

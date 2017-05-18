@@ -316,7 +316,6 @@ public class BluetoothMusicServcie extends Service {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
 	}
 	
 	/**

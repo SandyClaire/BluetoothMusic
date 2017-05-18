@@ -51,6 +51,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private BluetoothDeviceAdapter mVisibleAdapter;
 	private BluetoothSettingPresenter mPresenter;
 	private boolean isSearching = false;
+	private boolean isPairing = false;
 	private LayoutInflater mInflater;
 	private ProgressBar mProSearch;
 	private TextView mTextLocalName;
@@ -158,6 +159,9 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_search:
+			if (isPairing) {
+				return;
+			}
 			if (isSearching) {
 				stopDeviceSearching();
 			} else {
@@ -260,7 +264,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				holder.mImageUnpair.setBackground(getResources()
 						.getDrawable(R.drawable.btn_disconnect_device));
 				holder.mTextDeviceName.setTextColor(getResources().getColor(
-						R.color.blue));
+						R.color.yellow));
 				holder.mLinItem.setEnabled(true);
 			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRED) {
 				holder.mTextDeviceStatus.setVisibility(View.GONE);;
@@ -399,6 +403,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 				}
 			}
 		}
+		isPairing = false;
 		mVisibleAdapter.notifyDataSetChanged();
 	}
 
@@ -493,6 +498,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 				@Override
 				public void onClick(View v) {
+					isPairing = true;
 					for(BluetoothDevice mBluetoothDevice:mListVisibleDevices){
 						if(mBluetoothDevice.getStatus() == BluetoothDevice.DEVICE_PAIRING){
 							return;
