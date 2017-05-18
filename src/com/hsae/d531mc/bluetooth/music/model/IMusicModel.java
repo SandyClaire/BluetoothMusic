@@ -73,10 +73,15 @@ public interface IMusicModel {
 	
 	/**
 	 * set current player ap setting
-	 * @param nAttrID
 	 * @param nAttrValue
 	 */
-	public void setCurrentPlayerAPSettings(int nAttrID , int nAttrValue);
+	public void setCurrentPlayerRepeatModel(int nAttrValue);
+	
+	/**
+	 * set current player ap setting
+	 * @param nAttrValue
+	 */
+	public void setCurrentPlayerShuffleModel(int nAttrValue);
 	
 	/**
 	 * 抢占音源焦点

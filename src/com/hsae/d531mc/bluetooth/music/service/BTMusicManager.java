@@ -170,9 +170,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void play() throws RemoteException {
+		mBluetoothMusicModel.isHandPuse = false;
 		mBluetoothMusicModel.tryToSwitchSource();
 		mBluetoothMusicModel.requestAudioFocus(false);
-		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 		LogUtil.i(TAG, "------------- PLAY ");
 	}
 
@@ -202,15 +202,17 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	}
 
 	@Override
-	public void setRepeatMode(int arg0) throws RemoteException {
-		// TODO Auto-generated method stub
-
+	public void setRepeatMode(int nAttrValue) throws RemoteException {
+		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
+				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
+		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue );
 	}
 
 	@Override
-	public void setShuffleMode(int arg0) throws RemoteException {
-		// TODO Auto-generated method stub
-
+	public void setShuffleMode(int nAttrValue) throws RemoteException {
+		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
+				mBluetoothMusicModel.mShuffleAllowedlist, nAttrValue);
+		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue );
 	}
 
 	@Override

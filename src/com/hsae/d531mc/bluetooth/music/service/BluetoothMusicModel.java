@@ -67,6 +67,16 @@ public class BluetoothMusicModel {
 	
 	// carlife 是否连接
 	public boolean isCarLifeConnected = false;
+	
+	/**
+	 * 循环集合
+	 */
+	public ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
+	
+	/**
+	 * 随机集合
+	 */
+	public ArrayList<Integer> mShuffleAllowedlist = new ArrayList<Integer>();
 
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -80,6 +90,12 @@ public class BluetoothMusicModel {
 		Intent intent = new Intent(MangerConstant.ServiceActionName);
 		mContext.startService(intent);
 		mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	}
+	
+	public void releaseModel() {
+		mRepeatAllowedlist.clear();
+		mShuffleAllowedlist.clear();
+		mListDevices.clear();
 	}
 
 	private class BluetoothConnection implements ServiceConnection {
@@ -107,7 +123,7 @@ public class BluetoothMusicModel {
 			mIAnwPhoneLink = null;
 		}
 	}
-
+	
 	/**
 	 * This function returns the current power status
 	 * 
@@ -1048,6 +1064,8 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeRepeat(AllowList);
 		}
+		mRepeatAllowedlist.clear();
+		mRepeatAllowedlist.addAll(AllowList);
 	}
 
 	/**
@@ -1059,6 +1077,8 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateAttributeShuffle(AllowList);
 		}
+		mShuffleAllowedlist.clear();
+		mShuffleAllowedlist.addAll(AllowList);
 	}
 	
 	/**
@@ -1070,6 +1090,42 @@ public class BluetoothMusicModel {
 	public void updatePlayerModelSetting(int nAttrID, int nAttrValue) {
 		if (null != mIMusicModel) {
 			mIMusicModel.updataPlayerModel(nAttrID, nAttrValue);
+		}
+	}
+	
+	/**
+	 * 切换音乐模式
+	 * @param nAttriID
+	 * @param AllowedList
+	 * @param nCurrentMode
+	 */
+	public void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
+			int nCurrentMode) {
+		int nSupportSize = 0;
+		if (AllowedList != null) {
+			nSupportSize = AllowedList.size();
+			if (nSupportSize > 0) {
+				int i = 0;
+				int nValue = 0;
+				int nNextMode = -1;
+				for (i = 0; i < nSupportSize; i++) {
+					nValue = AllowedList.get(i);
+					if (nValue == nCurrentMode) {
+						int j = i + 1;
+						if (j >= nSupportSize)
+							j = 0;
+						nNextMode = AllowedList.get(j);
+						break;
+					}
+				}
+				if (nNextMode >= 0) {
+					try {
+						setCurrentPlayerAPSetting(nAttriID, nNextMode);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 	}
 
@@ -1142,7 +1198,6 @@ public class BluetoothMusicModel {
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource());
 		if (source.getCurrentSource() == App.BT_MUSIC) {
 			mainAudioChanged(flag);
-			//audioStreamEnable();
 			//如果手动点击停止，不进行播放；
 			if (isHandPuse) {
 				return;

@@ -166,12 +166,17 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	}
 
 	@Override
-	public void setCurrentPlayerAPSettings(int nAttrID, int nAttrValue) {
-		try {
-			mBluetoothMusicModel.setCurrentPlayerAPSetting(nAttrID, nAttrValue);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+	public void setCurrentPlayerRepeatModel(int nAttrValue) {
+		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
+				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
+		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue );
+	}
+	
+	@Override
+	public void setCurrentPlayerShuffleModel(int nAttrValue) {
+		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
+				mBluetoothMusicModel.mShuffleAllowedlist, nAttrValue);
+		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue );
 	}
 
 	@Override

@@ -155,6 +155,7 @@ public class BluetoothMusicServcie extends Service {
 	public void onDestroy() {
 		mContext.unregisterReceiver(mReceiver);
 		unRegisterContentObserver();
+		mBluetoothMusicModel.releaseModel();
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
 	}
@@ -279,9 +280,19 @@ public class BluetoothMusicServcie extends Service {
 						if (!isTicker) {
 							setTimingBegins();
 						}
-					} else {
+					} else if (nPlayStatus == AudioControl.PLAYSTATUS_PAUSED
+							|| nPlayStatus == AudioControl.PLAYSTATUS_STOPPED) {
 						setTimingEnd();
 						isplaying = false;
+					} else if (nPlayStatus == AudioControl.PLAYSTATUS_FWD_SEEK
+							|| nPlayStatus == AudioControl.PLAYSTATUS_REV_SEEK) {
+						if (isplaying) {
+							try {
+								mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+							} catch (RemoteException e) {
+								e.printStackTrace();
+							}
+						}
 					}
 					mBluetoothMusicModel.updatePlayStatus(isplaying);
 					mBluetoothMusicModel.setMusicStreamMute();
@@ -466,6 +477,7 @@ public class BluetoothMusicServcie extends Service {
 			mTicker = new Ticker();
 			stepTimeHandler.post(mTicker);
 			isTicker = true;
+			LogUtil.i(TAG, "setTimingBegins");
 		}
 	}
 
@@ -477,6 +489,7 @@ public class BluetoothMusicServcie extends Service {
 			stepTimeHandler.removeCallbacks(mTicker);
 			mTicker = null;
 			isTicker = false;
+			LogUtil.i(TAG, "setTimingEnd");
 		}
 	}
 
@@ -577,6 +590,7 @@ public class BluetoothMusicServcie extends Service {
 	private static final int USB_CONNECTED_IPOD = 3;
 	private static final int USB_CONNECTED_UNKNOW = 0;
 	private int usbType = 0;
+	
 	/**
 	 * USB是否插上
 	 */
@@ -596,6 +610,7 @@ public class BluetoothMusicServcie extends Service {
 			// e.printStackTrace();
 			// }
 		}
+		
 	}
 
 	/**

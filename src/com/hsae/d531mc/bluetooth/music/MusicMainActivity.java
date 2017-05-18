@@ -350,7 +350,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			msgr.what = MusicActionDefine.ACTION_A2DP_REPEAT_MODEL;
 			Bundle rBundle = new Bundle();
 			rBundle.putInt("currentRepeatModel", mRepeatMode);
-			rBundle.putIntegerArrayList("repeatList", mRepeatAllowedlist);
 			msgr.setData(rBundle);
 			this.notify(msgr, FLAG_RUN_MAIN_THREAD);
 			break;
@@ -359,7 +358,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			msgs.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL;
 			Bundle sBundle = new Bundle();
 			sBundle.putInt("currentShuffleModel", mShuffleMode);
-			sBundle.putIntegerArrayList("shuffleList", mShuffleAllowedlist);
 			msgs.setData(sBundle);
 			this.notify(msgs, FLAG_RUN_MAIN_THREAD);
 			break;

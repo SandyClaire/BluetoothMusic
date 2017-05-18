@@ -48,7 +48,8 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_CONNECT_STATUS_CHANGE:
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			mIMusicView.updateViewByConnectStatus(conStatus);
-			LogUtil.i(TAG, "updateViewByConnectStatus -- conStatus = " + conStatus);
+			LogUtil.i(TAG, "updateViewByConnectStatus -- conStatus = "
+					+ conStatus);
 			if (conStatus == MangerConstant.Anw_SUCCESS) {
 				initMusicModel();
 			}
@@ -56,7 +57,8 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
 			boolean playStatus = inMessage.getData().getBoolean("playStatus");
 			mIMusicView.updatePlayBtnByStatus(playStatus);
-			LogUtil.i(TAG, "updatePlayBtnByStatus -- playStatus = " + playStatus);
+			LogUtil.i(TAG, "updatePlayBtnByStatus -- playStatus = "
+					+ playStatus);
 			break;
 		case MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH:
 			mIMusicView.finishMusicActivity();
@@ -90,13 +92,15 @@ public class MusicPersenter implements IObserver {
 			boolean isSupport = mIMusicModel.A2DPSupportMetadata();
 			MusicBean bean = (MusicBean) inMessage.getData().getSerializable(
 					"musicBean");
-			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
+			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = "
+					+ isSupport);
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 			break;
 		case MusicActionDefine.ACTION_A2DP_CURRENT_MUSIC_POSITION_CHANGE:
 			String currentTime = inMessage.getData().getString("currentTime");
 			boolean isPlaying = inMessage.getData().getBoolean("playStatus");
-			LogUtil.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
+			LogUtil.i(TAG, " currentTime  = " + currentTime
+					+ " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
 		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
@@ -116,26 +120,20 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_REPEAT_MODEL:
 			int nCurrentMode = inMessage.getData().getInt("currentRepeatModel");
-			ArrayList<Integer> allowlist = inMessage.getData()
-					.getIntegerArrayList("repeatList");
-			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT, allowlist,
-					nCurrentMode);
+			mIMusicModel.setCurrentPlayerRepeatModel(nCurrentMode);
 			break;
 		case MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL:
 			int sCurrentMode = inMessage.getData()
 					.getInt("currentShuffleModel");
-			ArrayList<Integer> sallowlist = inMessage.getData()
-					.getIntegerArrayList("shuffleList");
-			setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, sallowlist,
-					sCurrentMode);
+			mIMusicModel.setCurrentPlayerShuffleModel(sCurrentMode);
 			break;
-		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE :
+		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE:
 			mIMusicModel.sendActivityPauseMsg();
 			break;
-		case MusicActionDefine.ACTION_SETTING_UPDATE_BG :
+		case MusicActionDefine.ACTION_SETTING_UPDATE_BG:
 			initBg();
 			break;
-			
+
 		default:
 			break;
 		}
@@ -164,8 +162,8 @@ public class MusicPersenter implements IObserver {
 		}
 		initMusicModel();
 	}
-	
-	private void initBg(){
+
+	private void initBg() {
 		Bitmap bg = mIMusicModel.getBg();
 		LogUtil.i(TAG, " --- initBg --- bg = " + bg);
 		mIMusicView.updateBgBitmap(bg);
@@ -201,39 +199,6 @@ public class MusicPersenter implements IObserver {
 						AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
 						mIMusicModel
 								.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE));
-	}
-
-	/**
-	 * 切换音乐模式
-	 * @param nAttriID
-	 * @param AllowedList
-	 * @param nCurrentMode
-	 */
-	private void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
-			int nCurrentMode) {
-		int nSupportSize = 0;
-		if (AllowedList != null) {
-			nSupportSize = AllowedList.size();
-			if (nSupportSize > 0) {
-				int i = 0;
-				int nValue = 0;
-				int nNextMode = -1;
-				for (i = 0; i < nSupportSize; i++) {
-					nValue = AllowedList.get(i);
-					if (nValue == nCurrentMode) {
-						int j = i + 1;
-						if (j >= nSupportSize)
-							j = 0;
-						nNextMode = AllowedList.get(j);
-						break;
-					}
-				}
-				if (nNextMode >= 0) {
-					mIMusicModel
-							.setCurrentPlayerAPSettings(nAttriID, nNextMode);
-				}
-			}
-		}
 	}
 
 }
