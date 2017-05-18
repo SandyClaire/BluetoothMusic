@@ -981,7 +981,7 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateCarlifeConnectStatus();
 		}
-		if (null != mIBluetoothSettingModel){
+		if (null != mIBluetoothSettingModel) {
 			mIBluetoothSettingModel.updateCarlifeConnectStatus();
 		}
 	}
@@ -1057,7 +1057,6 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	
 	/**
 	 * 更新循环模式
 	 * 
@@ -1451,8 +1450,7 @@ public class BluetoothMusicModel {
 	public void setNextClicked() {
 		mIMusicModel.setNextClicked();
 	}
-	
-	
+
 	public boolean isCarlifeConnected() {
 		boolean isConnected = false;
 		Soc soc = new Soc();

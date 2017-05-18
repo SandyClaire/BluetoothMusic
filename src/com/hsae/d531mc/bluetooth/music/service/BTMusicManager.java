@@ -23,7 +23,6 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private static BTMusicManager mManager;
 	private BluetoothMusicModel mBluetoothMusicModel;
 	public IBTMusicListener mListener;
-	
 
 	private BTMusicManager(Context mContext) {
 		super();
@@ -167,12 +166,12 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
 	
-	public void playByVr() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		mBluetoothMusicModel.tryToSwitchSource();
-		mBluetoothMusicModel.requestAudioFocus(false);
-		LogUtil.i(TAG, "------------- playByVr ");
-	}
+//	public void playByVr() throws RemoteException {
+//		mBluetoothMusicModel.isHandPuse = false;
+//		mBluetoothMusicModel.tryToSwitchSource();
+//		mBluetoothMusicModel.requestAudioFocus(false);
+//		LogUtil.i(TAG, "------------- playByVr ");
+//	}
 
 	@Override
 	public void playByName(String arg0) throws RemoteException {
@@ -262,6 +261,11 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		if (source.getCurrentSource() == App.BT_MUSIC) {
 			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
+	}
+
+	@Override
+	public void playByVR() throws RemoteException {
+		this.show();
 	}
 
 }
