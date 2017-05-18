@@ -1253,7 +1253,7 @@ public class BluetoothMusicModel {
 	/**
 	 * 自动连接蓝牙音乐
 	 */
-	private void autoConnectA2DP(){
+	private void autoConnectA2DP() {
 		if (hfpStatus == 1 && a2dpStatus != 1) {
 			LogUtil.i("BluetoothMusicModel",
 					"autoConnA2dp hfpStatus = " + hfpStatus

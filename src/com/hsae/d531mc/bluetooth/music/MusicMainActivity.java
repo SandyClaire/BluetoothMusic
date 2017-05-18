@@ -6,8 +6,15 @@ import java.util.regex.Pattern;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
+import android.app.WallpaperManager;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -55,6 +62,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private ImageView mBtnMusicSwith;
 	private ImageView mBtnSettings;
+	private ImageView mCover;
 	private ImageButton mBtnPrev;
 	private ImageView mBtnPlay;
 	private ImageButton mBtnNext;
@@ -177,6 +185,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
+		mCover = (ImageView) findViewById(R.id.music_cover);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
 				.getInstance(this);
@@ -245,6 +254,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
+		setWallPaperAlbumScreenbg();
 		super.onResume();
 	}
 
@@ -724,14 +734,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	
 	public void freshSeekBarTail(int progress){
 		int mMax = mSeekBar.getMax();
-//		LogUtil.i(TAG,"freshSeekBarTail");
-//		LogUtil.i(TAG, "progress: "+progress+",,,mMax: "+mMax);
-		int deltaX;
+		int deltaX = 0;
 		if(mMax == 0 || progress == 0){
 			mSeekTail.setVisibility(View.GONE);
 			return;
 		}else{
-			deltaX = (int)(480*(progress/(float)mMax));
+			deltaX = (int)(458*(progress/(float)mMax));
 			if(deltaX == 0){
 				mSeekTail.setVisibility(View.GONE);
 				return;
@@ -742,48 +750,41 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mSeekTail
 				.getLayoutParams();
-		
+
 		if(deltaX <= 30){
-			lp.height = 15;
-			lp.width = deltaX+10;
-			lp.topMargin = 30;
-			lp.leftMargin = 0;
-		}else if(deltaX <= 50){
-			lp.height = 25;
-			lp.width = deltaX+20;
-			lp.topMargin = 26;
-			lp.leftMargin = 0;
-		}else if(deltaX <= 100){
-			lp.height = 35;
-			lp.width = deltaX+25;
-			lp.topMargin = 23;
-			lp.leftMargin = 0;
-		} else if(deltaX <= 135){
-			lp.height = 45;
-			lp.width = deltaX+25;
-			lp.leftMargin = 0;
-			lp.topMargin = 18;
-		}else if(deltaX <= 165){
-			lp.height = 52;
-			lp.width = deltaX+35;
-			lp.leftMargin = 0;
-			lp.topMargin = 17;
-		}else if(deltaX <= 320){
-			lp.height = 52;
-			lp.width = 199;
-			lp.leftMargin = deltaX - 199+30;	
-			lp.topMargin = 17;
-		}else if(deltaX <= 400){
-			lp.height = 52;
-			lp.width = 199;
-			lp.leftMargin = deltaX - 199+20;	
-			lp.topMargin = 17;
-		}else{
-			lp.height = 52;
-			lp.width = 199;
-			lp.leftMargin = deltaX - 199+15;	
-			lp.topMargin = 17;
+			lp.width = (int)(deltaX*(480f/458f))+8;
+			lp.leftMargin = 3;
 		}
+		else if(deltaX <= 50){
+
+			lp.width = (int)(deltaX*(480f/458f))+15;
+			lp.leftMargin = 3;
+		}else if(deltaX <= 165){
+			lp.width = (int)(deltaX*(480f/458f))+15;
+			lp.leftMargin = 0;
+			
+		}else if((int)(deltaX*(480f/458f)) <= 170){
+			lp.width = deltaX+15;
+			lp.leftMargin = 0;
+			
+		}else if(deltaX <= 175){
+			lp.width = 185;
+			lp.leftMargin = deltaX - 171+11;
+			
+		}else if(deltaX <= 200){
+			lp.width = 185;
+			lp.leftMargin = deltaX - 171+9;
+			
+		}else if(deltaX <= 265){
+			lp.width = 185;
+			lp.leftMargin = deltaX - 171+7;
+			
+		}else{
+			lp.width = 185;
+			lp.leftMargin = deltaX - 165;				
+		}
+		lp.height = 30;
+		lp.topMargin = 22;
 		mSeekTail.setLayoutParams(lp);
 		mSeekTail.bringToFront();
 		mSeekTail.postInvalidate();
@@ -880,6 +881,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (bg != null) {
 			Drawable drawable =new BitmapDrawable(bg);
 			mImageBg.setBackgroundDrawable(drawable);
+			setWallPaperAlbumScreenbg();
 		} else {
 			mImageBg.setBackgroundResource(R.drawable.bg_music_main);
 		}
@@ -894,5 +896,49 @@ public class MusicMainActivity extends Activity implements ISubject,
 		}
 		
 	}
+	
+	private void setWallPaperAlbumScreenbg() {
+		
+		WallpaperManager wManager = WallpaperManager.getInstance(this);
+		BitmapDrawable bd = (BitmapDrawable)wManager.getDrawable();
+		if(bd!=null && bd.getBitmap()!=null){
+			Bitmap tempBitmap = bd.getBitmap();
+			float scale = Math.max(235f/tempBitmap.getWidth(), 235f/tempBitmap.getHeight());
+			Matrix matrix = new Matrix(); 
+	    	matrix.postScale(scale,scale); //长和宽放大缩小的比例 
+	    	LogUtil.i(TAG, "resetAlbumScreenbg:"+tempBitmap.getWidth());
+	    	Bitmap resizeBmp = Bitmap.createBitmap(tempBitmap,0,0,tempBitmap.getWidth(),tempBitmap.getHeight(),matrix,true);
+	    	try {			
+				mCover.setPadding(0, 0, 0, 0);
+				mCover.setImageBitmap(createCircleImage(resizeBmp,
+						235));
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				mCover.setPadding(0, 0, 0, 0);
+				mCover.setImageBitmap(null);
+				return;
+			}
+
+	    	resizeBmp.recycle();
+		}else{
+			mCover.setPadding(0, 0, 0, 0);
+			mCover.setImageBitmap(null);
+		}
+
+	}
+	
+	private Bitmap createCircleImage(Bitmap source, int min) {
+		final Paint paint = new Paint();
+		paint.setAntiAlias(true);
+		Bitmap target = Bitmap.createBitmap(min, min, Config.ARGB_8888);
+		Canvas canvas = new Canvas(target);
+		canvas.drawCircle(min / 2, min / 2, min / 2, paint);
+		paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_IN));
+		canvas.drawBitmap(source, 0, 0, paint);
+//		source.recycle();
+		return target;
+	}
+
 	
 }
