@@ -198,7 +198,7 @@ public class BluetoothMusicServcie extends Service {
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
-
+						
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
 							IPodProxy.getInstance().notifyA2dpConnected(

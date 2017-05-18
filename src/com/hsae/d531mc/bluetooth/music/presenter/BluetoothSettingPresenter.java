@@ -95,7 +95,7 @@ public class BluetoothSettingPresenter implements IObserver {
 				// 隔1S执行停止动作
 				mIBluetoothSettingView.setButtonClickable(false);
 				handler.postDelayed(new Runnable() {
-
+					
 					@Override
 					public void run() {
 						mIBluetoothSettingView.isSearching(result == 1);

@@ -543,6 +543,11 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+//		if (!isAudioFocused) {
+//			LogUtil.i(TAG, "未获得焦点、无法操作蓝牙音乐");
+//			return -999;
+//		}
+//		
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
 			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
