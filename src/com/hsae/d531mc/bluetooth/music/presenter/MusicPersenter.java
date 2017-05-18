@@ -133,6 +133,7 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicModel).attach(this);
 		((ISubject) mIMusicView).attach(this);
 		int status = mIMusicModel.getA2DPConnectStatus();
+		mIMusicModel.autoConnectA2DP();
 		mIMusicView.updateViewByConnectStatus(status);
 		LogUtil.i(TAG, " --- init +++ ");
 		if (status == MangerConstant.Anw_SUCCESS) {
@@ -150,6 +151,7 @@ public class MusicPersenter implements IObserver {
 			mIMusicView.updateMusicDataInfo(bean, isSupport);
 		}
 		initMusicModel();
+		
 	}
 
 	private void exit() {

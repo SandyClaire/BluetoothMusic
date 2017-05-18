@@ -133,4 +133,9 @@ public interface IMusicModel {
 	 */
 	public void finishMusicActivity();
 	
+	/**
+	 * 自动连接A2DP
+	 */
+	public void autoConnectA2DP();
+	
 }

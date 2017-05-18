@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -65,7 +66,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private Button mBtnHome;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
-	private TextView mTextAlbum;
 	private TextView mTextCurTime;
 	private TextView mTextTotalTime;
 	private SeekBar mSeekBar;
@@ -82,6 +82,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private LinearLayout mLinDisconTip;
 	private LinearLayout mLinContent;
 	private FrameLayout mFraBtn;
+	private boolean isFramShow = false;
+	private boolean isSupportPlaybackpos = false;
+	private boolean isSupportMetadata = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +120,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mSeekBar = (SeekBar) findViewById(R.id.music_seekbar);
 		mTextTitle = (TextView) findViewById(R.id.music_title);
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
-		mTextAlbum = (TextView) findViewById(R.id.music_album);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
@@ -143,6 +145,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnHome.setOnClickListener(this);
 		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
+		mDrawerLayout.setDrawerListener(mDrawerListener);
 //		mFragmentManager.beginTransaction()
 //		.replace(R.id.bluetooth_music_frame, mFragmet).commit();
 
@@ -169,6 +172,32 @@ public class MusicMainActivity extends Activity implements ISubject,
 		});
 		initBackground();
 	}
+	
+	DrawerListener mDrawerListener = new DrawerListener() {
+		
+		@Override
+		public void onDrawerStateChanged(int arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onDrawerSlide(View arg0, float arg1) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onDrawerOpened(View arg0) {
+			isFramShow = true;
+			
+		}
+		
+		@Override
+		public void onDrawerClosed(View arg0) {
+			isFramShow = false;
+		}
+	};
 	
 	byte[] in;
 	
@@ -239,11 +268,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 					.replace(R.id.bluetooth_music_frame, mSettingFragment)
 					.commit();
 		}
-
+		isFramShow = true;
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
 
 	public void closeMusicSwitch() {
+		isFramShow = false;
 		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
 
@@ -345,7 +375,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			finishActivity();
+			if (isFramShow) {
+				closeMusicSwitch();
+				return false;
+			} else {
+				Intent intent = new Intent(Intent.ACTION_MAIN);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.addCategory(Intent.CATEGORY_HOME);
+				startActivity(intent);
+				finishActivity();
+			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -367,6 +406,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 		} else if (status == 1) {
 			updateViewShow(true);
+			if (isFramShow) {
+				closeMusicSwitch();
+			}
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		}
 	}
@@ -417,14 +459,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (isSupport && null != bean) {
 			mTextTitle.setText(bean.getTitle());
 			mTextArtist.setText(bean.getAtrist());
-			mTextAlbum.setText(bean.getAlbum());
 			mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 		} else {
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
 			mTextArtist.setText(getResources().getString(
-					R.string.music_matedate_unsupport));
-			mTextAlbum.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
@@ -468,9 +507,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Pattern pattern = Pattern.compile("[0-9]+");
 		return pattern.matcher(str).matches();
 	}
-
-	private boolean isSupportPlaybackpos = false;
-	private boolean isSupportMetadata = false;
 
 	private String getCurrentTime(String nTime) {
 		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
@@ -659,21 +695,19 @@ public class MusicMainActivity extends Activity implements ISubject,
 	
 	public void freshSeekBarTail(int progress){
 		int mMax = mSeekBar.getMax();
-		LogUtil.i(TAG,"freshSeekBarTail");
-		LogUtil.i(TAG, "progress: "+progress+",,,mMax: "+mMax);
+//		LogUtil.i(TAG,"freshSeekBarTail");
+//		LogUtil.i(TAG, "progress: "+progress+",,,mMax: "+mMax);
 		int deltaX;
 		if(mMax == 0 || progress == 0){
 			mSeekTail.setVisibility(View.GONE);
 			return;
 		}else{
-			deltaX = 480*progress/mMax;
+			deltaX = (int)(480*(progress/(float)mMax));
 			if(deltaX == 0){
 				mSeekTail.setVisibility(View.GONE);
 				return;
 			}else{
 				mSeekTail.setVisibility(View.VISIBLE);
-				LogUtil.i(TAG, "progress: "+progress/(float)mMax);
-				LogUtil.i(TAG, "deltaX: "+deltaX);
 			}
 			
 		}
@@ -725,5 +759,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mSeekTail.bringToFront();
 		mSeekTail.postInvalidate();
 	}
+	
+	
 
 }

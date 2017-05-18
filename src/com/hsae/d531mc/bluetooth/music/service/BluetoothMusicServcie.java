@@ -19,6 +19,7 @@ import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
+import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 
 /**
  * 
@@ -73,6 +74,7 @@ public class BluetoothMusicServcie extends Service {
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_PAIR_STATUS);
+		filter.addAction(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
 		mContext.registerReceiver(mReceiver, filter);
 	}
 
@@ -289,8 +291,46 @@ public class BluetoothMusicServcie extends Service {
 					mBluetoothMusicModel.updatePairRequest(mAddress, mStatus);
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
+			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
+				autoConnA2dp();
 			}
 		}
+	}
+	
+	/**
+	 * 如果A2DP单独断开情况下，自动连接蓝牙音乐；
+	 */
+	private void autoConnA2dp(){
+		int hfpStatus = 0;
+		int a2dpStatus = 0;
+		try {
+			hfpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL, 0);
+			a2dpStatus = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+			if (hfpStatus == 1 && a2dpStatus != 1) {
+				LogUtil.i(TAG, "--------- autoConnA2dp if HFP connected = ");
+				mBluetoothMusicModel.a2dpConnect(getConnectedDevice());
+				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	
+	/**
+	 * 获取当连接设备地址
+	 * @return
+	 */
+	private String getConnectedDevice() {
+		String[] strAddress = new String[1];
+		String[] strName = new String[1];
+		try {
+			mBluetoothMusicModel.getConnectedDeviceInfo(
+					MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return strAddress[0];
 	}
 
 	/**

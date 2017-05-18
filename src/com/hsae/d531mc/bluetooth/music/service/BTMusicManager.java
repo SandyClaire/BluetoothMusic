@@ -1,12 +1,10 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.Handler;
-import android.os.Message;
 import android.os.RemoteException;
+
 import com.anwsdk.service.AudioControl;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
@@ -103,110 +101,65 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	}
 
+	boolean isFrist = true;
+	long downTime = System.currentTimeMillis();
+	long upTime = System.currentTimeMillis();
+
 	@Override
-	public void onHmiChanged(int arg0, boolean arg1) throws RemoteException {
-		removeHandlerMessages();
-		Message msg = Message.obtain();
+	public void onHmiChanged(int hmiIndex, boolean down) {
+		LogUtil.i("onHmiChanged", "down == " + down + ", hmiIndex == "
+				+ hmiIndex);
+		if (hmiIndex == HmiConst.HMI.SEEKDOWN.ordinal()
+				|| hmiIndex == HmiConst.HMI.SEEKUP.ordinal()) {
 
-		if (arg1) {
-//			msg.what = KEY_DOWN;
-//			mHandler.sendMessageDelayed(msg, 2000);
-//			mIsLongPress = false;
-		} else {
-			int hmiIndex = keyEventDispatcher(arg0);
-			msg.what = hmiIndex;
-			mHandler.sendMessage(msg);
-			LogUtil.i(TAG, "------------- KEY UP info = " + msg.what);
-		}
-	}
-
-	private void removeHandlerMessages() {
-		mHandler.removeMessages(SEEKUP_NEXT);
-		mHandler.removeMessages(SEEKDOWN_PREV);
-		mHandler.removeMessages(SEEKUP_FORWARD);
-		mHandler.removeMessages(SEEKDOWN_BACKWARD);
-		mHandler.removeMessages(KEY_DOWN);
-	}
-
-	private int keyEventDispatcher(int hmiIndex) {
-		int index = -1;
-		if (mIsLongPress) {
-			if (HmiConst.HMI.SEEKUP.ordinal() == hmiIndex) {
-				index = SEEKUP_FORWARD;
-			} else if (HmiConst.HMI.SEEKDOWN.ordinal() == hmiIndex) {
-				index = SEEKDOWN_BACKWARD;
-			}
-
-		} else {
-			if (HmiConst.HMI.SEEKUP.ordinal() == hmiIndex) {
-				index = SEEKUP_NEXT;
-			} else if (HmiConst.HMI.SEEKDOWN.ordinal() == hmiIndex) {
-				index = SEEKDOWN_PREV;
+			if (down) {
+				downTime = isFrist ? System.currentTimeMillis()
+						: (downTime == 0) ? System.currentTimeMillis()
+								: downTime;
+				isFrist = false;
+			} else {
+				upTime = System.currentTimeMillis();
+				LogUtil.e(TAG, "hmi long seek = " + (upTime - downTime));
+				if ((upTime - downTime) < 1500) {
+					seek(hmiIndex, false);
+				} else {
+					downTime = 0;
+					upTime = 0;
+					return;
+				}
 			}
 		}
-
-		return index;
 	}
 
-	private static final int SEEKUP_NEXT = 0x01;
-	private static final int SEEKDOWN_PREV = 0x02;
-	private static final int SEEKUP_FORWARD = 0x03;
-	private static final int SEEKDOWN_BACKWARD = 0x04;
-	private static final int KEY_DOWN = 0x07;
-
-	private boolean mIsLongPress = false;
-
-	@SuppressLint("HandlerLeak")
-	private Handler mHandler = new Handler() {
-		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case SEEKUP_NEXT:
+	private void seek(int index, boolean isLong) {
+		LogUtil.i("seek", "isLong == " + isLong + ", index == " + index);
+		if (!isLong) {
+			if (index == HmiConst.HMI.SEEKUP.ordinal()) {
 				try {
 					mBluetoothMusicModel
 							.AVRCPControl(AudioControl.CONTROL_FORWARD);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				LogUtil.i(TAG, "------------- SEEKUP_NEXT = " + msg.what);
-				break;
-			case SEEKDOWN_PREV:
+				LogUtil.i(TAG, "------------- SEEKUP_NEXT ");
+			} else if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
 				try {
 					mBluetoothMusicModel
 							.AVRCPControl(AudioControl.CONTROL_BACKWARD);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
-				LogUtil.i(TAG, "------------- SEEKDOWN_PREV = " + msg.what);
-				break;
-			case SEEKUP_FORWARD:
-				try {
-					mBluetoothMusicModel
-							.AVRCPControl(AudioControl.CONTROL_FASTFORWARD);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				LogUtil.i(TAG, "------------- SEEKUP_FORWARD = " + msg.what);
-				break;
-			case SEEKDOWN_BACKWARD:
-				try {
-					mBluetoothMusicModel
-							.AVRCPControl(AudioControl.CONTROL_REWIND);
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				LogUtil.i(TAG, "------------- SEEKDOWN_BACKWARD = " + msg.what);
-				break;
-			case KEY_DOWN:
-				mIsLongPress = true;
-				break;
-			default:
+				LogUtil.i(TAG, "------------- SEEKDOWN_PREV ");
 			}
-		};
-	};
+		}
+		downTime = 0;
+		upTime = 0;
+	}
 
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+		mBluetoothMusicModel.isHandPuse = true;
 		LogUtil.i(TAG, "------------- PAUSE ");
 	}
 
@@ -280,6 +233,18 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	public BTMusicInfo getBtMusicInfo() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void disconnectA2dp() throws RemoteException {
+		LogUtil.i(TAG, "--------- disconnectA2dp ");
+		mBluetoothMusicModel.a2dpDisconnect();
+	}
+
+	@Override
+	public String getBtMacAddress() throws RemoteException {
+		LogUtil.i(TAG, "--------- getBtMacAddress ");
+		return mBluetoothMusicModel.getLocalAddress();
 	}
 
 }

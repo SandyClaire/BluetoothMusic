@@ -40,6 +40,7 @@ public class BluetoothMusicModel {
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel nIBluetoothSettingModel;
 	private static final int errorCode = -1;
+	public boolean isHandPuse = false;
 
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -490,6 +491,9 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+		if (op_code == AudioControl.CONTROL_PLAY) {
+			isHandPuse = false;
+		}
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
 	}
 
@@ -757,6 +761,22 @@ public class BluetoothMusicModel {
 		}
 		return mIAnwPhoneLink.ANWBT_SetDeviceVol(bSpeaker, nVal);
 	}
+	
+	/**
+	 * Use this function to retrieve the Bluetooth name of remote device.
+	 * @return
+	 * @throws RemoteException
+	 */
+	public String getLocalAddress() throws RemoteException {
+		if (null == mIAnwPhoneLink) {
+			// In this case the service has crashed before we could even
+			// do anything with it; we can count on soon being
+			// disconnected (and then reconnected if it can be restarted)
+			// so there is no need to do anything here.
+			return "";
+		}
+		return mIAnwPhoneLink.ANWBT_ReadLocalAddr();
+	}
 
 	/**
 	 * 注册 Blutooth Setting 监听
@@ -1022,7 +1042,7 @@ public class BluetoothMusicModel {
 			}
 		}
 	}
-
+	
 	/**
 	 * 通知launcher 音乐信息
 	 */
@@ -1053,9 +1073,12 @@ public class BluetoothMusicModel {
 			if (mBTMmanager.mListener != null) {
 				mBTMmanager.mListener.syncBtMusicInfo(info);
 			}
-		} catch (RemoteException e) {
+			
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
+			LogUtil.i(TAG, " ---- Exception = "
+					+ e.toString() );
+		} 
 	}
 
 	/**
@@ -1107,9 +1130,15 @@ public class BluetoothMusicModel {
 			Source source = new Source();
 			LogUtil.i(TAG, "-------------- BT mAFCListener getCurrentSource"
 					+ source.getCurrentSource());
+			
 			if (isAudioFocused) {
+				//如果是手动暂停 不执行播放
+				if (isHandPuse) {
+					return;
+				}
 				try {
 					AVRCPControl(AudioControl.CONTROL_PLAY);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

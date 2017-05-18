@@ -3,11 +3,13 @@ package com.hsae.d531mc.bluetooth.music.model.impl;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
 
+import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
@@ -83,6 +85,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			playStatus();
 		} catch (RemoteException e) {
 			e.printStackTrace();
+		}
+		if (command == AudioControl.CONTROL_PAUSE) {
+			mBluetoothMusicModel.isHandPuse = true ;
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
@@ -252,6 +257,13 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_FINISH;
 		this.notify(msg, FLAG_RUN_SYNC);
 		LogUtil.i(TAG, "finishMusicActivity");
+	}
+
+	@Override
+	public void autoConnectA2DP() {
+		Intent intent = new Intent(
+				MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
+		mContext.sendBroadcast(intent);
 	}
 
 }
