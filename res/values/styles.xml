@@ -40,8 +40,18 @@
         <item name="android:paddingRight">10dp</item>
     </style>
     
-    <style name="timeText">
+    <style name="musicNameText">
 		<item name="android:textSize">45sp</item>
+		<item name="android:textColor">@android:color/white</item>        
+    </style>
+    
+    <style name="musicArtistText">
+		<item name="android:textSize">28sp</item>
+		<item name="android:textColor">@android:color/white</item>        
+    </style>
+    
+    <style name="musicTimeText">
+		<item name="android:textSize">20sp</item>
 		<item name="android:textColor">@android:color/white</item>        
     </style>
 
