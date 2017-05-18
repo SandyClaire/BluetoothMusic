@@ -23,14 +23,12 @@ import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
  * @author wangda
  *
  */
-public class BluetoothSettingModel extends ContactsSubjecter implements
-		IBluetoothSettingModel {
+public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoothSettingModel {
 
 	private static final String TAG = "MusicBTModel";
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothModel;
 	private List<BluetoothDevice> mListPairedBeans = new ArrayList<BluetoothDevice>();
-	
 
 	/**
 	 * 配对列表最大数量
@@ -52,12 +50,12 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	 * 是否执行配对
 	 */
 	private boolean ispairing = false;
-	
+
 	/**
 	 * 是否执行连接
 	 */
 	private boolean isConnecting = false;
-	
+
 	/**
 	 * 配对MAC地址
 	 */
@@ -72,8 +70,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	private void init() {
 		LogUtil.i(TAG, "--- init +++");
 		mBluetoothModel = BluetoothMusicModel.getInstance(mContext);
-		mBluetoothModel
-				.registBluetoothSettingListener((IBluetoothSettingModel) this);
+		mBluetoothModel.registBluetoothSettingListener((IBluetoothSettingModel) this);
 	}
 
 	@Override
@@ -91,17 +88,17 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		msg_search.what = MusicActionDefine.ACTION_SETTING_INQUIRY_FINISH;
 		this.notify(msg_search, FLAG_RUN_SYNC);
 		LogUtil.i(TAG, " --- SearchFinish");
-		
+
 		if (ispairing && pairThread != null) {
 			pairThread.start();
 			updatePairItem(pairAddress);
 			ispairing = false;
-			LogUtil.i(TAG,"SearchFinish --- pair");
+			LogUtil.i(TAG, "SearchFinish --- pair");
 		}
 		if (isConnecting) {
 			connect(mConnAddress);
 			isConnecting = false;
-			LogUtil.i(TAG,"SearchFinish --- connect");
+			LogUtil.i(TAG, "SearchFinish --- connect");
 		}
 	}
 
@@ -128,8 +125,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			@Override
 			public void run() {
 				try {
-					mBluetoothModel.pair(address, "0000",
-							Integer.parseInt(strCOD, 16));
+					mBluetoothModel.pair(address, "0000", Integer.parseInt(strCOD, 16));
 				} catch (NumberFormatException e) {
 					e.printStackTrace();
 				} catch (RemoteException e) {
@@ -137,7 +133,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 				}
 			}
 		}, "pairthread");
-		
+
 		if (mComplete) {
 			pairThread.start();
 			updatePairItem(pairAddress);
@@ -147,12 +143,13 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		}
 
 	}
-	
+
 	/**
 	 * 修改缓存中的数据状态
+	 * 
 	 * @param address
 	 */
-	private void updatePairItem(String address){
+	private void updatePairItem(String address) {
 		if (mBluetoothModel.mListDevices != null) {
 			for (int i = 0; i < mBluetoothModel.mListDevices.size(); i++) {
 				if (address.equals(mBluetoothModel.mListDevices.get(i).getAddress())) {
@@ -161,7 +158,6 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			}
 		}
 	}
-	
 
 	/**
 	 * 判断当前是否正在搜索设备
@@ -192,32 +188,27 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		mListPairedBeans.clear();
 		try {
 
-			mBluetoothModel.getConnectedDeviceInfo(
-					MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
+			mBluetoothModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
 			mBluetoothModel.getPairedList(nCount, Name, Address, COD);
 			for (int i = 0; i < nCount[0]; i++) {
 				BluetoothDevice bean;
 				if (nCount[0] < PAIRED_DEVICES_MAX_NUM) {
 					if (null != Address[i] && Address[i].equals(strAddress[0])) {
-						bean = new BluetoothDevice(Name[i], Address[i],
-								String.valueOf(COD[i]), 0,
+						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
 								BluetoothDevice.DEVICE_CONNECTED);
 						mListPairedBeans.add(bean);
 					} else {
-						bean = new BluetoothDevice(Name[i], Address[i],
-								String.valueOf(COD[i]), 0,
+						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
 								BluetoothDevice.DEVICE_PAIRED);
 						mListPairedBeans.add(bean);
 					}
-				} else if( i < nCount[0] && i >= (nCount[0] - PAIRED_DEVICES_MAX_NUM)){
+				} else if (i < nCount[0] && i >= (nCount[0] - PAIRED_DEVICES_MAX_NUM)) {
 					if (null != Address[i] && Address[i].equals(strAddress[0])) {
-						bean = new BluetoothDevice(Name[i], Address[i],
-								String.valueOf(COD[i]), 0,
+						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
 								BluetoothDevice.DEVICE_CONNECTED);
 						mListPairedBeans.add(bean);
 					} else {
-						bean = new BluetoothDevice(Name[i], Address[i],
-								String.valueOf(COD[i]), 0,
+						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
 								BluetoothDevice.DEVICE_PAIRED);
 						mListPairedBeans.add(bean);
 					}
@@ -229,7 +220,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		LogUtil.i(TAG, " getPairedDevies -- SIZE = " + mListPairedBeans.size());
 
 		return mListPairedBeans;
@@ -240,8 +231,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		String[] strAddress = new String[1];
 		String[] strName = new String[1];
 		try {
-			mBluetoothModel.getConnectedDeviceInfo(
-					MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
+			mBluetoothModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -290,28 +280,27 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	@Override
 	public void connectMoblie(final String connectAddress) {
 		mConnAddress = connectAddress;
-		LogUtil.i(TAG, "connectMoblie --- mComplete = "
-				+ mComplete);
+		LogUtil.i(TAG, "connectMoblie --- mComplete = " + mComplete);
 		if (mComplete) {
 			connect(connectAddress);
 		} else {
 			stopInquiry();
 			isConnecting = true;
 		}
-		//停止自动连接功能
+		// 停止自动连接功能
 		BtPhoneProxy.getInstance().settingStartBtConnect();
 	}
-	
+
 	/**
 	 * 连接手机
+	 * 
 	 * @param address
 	 */
-	private void connect(String address){
+	private void connect(String address) {
 		try {
 			mBluetoothModel.connectMobile(address);
 			mBluetoothModel.a2dpConnect(address);
-			LogUtil.i(TAG, "connect --- address = "
-					+ address);
+			LogUtil.i(TAG, "connect --- address = " + address);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -377,8 +366,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			mBundle.putSerializable("devciesbean", bean);
 			msg_search.setData(mBundle);
 			this.notify(msg_search, FLAG_RUN_SYNC);
-			LogUtil.i(TAG, "getVisibleDevices Name = "
-							+ bean.getDeviceName());
+			LogUtil.i(TAG, "getVisibleDevices Name = " + bean.getDeviceName());
 		}
 	}
 

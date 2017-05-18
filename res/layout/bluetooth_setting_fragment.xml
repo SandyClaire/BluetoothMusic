@@ -72,12 +72,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:gravity="center"
                 android:layout_marginLeft="@dimen/setting_title_text_margin_left"
+                android:gravity="center"
                 android:text="@string/bluetooth_enable_text"
                 android:textColor="@color/white"
-                android:visibility="gone"
-                android:textSize="@dimen/text_size_28" />
+                android:textSize="@dimen/text_size_28"
+                android:visibility="gone" />
         </FrameLayout>
     </LinearLayout>
 
@@ -85,18 +85,16 @@
         android:id="@+id/lin_setting_close"
         android:layout_width="@dimen/setting_layout_pandding_right"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:focusable="false"
         android:clickable="false"
+        android:focusable="false"
+        android:gravity="center"
         android:orientation="vertical" >
-        
-        <Button 
+
+        <Button
             android:id="@+id/btn_setting_close"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/btn_close_sliding"
-            />
-        
+            android:background="@drawable/btn_close_sliding" />
     </LinearLayout>
 
 </LinearLayout>
