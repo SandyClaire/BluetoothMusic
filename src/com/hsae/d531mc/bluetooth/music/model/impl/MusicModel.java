@@ -148,6 +148,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel{
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void requestAudioFoucs() {
+		mBluetoothMusicModel.requestAudioFocus();
 	}	
 	
 	

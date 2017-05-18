@@ -113,7 +113,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
 		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
 		mBtnHome = (Button) findViewById(R.id.btn_home);
-		mFragmet = new MusicSwitchFragmet(this);
+		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
@@ -196,6 +196,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			break;
 		case R.id.btn_prev:
 			msg.what = MusicActionDefine.ACTION_A2DP_PREV;
+			this.notify(msg, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_play:
 			if (ismPlaying) {
@@ -203,9 +204,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			} else {
 				msg.what = MusicActionDefine.ACTION_A2DP_PLAY;
 			}
+			this.notify(msg, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_next:
 			msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
+			this.notify(msg, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_repeat:
 			showRepeatPopUp(playModeListener);
@@ -223,7 +226,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		default:
 			break;
 		}
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
 	@Override
@@ -469,6 +471,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 					repeatWindow = null;
 				}
 				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ALL;
+				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_all);
 				break;
 			case R.id.btn_repeat_order:
 				if (repeatWindow != null) {
@@ -476,6 +479,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 					repeatWindow = null;
 				}
 				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ORDER;
+				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_order);
 				break;
 			case R.id.btn_repeat_single:
 				if (repeatWindow != null) {
@@ -483,6 +487,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 					repeatWindow = null;
 				}
 				msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_SINGLE;
+				mBtnRepeat.setBackgroundResource(R.drawable.btn_music_repeat_singel);
 				break;
 			case R.id.btn_shuffle_open:
 				if (shuffleWindow != null) {
@@ -490,6 +495,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 					shuffleWindow = null;
 				}
 				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_OPEN;
+				mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_open);
 				break;
 			case R.id.btn_shuffle_close:
 				if (shuffleWindow != null) {
@@ -497,6 +503,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 					shuffleWindow = null;
 				}
 				msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_CLOSE;
+				mBtnShuffle.setBackgroundResource(R.drawable.btn_music_shuffle_close);
 				break;
 			default:
 

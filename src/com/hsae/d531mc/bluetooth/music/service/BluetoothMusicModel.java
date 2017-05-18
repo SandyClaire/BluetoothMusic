@@ -4,11 +4,16 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
+import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.util.ShowLog;
@@ -525,5 +530,89 @@ public class BluetoothMusicModel {
 	public void unregistMusicListener() {
 		mIMusicModel = null;
 	}
+	
+	/**
+	 * 切换音源
+	 * @return
+	 */
+	public boolean tryToSwitchSource() {
+		Source source = new Source();
+        boolean isSwitch = source.tryToSwitchSource(App.BT_PHONE, true);
+        return isSwitch;
+    }
+	
+	/**
+     * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
+     * @param isChanged
+     */
+    private void mainAudioChanged(boolean isChanged) {
+    	Source source = new Source();
+    	source.mainAudioChanged(App.BT_PHONE, isChanged);
+        Log.i(TAG, "requestAudioSource == " + isChanged);
+    }
+    
+    public boolean isAudioFocused = false;
+    public AudioManager audioManager;
+    
+    /** 获取Android音频焦点 */
+    public void requestAudioFocus() {
+        Log.i(TAG, "requestAudioFocus---request audio focus");
+        audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); //STREAM_MUSIC
+        int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+            Log.i(TAG, "requestAudioFocus---AudioManager.AUDIOFOCUS_REQUEST_GRANTED" + "FocusManager获取音频焦点成功");
+            isAudioFocused = true;
+        } else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
+            Log.i(TAG, "requestAudioFocus---" + "FocusManager获取音频焦点失败");
+            isAudioFocused = false;
+        } else {
+        	isAudioFocused = false;
+            Log.i(TAG, "requestAudioFocus---" + "FocusManager获取音频焦点失败");
+        }
+        mainAudioChanged(isAudioFocused);
+    }
+    
+    public void releaseAudioFocus() {
+    	if (audioManager != null) {
+    		audioManager.abandonAudioFocus(mAFCListener);
+		}
+	}
+    
+    /**
+     * 音源焦点变化监听
+     */
+    OnAudioFocusChangeListener mAFCListener = new OnAudioFocusChangeListener() {
+		
+		@Override
+		public void onAudioFocusChange(int focusChange) {
+		    switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+            	isAudioFocused = true;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
+                break;
+            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
+            	isAudioFocused = true;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
+                break;
+            case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
+            	isAudioFocused = true;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS:
+            	isAudioFocused = false;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+            	isAudioFocused = false;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
+                break;
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+            	isAudioFocused = false;
+                Log.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+                break;
+            }
+		    mainAudioChanged(isAudioFocused);
+		}
+	};
 
 }

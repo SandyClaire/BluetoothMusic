@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.hsae.autosdk.ipod.IPodProxy;
+import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.R;
@@ -37,16 +39,26 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private TextView mTextFM;
 	private TextView mTextIPOD;
 	private TextView mTextBT;
+	private TextView mTextUSB;
+	private TextView mTextSpite;
 	private Context mContext;
+	private static MusicSwitchFragmet fragment;
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
 	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
 	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
 	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
 
 
-	public MusicSwitchFragmet(android.content.Context context) {
+	public MusicSwitchFragmet(Context context) {
 		super();
 		mContext = context;
+	}
+	
+	public static Fragment getInstance(Context mContext){
+		if (null == fragment) {
+			fragment = new MusicSwitchFragmet(mContext);
+		}
+		return fragment;
 	}
 
 	@Override
@@ -78,6 +90,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		mTextFM = (TextView) mView.findViewById(R.id.text_switch_fm);
 		mTextIPOD = (TextView) mView.findViewById(R.id.text_switch_ipod);
 		mTextBT = (TextView) mView.findViewById(R.id.text_switch_bluetooth);
+		mTextUSB = (TextView) mView.findViewById(R.id.text_switch_usb);
+		mTextSpite = (TextView) mView.findViewById(R.id.text_switch_spite);
 		mLinAM.setOnClickListener(this);
 		mLinFM.setOnClickListener(this);
 		mLinIpod.setOnClickListener(this);
@@ -108,8 +122,11 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			break;
 		case R.id.lin_music_ipod:
 			updateSelectedShow(3);
-			startOtherAPP(App.IPOD_MUSIC, IPOD_PACKAGE,
-					IPOD_ACTIVITY, bundle);
+			boolean isUsb = isUsbConnected() || !isIpodConnected();
+			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
+			String strPackage = isUsb ? "com.hsae.d531mc.usbmedia" : "com.hsae.d531mc.ipod";
+			String strClass = isUsb ? "com.hsae.d531mc.usbmedia.music.MusicPlayActivity" : "com.hsae.d531mc.ipod.view.MainActivity";
+			startOtherAPP(app, strPackage, strClass, bundle);
 			break;
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(0);
@@ -118,6 +135,24 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		default:
 			break;
 		}
+	}
+
+	/**
+	 * @Description: 判断USB是否连接
+	 * @return
+	 */
+	private boolean isUsbConnected() {
+		Soc soc = new Soc();
+		return soc.getUdiskMounted();
+	}
+	
+	/**
+	 * @Description: 判断Ipod是否连接
+	 * @return
+	 */
+	private boolean isIpodConnected() {
+		IPodProxy iPodProxy = IPodProxy.getInstance();
+		return iPodProxy.isConnected();
 	}
 
 	private void updateSelectedShow(int flag) {
@@ -129,6 +164,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextFM.setEnabled(true);
 			mTextIPOD.setTextColor(getResources().getColor(R.color.white));
 			mTextIPOD.setEnabled(true);
+			mTextUSB.setTextColor(getResources().getColor(R.color.white));
+			mTextSpite.setTextColor(getResources().getColor(R.color.white));
+			mTextUSB.setEnabled(true);
 			mTextBT.setTextColor(getResources().getColor(R.color.light_orange));
 			mTextBT.setEnabled(false);
 			break;
@@ -139,6 +177,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextFM.setEnabled(true);
 			mTextIPOD.setTextColor(getResources().getColor(R.color.white));
 			mTextIPOD.setEnabled(true);
+			mTextUSB.setTextColor(getResources().getColor(R.color.white));
+			mTextSpite.setTextColor(getResources().getColor(R.color.white));
+			mTextUSB.setEnabled(true);
 			mTextBT.setTextColor(getResources().getColor(R.color.white));
 			mTextBT.setEnabled(true);
 			break;
@@ -149,12 +190,18 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextAM.setEnabled(true);
 			mTextIPOD.setTextColor(getResources().getColor(R.color.white));
 			mTextIPOD.setEnabled(true);
+			mTextUSB.setTextColor(getResources().getColor(R.color.white));
+			mTextSpite.setTextColor(getResources().getColor(R.color.white));
+			mTextUSB.setEnabled(true);
 			mTextBT.setTextColor(getResources().getColor(R.color.white));
 			mTextBT.setEnabled(true);
 			break;
 		case 3:
 			mTextIPOD.setTextColor(getResources()
 					.getColor(R.color.light_orange));
+			mTextUSB.setTextColor(getResources().getColor(R.color.light_orange));
+			mTextSpite.setTextColor(getResources().getColor(R.color.light_orange));
+			mTextUSB.setEnabled(false);
 			mTextIPOD.setEnabled(false);
 			mTextFM.setTextColor(getResources().getColor(R.color.white));
 			mTextFM.setEnabled(true);
@@ -177,7 +224,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	public void startOtherAPP(App app, String appId, String activityName,
 			Bundle bundle) {
 		Source source = new Source();
-		boolean tryToSwitchSource = source.tryToSwitchSource(app, 1);
+		boolean tryToSwitchSource = source.tryToSwitchSource(app, true);
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getActivity(), appId)) {
@@ -197,7 +244,7 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 				getActivity().finish();
 			}
 		} else {
-			source.tryToSwitchSource(app, 0);
+			source.tryToSwitchSource(app, false);
 		}
 	}
 

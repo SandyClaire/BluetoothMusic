@@ -73,4 +73,7 @@ public interface IMusicModel {
 	 * @param nAttrValue
 	 */
 	public void setCurrentPlayerAPSettings(int nAttrID , int nAttrValue);
+	
+	public void requestAudioFoucs();
+	
 }
