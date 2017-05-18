@@ -15,7 +15,6 @@
     <color name="red">#FFFF0000</color>
     <color name="transparentdarkgray">#CC292929</color>
     <color name="transparentgray">#CC666666</color>
-    <color name="yellow">#ff9933</color>
     <color name="gray">#ff333333</color>
     <color name="light_blue">#5CACEE</color>
     <color name="light_gray">#87CEEB</color>
@@ -51,5 +50,27 @@
     <color name="listview_bottom_line">#BCBCBC</color>
     <color name="listview_top_line_old">#e8e8e8</color>
     <color name="listview_bottom_line_old">#9f9e9e</color>
+    
+    <color name="transparent_50">#e0000000</color>
+    <color name="themewhite">#FFFFFFFF</color>
+    <color name="c">#720606</color>
+    <color name="d">#FF6666</color>
+    <color name="e">#730606</color>
+    <!-- 淡灰色 -->
+    <color name="gainsboro">#DCDCDC</color>
+    <!-- 亮灰色 -->
+    <color name="lightgray">#D3D3D3</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="radio_seek_bar_thumb">#3cBCBCBC</color>
+    <color name="radio_seek_bar_text_color">#F7CF00</color>
+    <color name="left_list">#131934</color>
+    <color name="color_text_gray">#c8c8c8</color>
+    <color name="yellow">#ff9c00</color>
+    <color name="color_btn_bg">#85042E61</color>
+    <color name="dialog_bg">#75052245</color>
+    <color name="bian">#081520</color>
+    <color name="item_bg">#20FFFFFF</color>
 
 </resources>

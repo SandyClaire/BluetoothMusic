@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    
+
     <dimen name="margin_top_height">50dp</dimen>
-    <dimen name="music_contents_panding_lift">80dp</dimen>
+    <dimen name="music_contents_panding_lift">160dp</dimen>
     <dimen name="music_contents_panding_right">80dp</dimen>
-    
     <dimen name="music_bottombar_higth">110dp</dimen>
     <dimen name="music_buttom_button_mergin">48dp</dimen>
     <dimen name="music_popup_wigth">171dp</dimen>
-    
-    <dimen name="music_play_width">200dp</dimen>
-    
+    <dimen name="music_play_width">300dp</dimen>
     <dimen name="music_left_slide_width">425dp</dimen>
-    <dimen name="music_image_height">420dp</dimen>
-    
+    <dimen name="music_image_height">403dp</dimen>
     <dimen name="music_text_info_pandding">20dp</dimen>
-    
-    <dimen name="music_switch_pandding_right">40dp</dimen>
+    <dimen name="music_switch_pandding_right">45dp</dimen>
     <dimen name="music_switch_text_margin_left">20dp</dimen>
-    <dimen name="music_switch_text_size">24dp</dimen>
+    <dimen name="music_switch_text_size">28dp</dimen>
     <dimen name="bottom_bar_margin_left">170dp</dimen>
     <dimen name="text_artist_margin_top">30dp</dimen>
-    
     <dimen name="music_title_text_margin_top">80dp</dimen>
-    
+
     <!-- bluetooth settings -->
     <dimen name="padding_bottom_main_framelayout">110dp</dimen>
     <dimen name="text_size_main_bottom_bar">35dp</dimen>
     <dimen name="bottom_home_width">170dp</dimen>
     <dimen name="framelayout_left_slide_width">425dp</dimen>
+    <dimen name="left_fram_list_width">380dp</dimen>
+    <dimen name="left_fram_back">45dp</dimen>
     <dimen name="devices_discribe_text_pandding_left">20dp</dimen>
     <dimen name="devices_discribe_progressbar_margin">15dp</dimen>
     <dimen name="setting_layout_pandding_right">40dp</dimen>
@@ -37,12 +33,11 @@
     <dimen name="setting_refrash_button_margin_right">10dp</dimen>
     <dimen name="setting_pair_upair_text_height">58dp</dimen>
     <dimen name="text_size_36">36dp</dimen>
-    
     <dimen name="text_size_20">20dp</dimen>
     <dimen name="text_size_22">22dp</dimen>
     <dimen name="text_size_28">28dp</dimen>
     <dimen name="text_size_38">38dp</dimen>
-    
+
     <!-- devices item -->
     <dimen name="devices_item_min_height">84dp</dimen>
     <dimen name="devices_item_right_button_pandding_left">15dp</dimen>
@@ -53,4 +48,8 @@
     <dimen name="devices_item_name_text_height">30dp</dimen>
     <dimen name="devices_item_summery_text_height">20dp</dimen>
     
+    <dimen name="left_title_padding_left">60dp</dimen>
+    <dimen name="left_text_size">28dp</dimen>
+    <dimen name="left_source_padding_left">30dp</dimen>
+
 </resources>

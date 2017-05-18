@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/lin_source_main"
+    android:layout_width="@dimen/framelayout_left_slide_width"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_bluetoothsettings"
+    android:orientation="horizontal" >
+
+    <LinearLayout
+        android:id="@+id/lin_list"
+        android:layout_width="@dimen/left_fram_list_width"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:clipToPadding="true"
+        android:fitsSystemWindows="true"
+        android:orientation="vertical" >
+
+        <TextView
+            style="@style/SourceTitle"
+            android:text="@string/music_source_title"
+            android:textColor="@color/color_text_gray" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_fgx_title" />
+
+        <TextView
+            android:id="@+id/text_AM"
+            style="@style/SourceItem"
+            android:drawableLeft="@drawable/icon_music_source_am"
+            android:textColor="@drawable/icon_music_source_am" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/division_horizontal" />
+
+        <TextView
+            android:id="@+id/text_FM"
+            style="@style/SourceItem"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/icon_music_source_fm"
+            android:textColor="@drawable/icon_music_source_fm" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/division_horizontal" />
+
+        <LinearLayout
+            android:id="@+id/lin_usb"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/text_usb"
+                style="@style/SourceItem"
+                android:drawableLeft="@drawable/icon_music_source_usb"
+                android:drawablePadding="30dp"
+                android:paddingLeft="@dimen/left_source_padding_left"
+                android:text="@string/music_source_usb"
+                android:textColor="@drawable/icon_music_source_usb" />
+
+            <TextView
+                android:id="@+id/text_line"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/selector_source_bg"
+                android:gravity="center"
+                android:text="@string/music_switch_split"
+                android:textColor="@drawable/icon_music_source_ipod"
+                android:textSize="16dp" />
+
+            <TextView
+                android:id="@+id/lin_music_bluetooth"
+                style="@style/SourceItem"
+                android:layout_weight="1.2"
+                android:drawableLeft="@drawable/icon_music_source_ipod"
+                android:text="@string/music_source_ipod"
+                android:textColor="@drawable/icon_music_source_ipod" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:src="@drawable/division_horizontal" />
+
+        <TextView
+            android:id="@+id/text_blueTooth"
+            style="@style/SourceItem"
+            android:drawableLeft="@drawable/icon_music_source_bluetooth"
+            android:text="@string/music_source_bluetooth"
+            android:textColor="@drawable/icon_music_source_bluetooth" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btn_close_switch"
+        style="@style/ImageBackStyle"
+        android:layout_gravity="center_vertical|right"
+        android:src="@drawable/btn_close_sliding" />
+
+</FrameLayout>

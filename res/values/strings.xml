@@ -8,12 +8,13 @@
     <string name="music_source_title">Audio source selection</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
-    <string name="music_source_ipod">IPOD</string>
+    <string name="music_source_ipod">iPod</string>
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">Bluetooth</string>
     <string name="music_matedate_unsupport">UnSupport</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth device</string>
+    <string name="music_bluetooth_disconnect_tip">Bluetooth music disconnected</string>
     
     <!-- bluetooth settings -->
     <string name="visible_devices">Available devices</string>
@@ -27,5 +28,7 @@
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>
     <string name="bluetooth_status_pairing">Pairing...</string>
     <string name="bluetooth_enable_text">Please turn on bluetooth function</string>
+    
+    <string name="music_switch_split">/</string>
     
 </resources>

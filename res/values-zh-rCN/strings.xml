@@ -5,12 +5,13 @@
     <string name="music_source_title">音源选择</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
-    <string name="music_source_ipod">IPOD</string>
+    <string name="music_source_ipod">iPod</string>
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">蓝牙音乐</string>
     <string name="music_matedate_unsupport">不支持</string>
     <string name="music_bluetooth_disconnect">未连接</string>
     <string name="music_bluetooth_disconnect_summery">请连接蓝牙设备</string>
+    <string name="music_bluetooth_disconnect_tip">蓝牙音乐未连接</string>
     
     <string name="visible_devices">可用设备</string>
     <string name="pair_devices">配对列表</string>

@@ -5,6 +5,7 @@
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
     -->
 
+
     <!-- Application theme. -->
 
     <style name="top_texttitle_style">
@@ -16,7 +17,7 @@
         <item name="android:textSize">22dp</item>
         <item name="android:gravity">center_horizontal|center_vertical</item>
     </style>
-    
+
     <style name="CustomSeekBar">
         <item name="android:indeterminateOnly">false</item>
         <item name="android:progressDrawable">@drawable/layerlist_seekbar_mediaprogress</item>
@@ -24,27 +25,27 @@
         <item name="android:minHeight">47dip</item>
         <item name="android:maxHeight">47dip</item>
         <item name="android:thumb">@drawable/ic_seekbar_thumb</item>
-        <item name="android:focusable">true</item>
+        <item name="android:focusable">false</item>
         <item name="android:secondaryProgress">100</item>
         <item name="android:paddingLeft">10dp</item>
         <item name="android:paddingRight">10dp</item>
     </style>
-    
+
     <style name="musicNameText">
-		<item name="android:textSize">60dp</item>
-		<item name="android:textColor">@android:color/white</item>        
+        <item name="android:textSize">60dp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="musicArtistText">
-		<item name="android:textSize">36dp</item>
-		<item name="android:textColor">@android:color/white</item>        
+        <item name="android:textSize">36dp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="musicTimeText">
-		<item name="android:textSize">20sp</item>
-		<item name="android:textColor">@android:color/white</item>        
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
-    
+
     <style name="AppBaseTheme" parent="android:Theme.Light">
         <item name="android:windowAnimationStyle">@style/Animation</item>
     </style>
@@ -68,6 +69,41 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <!-- <item name="android:windowIsTranslucent">true</item> -->
         <item name="android:windowNoTitle">true</item>
+    </style>
+
+    <style name="MusicSeekBar">
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:progressDrawable">@drawable/music_progress</item>
+        <item name="android:indeterminateDrawable">@null</item>
+        <item name="android:minHeight">44dip</item>
+        <item name="android:maxHeight">44dip</item>
+        <item name="android:thumb">@drawable/seekbar_thumb</item>
+        <item name="android:focusable">true</item>
+        <item name="android:secondaryProgress">100</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingRight">10dp</item>
+    </style>
+
+    <style name="SourceTitle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:paddingLeft">@dimen/left_title_padding_left</item>
+        <item name="android:textSize">@dimen/left_text_size</item>
+    </style>
+
+    <style name="SourceItem" parent="SourceTitle">
+        <item name="android:paddingLeft">@dimen/left_source_padding_left</item>
+        <item name="android:drawablePadding">@dimen/left_source_padding_left</item>
+        <item name="android:textSize">28dp</item>
+    </style>
+    
+    <style name="ImageBackStyle">
+        <item name="android:layout_width">@dimen/left_fram_back</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:padding">7dp</item>
     </style>
 
 </resources>
