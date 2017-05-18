@@ -63,7 +63,7 @@ public class BluetoothMusicServcie extends Service {
 	/**
 	 * 背景监听
 	 */
-	private WallContentObserver mObserver;
+//	private WallContentObserver mObserver;
 
 	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
@@ -155,6 +155,7 @@ public class BluetoothMusicServcie extends Service {
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_PAIR_STATUS);
 		filter.addAction(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
+		filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 		mContext.registerReceiver(mReceiver, filter);
 	}
 
@@ -195,7 +196,7 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
 						LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　" + mBluetoothMusicModel.hfpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
-
+							
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
@@ -473,40 +474,40 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
-	/**
-	 * 注册背景数据库监听
-	 */
-	public void registerContentObserver() {
-		Uri uri = Uri.parse(Util.WALL_CONTENT_URI + "/" + Util.WALLPAPER_SET);
-		if (mObserver == null) {
-			mObserver = new WallContentObserver(new Handler());
-		}
-		getContentResolver().registerContentObserver(uri, false, mObserver);
-	}
-
-	/**
-	 * 注销背景数据库监听
-	 */
-	public void unRegisterContentObserver() {
-		if (mObserver != null) {
-			getContentResolver().unregisterContentObserver(mObserver);
-		}
-	}
-
-	class WallContentObserver extends ContentObserver {
-
-		public WallContentObserver(Handler handler) {
-			super(handler);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void onChange(boolean selfChange) {
-			super.onChange(selfChange);
-			LogUtil.i(TAG, "wall paperchanged");
-			initBackground();
-		}
-	}
+//	/**
+//	 * 注册背景数据库监听
+//	 */
+//	public void registerContentObserver() {
+//		Uri uri = Uri.parse(Util.WALL_CONTENT_URI + "/" + Util.WALLPAPER_SET);
+//		if (mObserver == null) {
+//			mObserver = new WallContentObserver(new Handler());
+//		}
+//		getContentResolver().registerContentObserver(uri, false, mObserver);
+//	}
+//
+//	/**
+//	 * 注销背景数据库监听
+//	 */
+//	public void unRegisterContentObserver() {
+//		if (mObserver != null) {
+//			getContentResolver().unregisterContentObserver(mObserver);
+//		}
+//	}
+//
+//	class WallContentObserver extends ContentObserver {
+//
+//		public WallContentObserver(Handler handler) {
+//			super(handler);
+//			// TODO Auto-generated constructor stub
+//		}
+//
+//		@Override
+//		public void onChange(boolean selfChange) {
+//			super.onChange(selfChange);
+//			LogUtil.i(TAG, "wall paperchanged");
+//			initBackground();
+//		}
+//	}
 
 	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
 

@@ -14,7 +14,6 @@ import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 
@@ -28,12 +27,10 @@ import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
-import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
-import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.util.Util;
 
 /**
@@ -1191,7 +1188,6 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (RemoteException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -1209,13 +1205,13 @@ public class BluetoothMusicModel {
 				if (!isHandPuse) {
 					AVRCPControl(AudioControl.CONTROL_PLAY);
 				}
-			} else {
+			}else {
 				LogUtil.i("cruze", "准备抢占焦点");
 				if (!isAudioFocused) {
 					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
 							AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+						LogUtil.i("cruze", "requestAudioFo cus == 获取音频焦点成功");
 						isAudioFocused = true;
 						mainAudioChanged(flag);
 						autoConnectA2DP();
@@ -1278,7 +1274,6 @@ public class BluetoothMusicModel {
 			BTMusicInfo info = new BTMusicInfo("", "", "", null);
 			notifyAutroMusicInfo(info);
 		}
-
 	}
 
 	public void notifyAutroMusicInfo(BTMusicInfo info) {
@@ -1291,7 +1286,6 @@ public class BluetoothMusicModel {
 			}
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			LogUtil.i(TAG, " ---- Exception = " + e.toString());
 		}
 	}
@@ -1335,13 +1329,20 @@ public class BluetoothMusicModel {
 				notifyAutroMusicInfo(null);
 				break;
 			}
-			LogUtil.i("cruze", "mAFCListener : isAudioFocused =  " + isAudioFocused);
+			LogUtil.i("cruze", "mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = " + isHandPuse);
 			try {
-				if (isAudioFocused && !isHandPuse) {
+				if (isHandPuse) {
+					return;
+				}
+				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					AVRCPControl(AudioControl.CONTROL_PLAY);
+					if (!isPlay) {
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+					}
 				} else {
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					if (isPlay) {
+						AVRCPControl(AudioControl.CONTROL_PAUSE);
+					}
 				}
 			} catch (RemoteException e) {
 			}
