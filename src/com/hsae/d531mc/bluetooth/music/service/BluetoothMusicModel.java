@@ -50,6 +50,16 @@ public class BluetoothMusicModel {
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = -1;
 	public boolean isHandPuse = false;
+	
+	/**
+	 * carplay 是否连接
+	 */
+	public boolean isCarPlayConnected = false;
+	
+	/**
+	 * carlife 是否连接
+	 */
+	public boolean isCarLifeConnected = false;
 
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -805,6 +815,15 @@ public class BluetoothMusicModel {
 		}
 		updateUnpairListByStatus(status, address);
 	}
+	
+	/**
+	 * 更新carplay连接状态
+	 */
+	public void updateCPConnectStatus() {
+		if (null != mIBluetoothSettingModel) {
+			mIBluetoothSettingModel.updateCarplayConnectStatus();
+		}
+	}
 
 	/**
 	 * 取消Blutooth Setting 监听
@@ -930,6 +949,15 @@ public class BluetoothMusicModel {
 	 */
 	public void registMusicListener(IMusicModel nMusicModel) {
 		mIMusicModel = nMusicModel;
+	}
+	
+	/**
+	 * 更新carlife连接状态
+	 */
+	public void updateCLConnectStatus(){
+		if (null != mIMusicModel) {
+			mIMusicModel.updateCarlifeConnectStatus();
+		}
 	}
 
 	/**
@@ -1088,7 +1116,8 @@ public class BluetoothMusicModel {
 		AutoSettings mAutoSettings = AutoSettings.getInstance();
 		try {
 			if (source.getCurrentSource() != App.BT_MUSIC ||
-					mAutoSettings.isDiagnoseMode()) {
+					mAutoSettings.isDiagnoseMode()||
+					!mAutoSettings.getPowerState()) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 			}
 		} catch (RemoteException e) {
@@ -1145,8 +1174,10 @@ public class BluetoothMusicModel {
 			try {
 				audioStreamEnable();
 				if (isHandPuse) {
+					LogUtil.i(TAG, "requestAudioFocus --- isHandPuse");
 					return;
 				}
+				LogUtil.i(TAG, "requestAudioFocus --- play");
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -1280,7 +1311,6 @@ public class BluetoothMusicModel {
 			}
 		}
 	};
-	
 	
 	public void deleteWallpaperCache(){
 		mMemoryCache = getCache();

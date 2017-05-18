@@ -253,7 +253,14 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
+		getCarlifeStatus();
 		super.onPause();
+	}
+	
+	private void getCarlifeStatus(){
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
 	/**
@@ -425,11 +432,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mFraInfo.setVisibility(View.GONE);
 			mFraControl.setVisibility(View.GONE);
 			mTextTip.setVisibility(View.VISIBLE);
+			getCarlifeStatus();
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setImageDrawable(getResources().getDrawable(
 					R.drawable.btn_music_play));
-			
 		}
 	}
 
@@ -447,6 +454,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.drawable.btn_music_play));
 		}
 	}
+	
+	private int isNameChange = 0;
+	private String musicName = "";
 
 	@Override
 	public void updateMusicDataInfo(MusicBean bean, boolean isSupport) {
@@ -458,7 +468,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 				mTextTitle.setText(getResources().getString(
 						R.string.music_matedate_unsupport));
 			} else {
-				mTextTitle.setText(bean.getTitle());
+				if (musicName.equals(bean.getTitle())) {
+					isNameChange ++;
+				}else {
+					isNameChange = 0;
+				}
+				if (isNameChange == 0) {
+					musicName = bean.getTitle();
+					mTextTitle.setText(bean.getTitle());
+				}
+				
 			}
 			if ("".equals(bean.getAtrist())) {
 				mTextArtist.setText(getResources().getString(
@@ -471,6 +490,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			} else {
 				mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 			}
+			
 		} else {
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
@@ -865,6 +885,16 @@ public class MusicMainActivity extends Activity implements ISubject,
 		} else {
 			mImageBg.setBackgroundResource(R.drawable.bg_music_main);
 		}
+	}
+
+	@Override
+	public void updateTextTipShow(boolean conn) {
+		if (conn) {
+			mTextTip.setText(getResources().getString(R.string.music_bluetooth_carlife_connect_tip));
+		} else {
+			mTextTip.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
+		}
+		
 	}
 	
 }

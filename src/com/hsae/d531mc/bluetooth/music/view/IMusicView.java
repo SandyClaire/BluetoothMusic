@@ -80,5 +80,11 @@ public interface IMusicView {
 	 * @return
 	 */
 	public void updateBgBitmap(Bitmap bg);
+	
+	/**
+	 * 更新断开提示语
+	 * @param conn
+	 */
+	public void updateTextTipShow(boolean conn);
 
 }

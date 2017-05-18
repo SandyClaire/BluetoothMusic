@@ -213,16 +213,11 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void show() throws RemoteException {
 		Intent intent = new Intent();
-//		intent.setAction(Intent.ACTION_MAIN);
-//		intent.addCategory(Intent.CATEGORY_LAUNCHER);
-//		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 		intent.setPackage("com.hsae.d531mc.bluetooth.music");
 		intent.setClassName(mContext,
 				"com.hsae.d531mc.bluetooth.music.MusicMainActivity");
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.addFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
 		mContext.startActivity(intent);
-		// mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 		LogUtil.i(TAG, "------------- show ");
 	}
 

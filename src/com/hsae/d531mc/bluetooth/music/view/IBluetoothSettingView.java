@@ -59,5 +59,11 @@ public interface IBluetoothSettingView {
 	 * @param list
 	 */
 	public void initVisibleList(List<BluetoothDevice> list);
+	
+	/**
+	 * 更细显示提示语
+	 * @param conn
+	 */
+	public void updateTextTipShow(boolean conn);
 
 }

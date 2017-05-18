@@ -150,4 +150,15 @@ public interface IMusicModel {
 	 */
 	public void updateBg();
 	
+	/**
+	 * 获取carlife连接状态
+	 * @return
+	 */
+	public boolean getCarlifeConnectStatus();
+	
+	/**
+	 * 更新carlife连接状态
+	 */
+	public void updateCarlifeConnectStatus();
+	
 }

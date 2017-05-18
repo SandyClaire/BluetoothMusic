@@ -269,13 +269,11 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getActivity(), appId)) {
-				Intent intent = new Intent(Intent.ACTION_MAIN);
-				intent.addCategory(Intent.CATEGORY_LAUNCHER);
+				Intent intent = new Intent();
 				ComponentName comp = new ComponentName(appId, activityName);
 				intent.setComponent(comp);
 
-				int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK
-						| Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED;
+				int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK;
 				intent.setFlags(launchFlags);
 				intent.setAction("android.intent.action.VIEW");
 				if (bundle != null) {

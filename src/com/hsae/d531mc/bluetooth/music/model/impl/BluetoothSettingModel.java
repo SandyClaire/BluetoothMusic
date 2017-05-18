@@ -30,6 +30,12 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	private Context mContext;
 	private BluetoothMusicModel mBluetoothModel;
 	private List<BluetoothDevice> mListPairedBeans = new ArrayList<BluetoothDevice>();
+	
+
+	/**
+	 * 配对列表最大数量
+	 */
+	private static final int PAIRED_DEVICES_MAX_NUM = 5;
 	/**
 	 * 搜索是否完成；
 	 */
@@ -170,8 +176,6 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		}
 		return false;
 	}
-	
-	private static final int PAIRED_DEVICES_MAX_NUM = 5;
 
 	/**
 	 * 获取配对列表
@@ -382,6 +386,18 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 	@Override
 	public List<BluetoothDevice> getVisibleList() {
 		return mBluetoothModel.mListDevices;
+	}
+
+	@Override
+	public boolean getCarplayConnectstatus() {
+		return mBluetoothModel.isCarPlayConnected;
+	}
+
+	@Override
+	public void updateCarplayConnectStatus() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
 }

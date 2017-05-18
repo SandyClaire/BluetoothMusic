@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.anwsdk.service.MangerConstant;
-import com.hsae.autosdk.carplay.CarPlayProxy;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.R;
@@ -154,6 +153,18 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 					.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
 			mProSearch.setVisibility(View.INVISIBLE);
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		getCaplayStatus();
+		super.onResume();
+	}
+	
+	private void getCaplayStatus(){
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 	
 	@Override
@@ -582,24 +593,14 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		} else {
 			mLinVis.setVisibility(View.GONE);
 			mTextEnable.setVisibility(View.VISIBLE);
-			updateBTEnableText(CarPlayProxy.getInstance().isConnected());
 			mListVisible.setVisibility(View.GONE);
 			mBtnSearch.setVisibility(View.INVISIBLE);
+			getCaplayStatus();
 			mListPairedDevices.clear();
 			mListVisibleDevices.clear();
 			updatePairListVisible();
 			mVisibleAdapter.notifyDataSetChanged();
 			mPairedAdapter.notifyDataSetChanged();
-		}
-	}
-
-	private void updateBTEnableText(boolean flag) {
-		if (flag) {
-			mTextEnable.setText(getResources().getString(
-					R.string.bluetooth_enable_carplay_text));
-		} else {
-			mTextEnable.setText(getResources().getString(
-					R.string.bluetooth_enable_text));
 		}
 	}
 
@@ -616,6 +617,17 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 					isPairing = true;
 				}
 			}
+		}
+	}
+
+	@Override
+	public void updateTextTipShow(boolean conn) {
+		if (conn) {
+			mTextEnable.setText(getResources().getString(
+					R.string.bluetooth_enable_carplay_text));
+		} else {
+			mTextEnable.setText(getResources().getString(
+					R.string.bluetooth_enable_text));
 		}
 	}
 

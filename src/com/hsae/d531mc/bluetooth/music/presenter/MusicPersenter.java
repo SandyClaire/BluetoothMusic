@@ -37,6 +37,10 @@ public class MusicPersenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
+		case MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS:
+			boolean conn = mIMusicModel.getCarlifeConnectStatus();
+			mIMusicView.updateTextTipShow(conn);
+			break;
 		case MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE:
 			mIMusicModel.requestAudioFoucs();
 			LogUtil.i(TAG, "requestAudioFoucs");

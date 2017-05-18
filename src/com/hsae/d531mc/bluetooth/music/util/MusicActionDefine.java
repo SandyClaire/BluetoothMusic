@@ -55,6 +55,8 @@ public class MusicActionDefine {
     
     static public final int ACTION_SETTING_GET_PAIRED_DEVICES = 80;
     static public final int ACTION_SETTING_UPDATE_BG = 81;
+    static public final int ACTION_SETTING_GET_CAPLAY_STATUS = 82;
+    static public final int ACTION_SETTING_GET_CAPLIFE_STATUS = 83;
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     

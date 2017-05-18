@@ -121,7 +121,21 @@ public interface IBluetoothSettingModel {
 	 */
 	public List<BluetoothDevice> getVisibleList();
 	
+	/**
+	 * 更新连接状态
+	 * @param status
+	 */
 	public void updateConnectStatus(int status);
 
+	/**
+	 * 获取carplay连接状态
+	 * @return
+	 */
+	public boolean getCarplayConnectstatus();
+	
+	/**
+	 * 更新carplay连接状态
+	 */
+	public void updateCarplayConnectStatus();
 	
 }

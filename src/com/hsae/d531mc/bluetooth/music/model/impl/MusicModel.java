@@ -280,4 +280,16 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
+	@Override
+	public boolean getCarlifeConnectStatus() {
+		return mBluetoothMusicModel.isCarLifeConnected;
+	}
+
+	@Override
+	public void updateCarlifeConnectStatus() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_CAPLIFE_STATUS;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
 }

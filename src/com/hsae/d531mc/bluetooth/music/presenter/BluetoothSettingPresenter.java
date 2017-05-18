@@ -44,6 +44,10 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
+		case MusicActionDefine.ACTION_SETTING_GET_CAPLAY_STATUS:
+			boolean conn = mBluetoothSettingModel.getCarplayConnectstatus();
+			mIBluetoothSettingView.updateTextTipShow(conn);
+			break;
 		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE :
 			int enableStatus = inMessage.getData().getInt("enableStatus");
 			mIBluetoothSettingView.updateBtEnable(enableStatus);
