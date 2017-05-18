@@ -28,8 +28,8 @@ public class BluetoothSettingPresenter implements IObserver {
 	private IBluetoothSettingModel mBluetoothSettingModel;
 	private IBluetoothSettingView mIBluetoothSettingView;
 
-	public BluetoothSettingPresenter(IBluetoothSettingModel btModel,
-			IBluetoothSettingView btSettingsView, Context mContext) {
+	public BluetoothSettingPresenter(IBluetoothSettingModel btModel, IBluetoothSettingView btSettingsView,
+			Context mContext) {
 		super();
 		this.mBluetoothSettingModel = btModel;
 		this.mIBluetoothSettingView = btSettingsView;
@@ -48,12 +48,11 @@ public class BluetoothSettingPresenter implements IObserver {
 			boolean conn = mBluetoothSettingModel.getCarplayConnectstatus();
 			mIBluetoothSettingView.updateTextTipShow(conn);
 			break;
-		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE :
+		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE:
 			int enableStatus = inMessage.getData().getInt("enableStatus");
 			mIBluetoothSettingView.updateBtEnable(enableStatus);
 			if (enableStatus == MangerConstant.BTPOWER_STATUS_ON) {
-				List<BluetoothDevice> pairedList = mBluetoothSettingModel
-						.getPairedDevies();
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
 			}
 			break;
@@ -63,7 +62,7 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_STOP_INQUIRY:
 			mBluetoothSettingModel.stopInquiry();
 			break;
-			
+
 		case MusicActionDefine.ACTION_SETTING_PAIR:
 			String address = inMessage.getData().getString("address");
 			String strCOD = inMessage.getData().getString("strcod");
@@ -71,8 +70,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			LogUtil.i(TAG, "--- pair  -  strCOD = " + strCOD + "address" + address);
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY_DEVICES:
-			BluetoothDevice bean = (BluetoothDevice) inMessage.getData()
-					.getSerializable("devciesbean");
+			BluetoothDevice bean = (BluetoothDevice) inMessage.getData().getSerializable("devciesbean");
 			mIBluetoothSettingView.showVisibleDevices(bean);
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY_FINISH:
@@ -81,11 +79,9 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_PAIR_STATUS_CHANGE:
 			int pairStatus = inMessage.getData().getInt("pairStatus");
 			String pairAddress = inMessage.getData().getString("pairAddress");
-			mIBluetoothSettingView.updateUnpairListByStatus(pairStatus,
-					pairAddress);
+			mIBluetoothSettingView.updateUnpairListByStatus(pairStatus, pairAddress);
 			if (pairStatus == MangerConstant.Anw_SUCCESS) {
-				List<BluetoothDevice> pairedList = mBluetoothSettingModel
-						.getPairedDevies();
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
 				connectMoblie(pairAddress);
 				mIBluetoothSettingView.showConnecttingStatus(pairAddress);
@@ -95,12 +91,10 @@ public class BluetoothSettingPresenter implements IObserver {
 			mBluetoothSettingModel.disconnectMoblie();
 			break;
 		case MusicActionDefine.ACTION_SETTING_UNPAIR:
-			String pairedAddress = inMessage.getData()
-					.getString("pairdAddress");
+			String pairedAddress = inMessage.getData().getString("pairdAddress");
 			int code = mBluetoothSettingModel.unpairDevice(pairedAddress);
 			if (code == MangerConstant.Anw_SUCCESS) {
-				List<BluetoothDevice> pairedList = mBluetoothSettingModel
-						.getPairedDevies();
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
 			}
 			break;
@@ -109,8 +103,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			connectMoblie(conAddress);
 			break;
 		case MusicActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES:
-			List<BluetoothDevice> pairedList = mBluetoothSettingModel
-					.getPairedDevies();
+			List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 			mIBluetoothSettingView.showPairedDevices(pairedList);
 			if (isConnect) {
 				Message msg = Message.obtain();
@@ -150,9 +143,10 @@ public class BluetoothSettingPresenter implements IObserver {
 	};
 
 	private void connectMoblie(final String address) {
-		int conn = mBluetoothSettingModel
-				.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL);
-		if (conn == MangerConstant.Anw_SUCCESS) {
+		int conn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL);
+		int a2dpConn = mBluetoothSettingModel.getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL);
+		
+		if (conn == MangerConstant.Anw_SUCCESS || a2dpConn  == MangerConstant.Anw_SUCCESS ) {
 			connAddress = address;
 			mBluetoothSettingModel.disconnectMoblie();
 			isConnect = true;
@@ -170,7 +164,7 @@ public class BluetoothSettingPresenter implements IObserver {
 	}
 
 	private void initBtName() {
-		String name  = mBluetoothSettingModel.getLocalName();
+		String name = mBluetoothSettingModel.getLocalName();
 		mIBluetoothSettingView.showLocalName(name);
 	}
 
@@ -192,11 +186,9 @@ public class BluetoothSettingPresenter implements IObserver {
 			LogUtil.i(TAG, "--- InitBTEnableTask enable = " + result);
 			mIBluetoothSettingView.updateBtEnable(result);
 			if (result == MangerConstant.BTPOWER_STATUS_ON) {
-				List<BluetoothDevice> pairedList = mBluetoothSettingModel
-						.getPairedDevies();
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel.getPairedDevies();
 				mIBluetoothSettingView.showPairedDevices(pairedList);
-				List<BluetoothDevice> visibleList = mBluetoothSettingModel
-						.getVisibleList();
+				List<BluetoothDevice> visibleList = mBluetoothSettingModel.getVisibleList();
 				mIBluetoothSettingView.initVisibleList(visibleList);
 			}
 		}

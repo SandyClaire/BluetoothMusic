@@ -1197,7 +1197,6 @@ public class BluetoothMusicModel {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-
 			mainAudioChanged(flag);
 			// 如果手动点击停止，不进行播放；
 			if (isHandPuse) {
@@ -1437,4 +1436,11 @@ public class BluetoothMusicModel {
 
 	}
 
+	public void setPrevClicked() {
+		mIMusicModel.setPrevClicked();
+	}
+
+	public void setNextClicked() {
+		mIMusicModel.setNextClicked();
+	}
 }

@@ -304,4 +304,18 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_MAIN_THREAD);
 	}
 
+	@Override
+	public void setPrevClicked() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_PREV;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	}
+
+	@Override
+	public void setNextClicked() {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_NEXT;
+		this.notify(msg, FLAG_RUN_MAIN_THREAD);		
+	}
+
 }

@@ -98,10 +98,6 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		return false;
 	}
 
-	@Override
-	public void next() throws RemoteException {
-		// TODO Auto-generated method stub
-	}
 
 	boolean isFrist = true;
 	long downTime = System.currentTimeMillis();
@@ -173,7 +169,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		mBluetoothMusicModel.isHandPuse = false;
 		mBluetoothMusicModel.tryToSwitchSource();
 		mBluetoothMusicModel.requestAudioFocus(false);
-		LogUtil.i(TAG, "------------- PLAY ");
+		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
 
 	@Override
@@ -188,8 +184,12 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void prev() throws RemoteException {
-		// TODO Auto-generated method stub
-
+		mBluetoothMusicModel.setPrevClicked();
+	}
+	
+	@Override
+	public void next() throws RemoteException {
+		mBluetoothMusicModel.setNextClicked();
 	}
 
 	@Override

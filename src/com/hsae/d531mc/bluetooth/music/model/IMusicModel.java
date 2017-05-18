@@ -173,4 +173,8 @@ public interface IMusicModel {
 
 	public void onUsbDisConnect();
 
+	public void setPrevClicked();
+
+	public void setNextClicked();
+
 }

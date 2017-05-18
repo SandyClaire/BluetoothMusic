@@ -367,6 +367,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 			bean.setStatus(BluetoothDevice.DEVICE_CONNECTING);
 			mPairedAdapter.notifyDataSetChanged();
+			
 			Message msg = Message.obtain();
 			msg.what = MusicActionDefine.ACTION_SETTING_CONNECT_MOBILE;
 			Bundle mBundle = new Bundle();
