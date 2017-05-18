@@ -253,8 +253,7 @@ public class BluetoothMusicServcie extends Service {
 						BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
 						mBluetoothMusicModel.notifyAutroMusicInfo(info);
 
-						LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + " --- mTitle = " + mTitle
-								+ " --- mAtrist = " + mAtrist + " --- mTotalTIme = " + mTotalTIme);
+						LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + " --- mTitle = " + mTitle+ " --- mAtrist = " + mAtrist + " --- mTotalTIme = " + mTotalTIme);
 					}
 				}
 				/* 蓝牙音乐播放状态 */
@@ -656,7 +655,6 @@ public class BluetoothMusicServcie extends Service {
 				usbHandler.sendMessage(msg);
 				isUSBOn = false;
 			}
-
 		}
 
 		@Override

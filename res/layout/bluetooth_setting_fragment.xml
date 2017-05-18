@@ -3,10 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="@dimen/margin_top_height"
-    android:paddingRight="10dp"
     android:background="@drawable/right_drawer_bg"
     android:orientation="horizontal" >
-    
+
     <LinearLayout
         android:id="@+id/lin_setting_close"
         android:layout_width="@dimen/setting_layout_pandding_right"
@@ -26,16 +25,17 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_marginLeft="10px"
         android:layout_weight="1"
         android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="108px"
+            android:layout_marginRight="30dp"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:padding="@dimen/setting_title_layout_pandding" 
-            android:paddingLeft="0dp">
+            android:paddingLeft="0dp" >
 
             <LinearLayout
                 android:layout_width="0dp"
@@ -69,13 +69,13 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_marginRight="10dp"
             android:layout_height="1dp"
             android:background="@drawable/division_bluetooth_title" />
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            
             android:layout_weight="1" >
 
             <ListView
@@ -91,6 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginRight="30dp"
                 android:layout_marginLeft="@dimen/setting_title_text_margin_left"
                 android:gravity="center"
                 android:text="@string/bluetooth_enable_text"
@@ -99,7 +100,5 @@
                 android:visibility="gone" />
         </FrameLayout>
     </LinearLayout>
-
-    
 
 </LinearLayout>

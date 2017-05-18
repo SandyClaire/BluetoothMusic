@@ -1167,16 +1167,17 @@ public class BluetoothMusicModel {
 		App soApp = source.getCurrentSource();
 		AutoSettings mAutoSettings = AutoSettings.getInstance();
 		try {
+			int mode = getStreamMode();
 			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
-			if (soApp != App.BT_MUSIC ||mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
+			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				return;
 			}
-//			if () {
-//				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-//			} else if (soApp == App.BT_MUSIC && getStreamMode() == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-//				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-//			}
+			if (soApp != App.BT_MUSIC) {
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+			} else if (soApp == App.BT_MUSIC && (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE ||mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
