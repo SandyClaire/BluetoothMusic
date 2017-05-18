@@ -40,7 +40,6 @@ import com.hsae.d531mc.bluetooth.music.view.IBluetoothSettingView;
  * @author wangda
  *
  */
-@SuppressLint("NewApi")
 public class BluetoothSettingFragment extends Fragment implements ISubject,
 		IBluetoothSettingView, OnClickListener {
 	private static final String TAG = "BluetoothSettingFragment";

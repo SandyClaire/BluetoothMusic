@@ -21,6 +21,7 @@ import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
+import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
@@ -981,8 +982,10 @@ public class BluetoothMusicModel {
 	 */
 	public void setMusicStreamMute() {
 		Source source = new Source();
+		AutoSettings mAutoSettings = AutoSettings.getInstance();
 		try {
-			if (source.getCurrentSource() != App.BT_MUSIC) {
+			if (source.getCurrentSource() != App.BT_MUSIC ||
+					mAutoSettings.isDiagnoseMode()) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 			}
 		} catch (RemoteException e) {

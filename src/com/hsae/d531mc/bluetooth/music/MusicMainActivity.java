@@ -25,7 +25,6 @@ import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.anwsdk.service.AudioControl;
@@ -39,6 +38,7 @@ import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
+import com.hsae.d531mc.bluetooth.music.util.MySeekBar;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 
 /**
@@ -63,7 +63,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private TextView mTextArtist;
 	private TextView mTextCurTime;
 	private TextView mTextTotalTime;
-	private SeekBar mSeekBar;
+	private MySeekBar mSeekBar;
 	private DrawerLayout mDrawerLayout;
 	private FrameLayout mFrameLayout;
 	private FragmentManager mFragmentManager;
@@ -162,7 +162,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
 		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
 		mBtnNext = (ImageButton) findViewById(R.id.btn_next);
-		mSeekBar = (SeekBar) findViewById(R.id.music_seekbar);
+		mSeekBar = (MySeekBar) findViewById(R.id.music_seekbar);
 		mTextTitle = (TextView) findViewById(R.id.music_title);
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
@@ -856,6 +856,5 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageBg.setBackgroundResource(R.drawable.bg_music_main);
 		}
 	}
-
 	
 }

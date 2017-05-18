@@ -6,10 +6,13 @@ import android.graphics.Bitmap;
 import android.os.RemoteException;
 
 import com.anwsdk.service.AudioControl;
+import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
 import com.hsae.autosdk.hmi.HmiConst;
+import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 
 public class BTMusicManager extends IBTMusicManager.Stub {
@@ -245,6 +248,15 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	public String getBtMacAddress() throws RemoteException {
 		LogUtil.i(TAG, "--------- getBtMacAddress ");
 		return mBluetoothMusicModel.getLocalAddress();
+	}
+
+	@Override
+	public void exitDiagnoseMode() throws RemoteException {
+		LogUtil.i(TAG, "------------- exitDiagnoseMode ");
+		Source source = new Source();
+		if (source.getCurrentSource() == App.BT_MUSIC) {
+			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+		}
 	}
 
 }

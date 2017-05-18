@@ -49,6 +49,7 @@ public class BluetoothMusicServcie extends Service {
 	private boolean isplaying = false;
 	private BTMusicManager mBTMmanager;
 	private String mTimePosition = "-1";
+	
 
 	@Override
 	public IBinder onBind(Intent intent) {
