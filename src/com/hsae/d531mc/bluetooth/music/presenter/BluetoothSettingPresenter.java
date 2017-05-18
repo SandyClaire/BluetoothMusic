@@ -1,10 +1,13 @@
 package com.hsae.d531mc.bluetooth.music.presenter;
 
 import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Message;
+
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
@@ -24,7 +27,6 @@ public class BluetoothSettingPresenter implements IObserver {
 	private static final String TAG = "MusicBTPresenter";
 	private IBluetoothSettingModel mBluetoothSettingModel;
 	private IBluetoothSettingView mIBluetoothSettingView;
-	private int backcode = 0;
 
 	public BluetoothSettingPresenter(IBluetoothSettingModel btModel,
 			IBluetoothSettingView btSettingsView, Context mContext) {
@@ -52,7 +54,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			}
 			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY:
-			mBluetoothSettingModel.getBluetoothVisibleDevices();
+			mBluetoothSettingModel.inquiryVisibleDevices();
 			break;
 		case MusicActionDefine.ACTION_SETTING_STOP_INQUIRY:
 			mBluetoothSettingModel.stopInquiry();
@@ -159,14 +161,40 @@ public class BluetoothSettingPresenter implements IObserver {
 		LogUtil.i(TAG, "--- init +++");
 		((ISubject) mBluetoothSettingModel).attach(this);
 		((ISubject) mIBluetoothSettingView).attach(this);
-		String name = mBluetoothSettingModel.getLocalName();
+		initBtName();
+		initBtEnableStatus();
+	}
+
+	private void initBtName() {
+		String name  = mBluetoothSettingModel.getLocalName();
 		mIBluetoothSettingView.showLocalName(name);
-		int enableStatus = mBluetoothSettingModel.getBTEnableStatus();
-		mIBluetoothSettingView.updateBtEnable(enableStatus);
-		if (enableStatus == MangerConstant.BTPOWER_STATUS_ON) {
-			List<BluetoothDevice> pairedList = mBluetoothSettingModel
-					.getPairedDevies();
-			mIBluetoothSettingView.showPairedDevices(pairedList);
+	}
+
+	private void initBtEnableStatus() {
+		InitBTEnableTask enableTask = new InitBTEnableTask();
+		enableTask.execute();
+	}
+
+	class InitBTEnableTask extends AsyncTask<Void, Void, Integer> {
+
+		@Override
+		protected Integer doInBackground(Void... params) {
+			return mBluetoothSettingModel.getBTEnableStatus();
+		}
+
+		@SuppressLint("NewApi")
+		@Override
+		protected void onPostExecute(Integer result) {
+			LogUtil.i(TAG, "--- InitBTEnableTask enable = " + result);
+			mIBluetoothSettingView.updateBtEnable(result);
+			if (result == MangerConstant.BTPOWER_STATUS_ON) {
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel
+						.getPairedDevies();
+				mIBluetoothSettingView.showPairedDevices(pairedList);
+				List<BluetoothDevice> visibleList = mBluetoothSettingModel
+						.getVisibleList();
+				mIBluetoothSettingView.initVisibleList(visibleList);
+			}
 		}
 	}
 

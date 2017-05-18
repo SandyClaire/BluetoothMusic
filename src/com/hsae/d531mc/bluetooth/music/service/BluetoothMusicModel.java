@@ -1,6 +1,7 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -17,6 +18,7 @@ import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 
 import com.anwsdk.service.AudioControl;
+import com.anwsdk.service.BT_ADV_DATA;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
@@ -25,6 +27,7 @@ import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
+import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
@@ -44,7 +47,7 @@ public class BluetoothMusicModel {
 	private BluetoothConnection mConnection = new BluetoothConnection();
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
-	private IBluetoothSettingModel nIBluetoothSettingModel;
+	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = -1;
 	public boolean isHandPuse = false;
 
@@ -783,11 +786,11 @@ public class BluetoothMusicModel {
 	/**
 	 * 注册 Blutooth Setting 监听
 	 * 
-	 * @param mBluetoothSettingModel
+	 * @param bluetoothSettingModel
 	 */
 	public void registBluetoothSettingListener(
-			IBluetoothSettingModel mBluetoothSettingModel) {
-		nIBluetoothSettingModel = mBluetoothSettingModel;
+			IBluetoothSettingModel bluetoothSettingModel) {
+		mIBluetoothSettingModel = bluetoothSettingModel;
 	}
 
 	/**
@@ -797,16 +800,116 @@ public class BluetoothMusicModel {
 	 * @param status
 	 */
 	public void updatePairRequest(String address, int status) {
-		if (null != nIBluetoothSettingModel) {
-			nIBluetoothSettingModel.updateDevicePair(address, status);
+		if (null != mIBluetoothSettingModel) {
+			mIBluetoothSettingModel.updateDevicePair(address, status);
 		}
+		updateUnpairListByStatus(status, address);
 	}
 
 	/**
 	 * 取消Blutooth Setting 监听
 	 */
 	public void unregistBluetoothSettingListener() {
-		nIBluetoothSettingModel = null;
+		mIBluetoothSettingModel = null;
+	}
+	
+	/**
+	 * 缓存可用设备列表
+	 */
+	public List<BluetoothDevice> mListDevices = new ArrayList<BluetoothDevice>();
+	
+	/**
+	 * 搜索蓝牙设备主调
+	 */
+	public void getBluetoothVisibleDevices() {
+
+		Thread inquiryThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					mListDevices.clear();
+					inquiryBtDevices(InquiryCallBack);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
+		}, "inquiryThread");
+		inquiryThread.start();
+		LogUtil.i(TAG, "--- inquiryThread.star");
+	}
+
+	/**
+	 * 搜索设备回调
+	 */
+	private IAnwInquiryCallBackEx InquiryCallBack = new IAnwInquiryCallBackEx.Stub() {
+
+		@Override
+		public void InquiryDataRsp(String address, String strName, int cod,
+				int RSSI, BT_ADV_DATA EirData, boolean bComplete)
+				throws RemoteException {
+			final boolean mComplete = bComplete;
+			final String mName = strName;
+			final String mAddress = address;
+			final int mCod = cod;
+			final int mRSSI = RSSI;
+
+			final int[] mCount = new int[1];
+			final String[] Name = new String[16];
+			final String[] Address = new String[16];
+			final int[] COD = new int[16];
+
+			mHandler.post(new Runnable() {
+				public void run() {
+					if (mComplete == false) {
+						StringBuilder mBuilder = new StringBuilder();
+						mBuilder.append("0x");
+						mBuilder.append(Integer.toHexString(mCod));
+						try {
+							getPairedList(mCount, Name,
+									Address, COD);
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+						for (int i = 0; i < mCount[0]; i++) {
+							if (mAddress.equals(Address[i])) {
+								return;
+							}
+						}
+						BluetoothDevice bean = new BluetoothDevice(mName,
+								mAddress, mBuilder.toString(), mRSSI,
+								BluetoothDevice.DEVICE_UNPAIR);
+						mListDevices.add(bean);
+						if (mIBluetoothSettingModel != null) {
+							mIBluetoothSettingModel.getVisibleDevices(bean, false);
+						}
+					} else {
+						if (mIBluetoothSettingModel != null) {
+							mIBluetoothSettingModel.getVisibleDevices(null, true);
+						}
+					}
+				}
+			});
+		}
+	};
+	
+	public void updateUnpairListByStatus(int status, String address) {
+		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
+				+ "-- address = " + address);
+		if (status == MangerConstant.Anw_SUCCESS) {
+			for (int i = 0; i < mListDevices.size(); i++) {
+				if (mListDevices.get(i).getAddress().equals(address)) {
+					mListDevices.remove(i);
+				}
+			}
+		} else {
+			for (int i = 0; i < mListDevices.size(); i++) {
+				if (mListDevices.get(i).getAddress().equals(address)) {
+					mListDevices.get(i).setStatus(
+							BluetoothDevice.DEVICE_UNPAIR);
+				}
+			}
+		}
 	}
 
 	/**
@@ -815,8 +918,8 @@ public class BluetoothMusicModel {
 	 * @param status
 	 */
 	public void updateBTEnalbStatus(int status) {
-		if (null != nIBluetoothSettingModel) {
-			nIBluetoothSettingModel.updateBtEnableStatus(status);
+		if (null != mIBluetoothSettingModel) {
+			mIBluetoothSettingModel.updateBtEnableStatus(status);
 		}
 	}
 
@@ -849,8 +952,8 @@ public class BluetoothMusicModel {
 	 * @param status
 	 */
 	public void updateHFPConnectStatus(int status) {
-		if (null != nIBluetoothSettingModel) {
-			nIBluetoothSettingModel.updateConnectStatus(status);
+		if (null != mIBluetoothSettingModel) {
+			mIBluetoothSettingModel.updateConnectStatus(status);
 		}
 	}
 

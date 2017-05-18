@@ -256,6 +256,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 		super.onPause();
 	}
 
+	/**
+	 * 显示侧边栏
+	 * @param flag
+	 * flag : true 显示音源切换
+	 *        false 显示蓝牙设置
+	 */
 	private void showFram(boolean flag) {
 		if (flag) {
 			mFragmentManager.beginTransaction()
@@ -269,6 +275,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
 
+	/**
+	 * 关闭侧边栏
+	 */
 	public void closeMusicSwitch() {
 		isFramShow = false;
 		mDrawerLayout.closeDrawer(mFrameLayout);
@@ -348,6 +357,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			this.notify(msgs, FLAG_RUN_MAIN_THREAD);
 			break;
 		case R.id.btn_home:
+			closeMusicSwitch();
 			Intent intent = new Intent(Intent.ACTION_MAIN);
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			intent.addCategory(Intent.CATEGORY_HOME);

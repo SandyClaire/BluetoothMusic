@@ -53,4 +53,11 @@ public interface IBluetoothSettingView {
 	 * @param status
 	 */
 	public void updateBtEnable(int status);
+	
+	/**
+	 * int visible list
+	 * @param list
+	 */
+	public void initVisibleList(List<BluetoothDevice> list);
+
 }

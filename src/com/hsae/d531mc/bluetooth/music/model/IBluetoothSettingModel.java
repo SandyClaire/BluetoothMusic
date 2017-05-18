@@ -23,8 +23,8 @@ public interface IBluetoothSettingModel {
 	 * @param inqCallBack
 	 * @return
 	 */
-	public void getBluetoothVisibleDevices();
-	
+	public void inquiryVisibleDevices();
+
 	/**
 	 * stop inquiry
 	 * @return
@@ -99,12 +99,6 @@ public interface IBluetoothSettingModel {
 	public int getConnectStatus(int profile);
 	
 	/**
-	 * 跟新连接状态
-	 * @param status
-	 */
-	public void updateConnectStatus(int status);
-	
-	/**
 	 * update bluetooth enable status
 	 * @param status
 	 */
@@ -115,5 +109,19 @@ public interface IBluetoothSettingModel {
 	 * @return
 	 */
 	public int getBTEnableStatus();
+	
+	/**
+	 * get visible devices
+	 * @param list
+	 */
+	public void getVisibleDevices(BluetoothDevice bean, boolean complete);
 
+	/**
+	 * 获取缓存可用设备数据
+	 */
+	public List<BluetoothDevice> getVisibleList();
+	
+	public void updateConnectStatus(int status);
+
+	
 }

@@ -64,7 +64,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private TextView mTextEnable;
 	private static BluetoothSettingFragment fragment;
 	private List<BluetoothDevice> mListPairedDevices = new ArrayList<BluetoothDevice>();
-	private ArrayList<BluetoothDevice> mListVisibleDevices = new ArrayList<BluetoothDevice>();
+	private List<BluetoothDevice> mListVisibleDevices = new ArrayList<BluetoothDevice>();
 
 	public static Fragment getInstance(Context nContext) {
 		if (null == fragment) {
@@ -124,7 +124,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_LAUNCHED;
 		this.notify(msg, FLAG_RUN_SYNC);
-		searchDevices();
+		LogUtil.i(TAG, "--- initMVP +++");
 	}
 
 	private void searchDevices() {
@@ -158,7 +158,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	
 	@Override
 	public void onDetach() {
-		stopDeviceSearching();
 		super.onDetach();
 	}
 
@@ -601,6 +600,22 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		} else {
 			mTextEnable.setText(getResources().getString(
 					R.string.bluetooth_enable_text));
+		}
+	}
+
+	@Override
+	public void initVisibleList(List<BluetoothDevice> list) {
+		mVisibleAdapter.removeAll();
+		LogUtil.i(TAG, "initVisibleList size = " + list.size());
+		if (list.size() == 0) {
+			searchDevices();
+		}else {
+			for (int i = 0; i < list.size(); i++) {
+				showVisibleDevices(list.get(i));
+				if (list.get(i).getStatus() == BluetoothDevice.DEVICE_PAIRING) {
+					isPairing = true;
+				}
+			}
 		}
 	}
 
