@@ -184,12 +184,12 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void prev() throws RemoteException {
-		mBluetoothMusicModel.setPrevClicked();
+//		mBluetoothMusicModel.setPrevClicked();
 	}
 	
 	@Override
 	public void next() throws RemoteException {
-		mBluetoothMusicModel.setNextClicked();
+//		mBluetoothMusicModel.setNextClicked();
 	}
 
 	@Override
