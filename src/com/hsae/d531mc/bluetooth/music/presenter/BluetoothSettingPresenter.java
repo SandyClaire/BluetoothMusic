@@ -65,7 +65,7 @@ public class BluetoothSettingPresenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE:
 			int enableStatus = inMessage.getData().getInt("enableStatus");
-			
+
 			boolean carlifeStatus = mBluetoothSettingModel.getCarLifeConnectstatus();
 			if (carlifeStatus) {
 				enableStatus = -2;
@@ -85,12 +85,27 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_SETTING_STOP_INQUIRY:
 			mBluetoothSettingModel.stopInquiry();
 			break;
-			
+
 		case MusicActionDefine.ACTION_ISBTSEARCHING:
 			mIBluetoothSettingView.isSearching(mBluetoothSettingModel.isCurrentInquring());
 			break;
 		case MusicActionDefine.ACTION_SEACH_CALLBACK:
-			mIBluetoothSettingView.isSearching(inMessage.getData().getInt("code") == 1);
+			final int result = inMessage.getData().getInt("code");
+			if (result == 647) {
+				//隔1S执行停止动作
+				mIBluetoothSettingView.setButtonClickable(false);
+				handler.postDelayed(new Runnable() {
+					
+					@Override
+					public void run() {
+						mIBluetoothSettingView.isSearching(result == 1);
+						mIBluetoothSettingView.setButtonClickable(true);
+					}
+				}, 1000);
+			}else{
+				mIBluetoothSettingView.isSearching(result == 1);
+			}
+				
 			break;
 		case MusicActionDefine.ACTION_SETTING_PAIR:
 			String address = inMessage.getData().getString("address");
@@ -237,5 +252,7 @@ public class BluetoothSettingPresenter implements IObserver {
 		((ISubject) mBluetoothSettingModel).detach(this);
 		((ISubject) mIBluetoothSettingView).detach(this);
 	}
-
+	
+	
+	Handler handler = new Handler();
 }

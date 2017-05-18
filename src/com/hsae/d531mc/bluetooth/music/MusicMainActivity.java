@@ -443,7 +443,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			} else {
 				msgl.what = MusicActionDefine.ACTION_A2DP_PLAY;
 			}
-			this.notify(msgl, FLAG_RUN_MAIN_THREAD);
+			this.notify(msgl, FLAG_RUN_SYNC);
 			break;
 		case R.id.btn_repeat:
 			Message msgr = Message.obtain();
@@ -451,7 +451,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			Bundle rBundle = new Bundle();
 			rBundle.putInt("currentRepeatModel", mRepeatMode);
 			msgr.setData(rBundle);
-			this.notify(msgr, FLAG_RUN_MAIN_THREAD);
+			this.notify(msgr, FLAG_RUN_SYNC);
 			break;
 		case R.id.btn_shuffle:
 			Message msgs = Message.obtain();
@@ -459,7 +459,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			Bundle sBundle = new Bundle();
 			sBundle.putInt("currentShuffleModel", mShuffleMode);
 			msgs.setData(sBundle);
-			this.notify(msgs, FLAG_RUN_MAIN_THREAD);
+			this.notify(msgs, FLAG_RUN_SYNC);
 			break;
 		case R.id.btn_home:
 			closeMusicSwitch();

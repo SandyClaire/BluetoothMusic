@@ -156,20 +156,20 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	@Override
 	public void onResume() {
 		super.onResume();
-//		getCaplayStatus();
+		// getCaplayStatus();
 	}
 
-//	private void getCaplayStatus() {
-//		Message msg = Message.obtain();
-//		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
-//		this.notify(msg, FLAG_RUN_MAIN_THREAD);
-//	}
-//
-//	private void getCarlifeStatus() {
-//		Message msg = Message.obtain();
-//		msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
-//		this.notify(msg, FLAG_RUN_MAIN_THREAD);
-//	}
+	// private void getCaplayStatus() {
+	// Message msg = Message.obtain();
+	// msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
+	// this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	// }
+	//
+	// private void getCarlifeStatus() {
+	// Message msg = Message.obtain();
+	// msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
+	// this.notify(msg, FLAG_RUN_MAIN_THREAD);
+	// }
 
 	@Override
 	public void onDetach() {
@@ -180,7 +180,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.btn_search:
-			if (isPairing || !isStop) {
+			LogUtil.i(TAG, "isPairing = " + isPairing + "isStop = " + isStop);
+			if (isPairing || (!isStop && isSearching)) {
 				return;
 			}
 			isSearching();
@@ -201,7 +202,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			break;
 		}
 	}
-	
+
 	private void isSearching() {
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_ISBTSEARCHING;
@@ -319,7 +320,18 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
 				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
 				holder.mLinItem.setEnabled(true);
-			} else if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTING) {
+			} else if (bean.getStatus() == BluetoothDevice.DEVICE_PAIRING) {
+				holder.progressBar.setVisibility(View.VISIBLE);
+				holder.mImageUnpair.setVisibility(View.GONE);
+				holder.tvDisConnect.setVisibility(View.GONE);
+				// holder.mTextDeviceStatus.setVisibility(View.VISIBLE);
+				// holder.mTextDeviceStatus.setText(getResources().getString(R.string.bluetooth_status_connecting));
+				holder.mImageUnpair.setBackground(getResources().getDrawable(R.drawable.btn_unpair_device));
+				holder.mTextDeviceName.setTextColor(getResources().getColor(R.color.white_trans));
+				holder.mLinItem.setEnabled(false);
+			}
+
+			else if (bean.getStatus() == BluetoothDevice.DEVICE_CONNECTING) {
 				holder.progressBar.setVisibility(View.VISIBLE);
 				holder.mImageUnpair.setVisibility(View.GONE);
 				holder.tvDisConnect.setVisibility(View.GONE);
@@ -611,8 +623,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 
 	@Override
 	public void updateBtEnable(int status) {
-		LogUtil.i(TAG, "updateBtEnable : status = "+status);
-		
+		LogUtil.i(TAG, "updateBtEnable : status = " + status);
+
 		if (status == MangerConstant.BTPOWER_STATUS_ON) {
 			mLinVis.setVisibility(View.VISIBLE);
 			mTextEnable.setVisibility(View.GONE);
@@ -633,8 +645,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			updatePairListVisible();
 			mVisibleAdapter.notifyDataSetChanged();
 			mPairedAdapter.notifyDataSetChanged();
-		}
-		else if (status == -2) {
+		} else if (status == -2) {
 			// carlife is connected
 			mLinVis.setVisibility(View.GONE);
 			mTextEnable.setVisibility(View.VISIBLE);
@@ -647,8 +658,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 			updatePairListVisible();
 			mVisibleAdapter.notifyDataSetChanged();
 			mPairedAdapter.notifyDataSetChanged();
-		}
-		else if (status == -1) {
+		} else if (status == -1) {
 			mLinVis.setVisibility(View.GONE);
 			mTextEnable.setVisibility(View.VISIBLE);
 			mListVisible.setVisibility(View.GONE);
@@ -698,6 +708,11 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	@Override
 	public void isSearching(boolean currentInquring) {
 		updateSearchBtnShow(currentInquring);
+	}
+
+	@Override
+	public void setButtonClickable(boolean b) {
+		mBtnSearch.setEnabled(b);
 	}
 
 }

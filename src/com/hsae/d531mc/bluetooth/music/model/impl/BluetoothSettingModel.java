@@ -405,7 +405,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		data.putInt("code", result);
 		msg.setData(data);
 		msg.what = MusicActionDefine.ACTION_SEACH_CALLBACK;
-		this.notify(msg, FLAG_RUN_MAIN_THREAD);
+		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
 }

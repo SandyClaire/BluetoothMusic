@@ -570,7 +570,6 @@ public class BluetoothMusicModel {
 	 */
 	public int inquiryBtStop() throws RemoteException {
 		if (null == mIAnwPhoneLink) {
-			// TODO:
 			return errorCode;
 		}
 		return mIAnwPhoneLink.ANWBT_DeviceInquiryStop();
@@ -870,9 +869,7 @@ public class BluetoothMusicModel {
 		new InitStatusTask().execute();
 		LogUtil.i(TAG, "--- inquiryThread.star");
 	}
-	
-	
-	
+
 	class InitStatusTask extends AsyncTask<Void, Void, Integer> {
 
 		@Override
@@ -888,34 +885,37 @@ public class BluetoothMusicModel {
 		@SuppressLint("NewApi")
 		@Override
 		protected void onPostExecute(Integer result) {
-			LogUtil.i(TAG, "getBluetoothVisibleDevices : code = "+result);
-			//根据供应商反馈搜索结果为647时、执行一次stop的动作、且1S内不能执行搜索
+			LogUtil.i(TAG, "getBluetoothVisibleDevices : code = " + result);
+			// 根据供应商反馈搜索结果为647时、执行一次stop的动作、且1S内不能执行搜索
 			if (result == 647) {
-				Bundle bundle = new Bundle();
-				bundle.putInt("result", result);
-				Message msg = Message.obtain();
-				msg.setData(bundle);
-				handler.sendMessageDelayed(msg, 1000);
-			}else{
-				mIBluetoothSettingModel.onInquiryCallBack(result);
+				mIBluetoothSettingModel.stopInquiry();
 			}
+			mIBluetoothSettingModel.onInquiryCallBack(result);
 		}
 	}
 
-	Handler handler = new Handler(){
-		public void handleMessage(android.os.Message msg) {
-			LogUtil.i(TAG, "stopInquiry = ");
-			mIBluetoothSettingModel.stopInquiry();
-			mIBluetoothSettingModel.onInquiryCallBack(msg.getData().getInt("result"));
+	private static final int MSG_SETSTREAM_MODE = 0X2;
+
+	Handler handler = new Handler() {
+		public void handleMessage(final android.os.Message msg) {
+
+			switch (msg.what) {
+			case MSG_SETSTREAM_MODE:
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+						try {
+							audioSetStreamMode(msg.getData().getInt("mode"));
+						} catch (RemoteException e) {
+						}
+					}
+				}).start();
+				break;
+			}
+
 		};
 	};
-	
-	
-	
-	
-	
-	
-	
 
 	/**
 	 * 搜索设备回调
@@ -1225,18 +1225,27 @@ public class BluetoothMusicModel {
 			}
 
 			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
-			if (soApp != App.BT_MUSIC) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+			if (soApp != App.BT_MUSIC && !isDisByIpod) {
+				Bundle data = new Bundle();
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				Message msg = Message.obtain();
+				msg.what = MSG_SETSTREAM_MODE;
+				msg.setData(data);
+				handler.sendMessage(msg);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
 			} else if (soApp == App.BT_MUSIC
 					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				Bundle data = new Bundle();
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				Message msg = Message.obtain();
+				msg.what = MSG_SETSTREAM_MODE;
+				msg.setData(data);
+				handler.sendMessage(msg);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
 			}
 		} catch (RemoteException e) {
 		}
 	}
-
 
 	public boolean isAudioFocused = false;
 	int playtimes = 0;
@@ -1258,10 +1267,10 @@ public class BluetoothMusicModel {
 						@Override
 						public void run() {
 							try {
-								if (!isPlay && playtimes < 5) {
+								if (!isPlay && playtimes < 3) {
 									playtimes++;
 									AVRCPControl(AudioControl.CONTROL_PLAY);
-									handler.postDelayed(this, 1000);
+									handler.postDelayed(this, 1500);
 								} else {
 									playtimes = 0;
 									handler.removeCallbacks(this);
@@ -1269,7 +1278,7 @@ public class BluetoothMusicModel {
 							} catch (RemoteException e) {
 							}
 						}
-					}, 1000);
+					}, 1500);
 				}
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");

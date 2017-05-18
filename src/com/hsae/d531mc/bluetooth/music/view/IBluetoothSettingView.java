@@ -68,5 +68,7 @@ public interface IBluetoothSettingView {
 
 	public void isSearching(boolean currentInquring);
 
+	public void setButtonClickable(boolean b);
+
 
 }
