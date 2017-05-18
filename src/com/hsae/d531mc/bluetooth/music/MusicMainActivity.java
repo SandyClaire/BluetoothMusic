@@ -20,6 +20,7 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -409,11 +410,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mRepeatView = inflater.inflate(R.layout.pop_repeat, null);
 
-		Button btnRepeatAll = (Button) mRepeatView
+		LinearLayout btnRepeatAll = (LinearLayout) mRepeatView
 				.findViewById(R.id.btn_repeat_all);
-		Button btnRepeatSingle = (Button) mRepeatView
+		LinearLayout btnRepeatSingle = (LinearLayout) mRepeatView
 				.findViewById(R.id.btn_repeat_single);
-		Button btnRepeatOrder = (Button) mRepeatView
+		LinearLayout btnRepeatOrder = (LinearLayout) mRepeatView
 				.findViewById(R.id.btn_repeat_order);
 		btnRepeatAll.setOnClickListener(clickListener);
 		btnRepeatSingle.setOnClickListener(clickListener);
@@ -426,7 +427,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		repeatWindow.setFocusable(true);
 		repeatWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_repeat),
-				Gravity.BOTTOM | Gravity.RIGHT, 165, 110);
+				Gravity.BOTTOM | Gravity.RIGHT, 172, 0);
 	}
 
 	private View mShuffleView;
@@ -439,9 +440,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		mShuffleView = inflater.inflate(R.layout.pop_shuffle, null);
 
-		Button btnOpen = (Button) mShuffleView
+		LinearLayout btnOpen = (LinearLayout) mShuffleView
 				.findViewById(R.id.btn_shuffle_open);
-		Button btnClose = (Button) mShuffleView
+		LinearLayout btnClose = (LinearLayout) mShuffleView
 				.findViewById(R.id.btn_shuffle_close);
 		btnOpen.setOnClickListener(clickListener);
 		btnClose.setOnClickListener(clickListener);
@@ -453,7 +454,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		shuffleWindow.setFocusable(true);
 		shuffleWindow.showAtLocation(
 				MusicMainActivity.this.findViewById(R.id.btn_shuffle),
-				Gravity.BOTTOM | Gravity.RIGHT, 0, 110);
+				Gravity.BOTTOM | Gravity.RIGHT, 0, 0);
 	}
 
 	private OnClickListener playModeListener = new OnClickListener() {
