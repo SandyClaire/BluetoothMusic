@@ -27,7 +27,7 @@
                     android:id="@+id/btn_bt_settings"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_bluetoothswitch"/>
+                    android:background="@drawable/btn_bluetoothswitch" />
             </LinearLayout>
 
             <LinearLayout
@@ -44,8 +44,8 @@
                     android:layout_width="0dp"
                     android:layout_height="@dimen/music_image_height"
                     android:layout_weight="1"
-                    android:padding="@dimen/music_text_info_pandding"
-                    android:orientation="vertical" >
+                    android:orientation="vertical"
+                    android:padding="@dimen/music_text_info_pandding" >
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -59,8 +59,8 @@
                             style="@style/musicNameText"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textStyle="bold"
-                            android:text="music"/>
+                            android:text="music"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/music_artist"
@@ -76,8 +76,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="album"
-                            android:visibility="gone"/>
-
+                            android:visibility="gone" />
                     </LinearLayout>
 
                     <RelativeLayout
@@ -91,9 +90,8 @@
                             style="@style/CustomSeekBar"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:focusable="false"
-            				android:enabled="false"
-                            android:layout_centerHorizontal="true" />
+                            android:layout_centerHorizontal="true"
+                            android:enabled="false" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -103,22 +101,22 @@
 
                             <TextView
                                 android:id="@+id/music_currenttime"
+                                style="@style/musicTimeText"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
                                 android:layout_gravity="left"
                                 android:layout_marginLeft="10dp"
-                                android:text="@string/play_text_min"
-                                style="@style/musicTimeText" />
+                                android:layout_weight="1"
+                                android:text="@string/play_text_min" />
 
                             <TextView
                                 android:id="@+id/music_totaltime"
+                                style="@style/musicTimeText"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="right"
                                 android:layout_marginRight="10dp"
-                                android:text="@string/play_text_max"
-                                style="@style/musicTimeText" />
+                                android:text="@string/play_text_max" />
                         </LinearLayout>
                     </RelativeLayout>
                 </LinearLayout>
@@ -127,7 +125,7 @@
                     android:id="@+id/music_cover"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/music_image_height"
-                    android:background="@drawable/icon_music_main"/>
+                    android:background="@drawable/icon_music_main" />
             </LinearLayout>
         </LinearLayout>
 
@@ -137,14 +135,12 @@
             android:layout_gravity="bottom"
             android:background="@drawable/bg_bottom_bar" >
 
-            
-            <View 
+            <View
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/bottom_bar_margin_left"
-                android:background="@drawable/icon_vertical_split"
-                />
-            
+                android:background="@drawable/icon_vertical_split" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -156,23 +152,28 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_prev"/>
+                    android:background="@drawable/btn_music_prev" />
 
-                <Button
-                    android:id="@+id/btn_play"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:background="@drawable/btn_music_play"/>
+                <LinearLayout
+                    android:layout_width="@dimen/music_play_width"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="horizontal" >
+
+                    <Button
+                        android:id="@+id/btn_play"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:background="@drawable/btn_music_play" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/btn_next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_next"/>
+                    android:background="@drawable/btn_music_next" />
             </LinearLayout>
 
             <LinearLayout
@@ -182,37 +183,35 @@
                 android:gravity="center"
                 android:orientation="horizontal" >
 
-                <View 
+                <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/icon_vertical_split"
-                    />
-                
+                    android:background="@drawable/icon_vertical_split" />
+
                 <Button
                     android:id="@+id/btn_repeat"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/btn_music_repeat_singel"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"
                     android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"  />
-                
-                <View 
+                    android:background="@drawable/btn_music_repeat_singel" />
+
+                <View
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/icon_vertical_split"
-                    />
+                    android:background="@drawable/icon_vertical_split" />
 
                 <Button
                     android:id="@+id/btn_shuffle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginRight="@dimen/music_buttom_button_mergin"
                     android:layout_marginLeft="@dimen/music_buttom_button_mergin"
+                    android:layout_marginRight="@dimen/music_buttom_button_mergin"
                     android:background="@drawable/btn_music_shuffle_open" />
             </LinearLayout>
-            
+
             <LinearLayout
                 android:layout_width="@dimen/bottom_bar_margin_left"
                 android:layout_height="match_parent"
@@ -225,7 +224,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/btn_home" />
-                
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
@@ -234,7 +232,7 @@
         android:id="@+id/bluetooth_music_frame"
         android:layout_width="@dimen/music_left_slide_width"
         android:layout_height="match_parent"
-        android:layout_marginBottom="@dimen/music_bottombar_higth"
-        android:layout_gravity="start" />
+        android:layout_gravity="start"
+        android:layout_marginBottom="@dimen/music_bottombar_higth" />
 
 </android.support.v4.widget.DrawerLayout>

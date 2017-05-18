@@ -8,6 +8,8 @@
     <dimen name="music_buttom_button_mergin">48dp</dimen>
     <dimen name="music_popup_wigth">171dp</dimen>
     
+    <dimen name="music_play_width">200dp</dimen>
+    
     <dimen name="music_left_slide_width">425dp</dimen>
     <dimen name="music_image_height">420dp</dimen>
     
