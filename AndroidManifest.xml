@@ -26,7 +26,7 @@
         
         <service android:name=".service.BluetoothMusicServcie" >
             <intent-filter>
-                <action android:name="com.hsae.d531mc.bluetooth.service.BluetoothMusicService" />
+                <action android:name="com.hsae.auto.BT_MUSIC_SERVICE" />
             </intent-filter>
         </service>
         
