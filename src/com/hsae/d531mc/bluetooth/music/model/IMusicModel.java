@@ -121,4 +121,11 @@ public interface IMusicModel {
 	 */
 	public void sendActivityPauseMsg();
 	
+	/**
+	 * 设置音量大小
+	 * @param flag
+	 * @param vol
+	 */
+	public void setDeviceVol(boolean flag, int vol);
+	
 }

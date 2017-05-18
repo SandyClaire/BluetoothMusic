@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,8 +17,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.hsae.autosdk.ipod.IPodProxy;
 import com.hsae.autosdk.os.Soc;
+import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
@@ -43,7 +44,6 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private TextView mTextBT;
 	private TextView mTextUSB;
 	private TextView mTextSpite;
-	private Context mContext;
 	private Button mBtnClose;
 	private static MusicSwitchFragmet fragment;
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
@@ -53,15 +53,9 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
 	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
 
-
-	public MusicSwitchFragmet(Context context) {
-		super();
-		mContext = context;
-	}
-	
-	public static Fragment getInstance(Context mContext){
+	public static Fragment getInstance(Context mContext) {
 		if (null == fragment) {
-			fragment = new MusicSwitchFragmet(mContext);
+			fragment = new MusicSwitchFragmet();
 		}
 		return fragment;
 	}
@@ -70,8 +64,23 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mView = inflater.inflate(R.layout.music_switch, container, false);
+		// setBlurBackground();
 		return mView;
 	}
+
+	// private void setBlurBackground() {
+	// int scaleRatio = 35;
+	// int blurRadius = 8;
+	// Bitmap originBitmap = BitmapFactory.decodeResource(getResources(),
+	// R.drawable.bg_bluetoothsettings);
+	// Bitmap scaledBitmap = Bitmap.createScaledBitmap(originBitmap,
+	// originBitmap.getWidth() / scaleRatio,
+	// originBitmap.getHeight() / scaleRatio,
+	// false);
+	// Bitmap blurBitmap = FastBlurUtil.doBlur(scaledBitmap, blurRadius, true);
+	// Drawable background = new BitmapDrawable(getResources(), blurBitmap);
+	// mView.setBackground(background);
+	// }
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -118,14 +127,14 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 		case R.id.lin_music_am:
 			updateSelectedShow(1);
 			bundle.putInt("band", 0x01);
-			startOtherAPP(App.RADIO, RADIO_PACKAGE,
-					RADIO_ACTIVITY_AM_FM, bundle);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
+					bundle);
 			break;
 		case R.id.lin_music_fm:
 			updateSelectedShow(2);
 			bundle.putInt("band", 0x03);
-			startOtherAPP(App.RADIO, RADIO_PACKAGE,
-					RADIO_ACTIVITY_AM_FM, bundle);
+			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
+					bundle);
 			break;
 		case R.id.lin_music_ipod:
 			updateSelectedShow(3);
@@ -133,13 +142,16 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
 			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
 			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
+			// Log.i("wangda", "isUsb == " + isUsb + ", isUsbConnected == " +
+			// isUsbConnected() + " ,  !isIpodConnected == " +
+			// !isIpodConnected());
 			startOtherAPP(app, strPackage, strClass, bundle);
 			break;
 		case R.id.lin_music_bluetooth:
 			updateSelectedShow(0);
 			break;
 		case R.id.btn_close_switch:
-			((MusicMainActivity)getActivity()).closeMusicSwitch();
+			((MusicMainActivity) getActivity()).closeMusicSwitch();
 			break;
 		default:
 			break;
@@ -151,17 +163,33 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	 * @return
 	 */
 	private boolean isUsbConnected() {
+		boolean isConnected = false;
 		Soc soc = new Soc();
-		return soc.getUdiskMounted();
+		UsbDevices deivce = soc.getCurrentDevice();
+		if (deivce != null) {
+			if (deivce == UsbDevices.UDISK) {
+				isConnected = true;
+			}
+		}
+		Log.i(TAG, "isUsbConnected = " + soc.getCurrentDevice());
+		return isConnected;
 	}
-	
+
 	/**
 	 * @Description: 判断Ipod是否连接
 	 * @return
 	 */
 	private boolean isIpodConnected() {
-		IPodProxy iPodProxy = IPodProxy.getInstance();
-		return iPodProxy.isConnected();
+		boolean isConnected = false;
+		Soc soc = new Soc();
+		UsbDevices deivce = soc.getCurrentDevice();
+		if (deivce != null) {
+			if (deivce == UsbDevices.IPOD) {
+				isConnected = true;
+			}
+		}
+		Log.i(TAG, "isIPodConnected = " + soc.getCurrentDevice());
+		return isConnected;
 	}
 
 	private void updateSelectedShow(int flag) {
@@ -209,7 +237,8 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 			mTextIPOD.setTextColor(getResources()
 					.getColor(R.color.light_orange));
 			mTextUSB.setTextColor(getResources().getColor(R.color.light_orange));
-			mTextSpite.setTextColor(getResources().getColor(R.color.light_orange));
+			mTextSpite.setTextColor(getResources().getColor(
+					R.color.light_orange));
 			mTextUSB.setEnabled(false);
 			mTextIPOD.setEnabled(false);
 			mTextFM.setTextColor(getResources().getColor(R.color.white));
@@ -232,8 +261,10 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 	 */
 	public void startOtherAPP(App app, String appId, String activityName,
 			Bundle bundle) {
+		// Log.i("wangda", "tryToSwitchSource -------------------------- ");
 		Source source = new Source();
 		boolean tryToSwitchSource = source.tryToSwitchSource(app);
+		// Log.i("wangda", "tryToSwitchSource == " + tryToSwitchSource);
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getActivity(), appId)) {
@@ -249,11 +280,11 @@ public class MusicSwitchFragmet extends Fragment implements OnClickListener {
 				if (bundle != null) {
 					intent.putExtras(bundle);
 				}
+
+				// Log.i("wangda", "activityName == " + activityName);
 				getActivity().startActivity(intent);
 				getActivity().finish();
 			}
-		} else {
-			source.tryToSwitchSource(app);
 		}
 	}
 

@@ -45,6 +45,15 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
 			break;
+		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE :
+			int enableStatus = inMessage.getData().getInt("enableStatus");
+			mIBluetoothSettingView.updateBtEnable(enableStatus);
+			if (enableStatus == MangerConstant.BTPOWER_STATUS_ON) {
+				List<BluetoothDevice> pairedList = mBluetoothSettingModel
+						.getPairedDevies();
+				mIBluetoothSettingView.showPairedDevices(pairedList);
+			}
+			break;
 		case MusicActionDefine.ACTION_SETTING_INQUIRY:
 			backcode = mBluetoothSettingModel.getBluetoothVisibleDevices();
 			break;
@@ -154,9 +163,13 @@ public class BluetoothSettingPresenter implements IObserver {
 		((ISubject) mIBluetoothSettingView).attach(this);
 		String name = mBluetoothSettingModel.getLocalName();
 		mIBluetoothSettingView.showLocalName(name);
-		List<BluetoothDevice> pairedList = mBluetoothSettingModel
-				.getPairedDevies();
-		mIBluetoothSettingView.showPairedDevices(pairedList);
+		int enableStatus = mBluetoothSettingModel.getBTEnableStatus();
+		mIBluetoothSettingView.updateBtEnable(enableStatus);
+		if (enableStatus == MangerConstant.BTPOWER_STATUS_ON) {
+			List<BluetoothDevice> pairedList = mBluetoothSettingModel
+					.getPairedDevies();
+			mIBluetoothSettingView.showPairedDevices(pairedList);
+		}
 	}
 
 	private void exit() {

@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 
 /**
@@ -66,6 +67,7 @@ public class BluetoothMusicServcie extends Service {
 		filter.addAction(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS);
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT);
+		filter.addAction(MangerConstant.MSG_ACTION_PAIR_STATUS);
 		mContext.registerReceiver(mReceiver, filter);
 	}
 
@@ -82,11 +84,23 @@ public class BluetoothMusicServcie extends Service {
 			String strAction = intent.getAction();
 			Bundle mBundle = intent.getExtras();
 
-			if (strAction.equals(MangerConstant.MSG_ACTION_CONNECT_STATUS)) {
+			if (strAction.equals(MangerConstant.MSG_ACTION_POWER_STATUS)) {
+				if(mBundle != null)
+				{
+					boolean bPowerON = mBundle.getBoolean ("Value");
+					if (bPowerON) {
+						mBluetoothMusicModel.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
+					} else {
+						mBluetoothMusicModel.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);
+					}
+				}
+				
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_CONNECT_STATUS)) {
 				if (mBundle != null) {
 					int nProfile = mBundle.getInt("Profile");
 					if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
+						mBluetoothMusicModel.updateHFPConnectStatus(mConnectStatus);
 						Log.i(TAG, "PROFILE_HF_CHANNEL = mConnectStatus");
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 						mConnectStatus = mBundle.getInt("Value");
@@ -146,6 +160,10 @@ public class BluetoothMusicServcie extends Service {
 						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum,
 								mTotalTIme);
 						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
+						
+						BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(),
+								bean.getAlbum(), null);
+	            		mBluetoothMusicModel.notifyAutroMusicInfo(info);
 						
 						Log.i(TAG, "-- nPlayStatus = " + nPlayStatus
 								+ " --- mTitle = " + mTitle + " --- mAtrist = "
@@ -223,6 +241,13 @@ public class BluetoothMusicServcie extends Service {
 						break;
 
 					}
+				}
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_PAIR_STATUS)) {
+				if (mBundle != null) {
+					String mAddress = mBundle.getString("Address");
+					int mStatus = mBundle.getInt("Status");
+					mBluetoothMusicModel.updatePairRequest(mAddress, mStatus);
+					Log.i(TAG, "--------- pair status = " + mStatus);
 				}
 			}
 		}

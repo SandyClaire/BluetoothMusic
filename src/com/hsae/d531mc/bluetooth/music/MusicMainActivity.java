@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.anwsdk.service.AudioControl;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
+import com.hsae.d531mc.bluetooth.music.fragmet.BluetoothSettingFragment;
 import com.hsae.d531mc.bluetooth.music.fragmet.MusicSwitchFragmet;
 import com.hsae.d531mc.bluetooth.music.model.impl.MusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.IObserver;
@@ -50,7 +51,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private MusicPersenter mPresenter;
 
 	private Button mBtnMusicSwith;
-//	private Button mBtnSettings;
+	private Button mBtnSettings;
 	private Button mBtnPrev;
 	private Button mBtnPlay;
 	private Button mBtnNext;
@@ -71,6 +72,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private boolean isfirst = false;
 	private ImageView mImageShuffle;
 	private ImageView mImageRepeat;
+	private BluetoothSettingFragment mSettingFragment;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +97,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private void initView() {
 		mBtnMusicSwith = (Button) findViewById(R.id.btn_source_settings);
-//		mBtnSettings = (Button) findViewById(R.id.btn_bt_settings);
+		mBtnSettings = (Button) findViewById(R.id.btn_bt_settings);
 		mBtnPrev = (Button) findViewById(R.id.btn_prev);
 		mBtnPlay = (Button) findViewById(R.id.btn_play);
 		mBtnNext = (Button) findViewById(R.id.btn_next);
@@ -113,6 +115,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mImageShuffle = (ImageView) findViewById(R.id.img_shuffle);
 		mImageRepeat = (ImageView) findViewById(R.id.img_repeat);
 		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
+		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment.getInstance(this);
 		mFragmentManager = getFragmentManager();
 		mBtnMusicSwith.setOnClickListener(this);
 		mBtnPrev.setOnClickListener(this);
@@ -121,7 +124,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnRepeat.setOnClickListener(this);
 		mBtnShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
-//		mBtnSettings.setOnClickListener(this);
+		mBtnSettings.setOnClickListener(this);
 		mDrawerLayout.setOnTouchListener(touchListener);
 
 		mBtnNext.setOnLongClickListener(new OnLongClickListener() {
@@ -181,12 +184,18 @@ public class MusicMainActivity extends Activity implements ISubject,
 		super.onPause();
 	}
 
-	private void showFram() {
-		if (isfirst) {
-			mFragmentManager.beginTransaction()
-					.replace(R.id.bluetooth_music_frame, mFragmet).commit();
-			isfirst = false;
-		}
+	private void showFram(boolean flag) {
+//		if (isfirst) {
+			if (flag) {
+				mFragmentManager.beginTransaction()
+				.replace(R.id.bluetooth_music_frame, mFragmet).commit();
+			}else {
+				mFragmentManager.beginTransaction()
+				.replace(R.id.bluetooth_music_frame, mSettingFragment).commit();
+			}
+			
+//			isfirst = false;
+//		}
 		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
 	
@@ -230,11 +239,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		
 		switch (v.getId()) {
 		case R.id.btn_source_settings:
-			showFram();
+			showFram(true);
 			break;
-//		case R.id.btn_bt_settings:
-//			showFram();
-//			break;
+		case R.id.btn_bt_settings:
+			showFram(false);
+			break;
 		case R.id.btn_prev:
 			Message msgp = Message.obtain();
 			msgp.what = MusicActionDefine.ACTION_A2DP_PREV;

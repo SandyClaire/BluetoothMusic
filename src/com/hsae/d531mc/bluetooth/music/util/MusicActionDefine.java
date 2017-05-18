@@ -11,6 +11,8 @@ package com.hsae.d531mc.bluetooth.music.util;
 public class MusicActionDefine {
     static public final int ACTION_APP_LAUNCHED = 1;
     static public final int ACTION_APP_EXIT = 99;
+    
+    static public final int ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE = 100;
 
     
     // connect status
@@ -52,7 +54,6 @@ public class MusicActionDefine {
     static public final int ACTION_SETTING_CONNECT_MOBILE = 79;
     
     static public final int ACTION_SETTING_GET_PAIRED_DEVICES = 80;
-    
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     

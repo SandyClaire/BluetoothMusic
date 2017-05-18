@@ -97,5 +97,23 @@ public interface IBluetoothSettingModel {
 	 * @return
 	 */
 	public int getConnectStatus(int profile);
+	
+	/**
+	 * 跟新连接状态
+	 * @param status
+	 */
+	public void updateConnectStatus(int status);
+	
+	/**
+	 * update bluetooth enable status
+	 * @param status
+	 */
+	public void updateBtEnableStatus(int status);
+	
+	/**
+	 * get bluetooth enable status
+	 * @return
+	 */
+	public int getBTEnableStatus();
 
 }

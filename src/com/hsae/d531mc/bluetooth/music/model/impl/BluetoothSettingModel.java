@@ -258,12 +258,12 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 		return strAddress[0];
 	}
 
-//	@Override
-//	public void updateConnectStatus(int status) {
-//		Message msg = Message.obtain();
-//		msg.what = ContactsActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES;
-//		this.notify(msg, FLAG_RUN_SYNC);
-//	}
+	@Override
+	public void updateConnectStatus(int status) {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_SETTING_GET_PAIRED_DEVICES;
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
 
 	@Override
 	public void updateDevicePair(String address, int status) {
@@ -346,6 +346,26 @@ public class BluetoothSettingModel extends ContactsSubjecter implements
 			e.printStackTrace();
 		}
 		return backCode;
+	}
+
+	@Override
+	public void updateBtEnableStatus(int status) {
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE;
+		Bundle mBundle = new Bundle();
+		mBundle.putInt("enableStatus", status);
+		msg.setData(mBundle);
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
+
+	@Override
+	public int getBTEnableStatus() {
+		try {
+			return mBluetoothModel.getBTPowerStatus();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return MangerConstant.BTPOWER_STATUS_OFF;
 	}
 
 }

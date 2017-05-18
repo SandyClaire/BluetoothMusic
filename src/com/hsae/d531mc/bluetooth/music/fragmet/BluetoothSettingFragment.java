@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.anwsdk.service.MangerConstant;
 import com.hsae.d531mc.bluetooth.music.MusicMainActivity;
 import com.hsae.d531mc.bluetooth.music.R;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
@@ -54,23 +55,21 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	private TextView mTextLocalName;
 	private LinearLayout mLinClose;
 
-	private Context mContext;
+	private static Context mContext;
 	private ListViewEx mListPaired;
 	private PairedAdapter mPairedAdapter;
 	private LinearLayout mLinPair;
+	private LinearLayout mLinVis;
+	private TextView mTextEnable;
 	private static BluetoothSettingFragment fragment;
 	private List<BluetoothDevice> mListPairedDevices = new ArrayList<BluetoothDevice>();
 	private ArrayList<BluetoothDevice> mListVisibleDevices = new ArrayList<BluetoothDevice>();
-
-	public BluetoothSettingFragment(Context mContext) {
-		this.mContext = mContext;
-		mInflater = LayoutInflater.from(mContext);
-	}
 	
-	public static Fragment getInstance(Context mContext){
+	public static Fragment getInstance(Context nContext){
 		if (null == fragment) {
-			fragment = new BluetoothSettingFragment(mContext);
+			fragment = new BluetoothSettingFragment();
 		}
+		mContext = nContext;
 		return fragment;
 	}
 
@@ -90,6 +89,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 	}
 
 	private void initView() {
+		mInflater = LayoutInflater.from(mContext);
 		View headerView = mInflater.inflate(R.layout.devices_list_header_view,
 				null);
 		mProSearch = (ProgressBar) headerView.findViewById(R.id.pro_search);
@@ -98,6 +98,8 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		mListPaired = (ListViewEx) headerView
 				.findViewById(R.id.list_paired_device);
 		mLinPair = (LinearLayout) headerView.findViewById(R.id.linear_pair);
+		mLinVis = (LinearLayout) headerView.findViewById(R.id.lin_visible_text);
+		mTextEnable = (TextView) mView.findViewById(R.id.text_enable_tip);
 		mTextLocalName = (TextView) mView.findViewById(R.id.text_local_name);
 		mBtnClose = (Button) mView.findViewById(R.id.btn_setting_close);
 		mLinClose = (LinearLayout) mView.findViewById(R.id.lin_setting_close);
@@ -124,20 +126,20 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 
 	private void searchDevices() {
 		mVisibleAdapter.removeAll();
-		updateBtnEnable(true);
+		updateSearchBtnShow(true);
 		Message msg_search = Message.obtain();
 		msg_search.what = MusicActionDefine.ACTION_SETTING_INQUIRY;
 		this.notify(msg_search, FLAG_RUN_SYNC);
 	}
-
+	
 	private void stopDeviceSearching() {
-		updateBtnEnable(false);
+		updateSearchBtnShow(false);
 		Message msg_stop = Message.obtain();
 		msg_stop.what = MusicActionDefine.ACTION_SETTING_STOP_INQUIRY;
 		this.notify(msg_stop, FLAG_RUN_MAIN_THREAD);
 	}
 
-	private void updateBtnEnable(boolean flag) {
+	private void updateSearchBtnShow(boolean flag) {
 		if (flag) {
 			isSearching = true;
 			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);;
@@ -148,7 +150,6 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			mProSearch.setVisibility(View.INVISIBLE);
 		}
 	}
-
 
 	@Override
 	public void onClick(View v) {
@@ -196,7 +197,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 		Toast.makeText(mContext,
 				mContext.getResources().getString(R.string.search_finish),
 				Toast.LENGTH_SHORT).show();
-		updateBtnEnable(false);
+		updateSearchBtnShow(false);
 	}
 
 	@Override
@@ -541,6 +542,24 @@ public class BluetoothSettingFragment extends Fragment implements ISubject,
 			}
 		}
 		mPairedAdapter.notifyDataSetChanged();
+	}
+
+	@Override
+	public void updateBtEnable(int status) {
+		if (status == MangerConstant.BTPOWER_STATUS_ON) {
+			mLinVis.setVisibility(View.VISIBLE);
+			mTextEnable.setVisibility(View.GONE);
+			mListVisible.setVisibility(View.VISIBLE);
+			mBtnSearch.setEnabled(true);
+		}else {
+			mListPairedDevices.clear();
+			mListVisibleDevices.clear();
+			mLinVis.setVisibility(View.GONE);
+			mTextEnable.setVisibility(View.VISIBLE);
+			mListVisible.setVisibility(View.GONE);
+			updatePairListVisible();
+			mBtnSearch.setEnabled(false);
+		}
 	}
 
 }

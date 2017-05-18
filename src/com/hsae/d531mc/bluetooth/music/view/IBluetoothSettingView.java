@@ -47,4 +47,10 @@ public interface IBluetoothSettingView {
 	 */
 	public void showConnecttingStatus(String address);
 	
+	
+	/**
+	 * update bluetooth enable status
+	 * @param status
+	 */
+	public void updateBtEnable(int status);
 }
