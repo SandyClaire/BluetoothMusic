@@ -15,7 +15,7 @@
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth device</string>
     <string name="music_bluetooth_disconnect_tip">Bluetooth music disconnected</string>
-    <string name="music_bluetooth_carlife_connect_tip">Baidu Carlife connection \n Bluetooth music function cannot be used</string>
+    <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife connection \n Bluetooth music function cannot be used</string>
     
     <!-- bluetooth settings -->
     <string name="visible_devices">Available devices</string>

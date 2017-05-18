@@ -99,6 +99,14 @@
             android:layout_gravity="top|right"
             android:layout_marginTop="10dp"
             android:background="@drawable/icon_music_main" />
+        
+        <ImageView
+            android:id="@+id/music_cover"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:layout_gravity="top|right"
+            android:layout_marginRight="140dp"
+            android:layout_marginTop="95dp" />
     </FrameLayout>
 
     <FrameLayout
@@ -150,10 +158,9 @@
 
             <ImageView
                 android:id="@+id/seekbar_tail"
-                android:layout_width="199dp"
-                android:layout_height="52dp"
+                android:layout_width="185dp"
+                android:layout_height="30dp"
                 android:layout_gravity="left"
-                android:layout_marginTop="18dp"
                 android:src="@drawable/seekbar_tail"
                 android:visibility="gone" />
         </FrameLayout>
