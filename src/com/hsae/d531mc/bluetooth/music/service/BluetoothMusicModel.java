@@ -26,7 +26,9 @@ import com.anwsdk.service.BT_ADV_DATA;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.bt.BTConst;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
+import com.hsae.autosdk.bt.phone.BtPhoneProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.settings.AutoSettings;
@@ -42,7 +44,7 @@ import com.hsae.d531mc.bluetooth.music.util.Util;
 /**
  * 
  * @author wangda
- *	
+ *
  */
 public class BluetoothMusicModel {
 
@@ -60,6 +62,7 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
+	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
 	// 壁纸缓存
 	private LruCache<String, Bitmap> mMemoryCache;
@@ -1220,24 +1223,25 @@ public class BluetoothMusicModel {
 			int mode = getStreamMode();
 			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
 			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_MUTE);
 				return;
 			}
-			
 
 			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
-			if (soApp != App.BT_MUSIC && !isDisByIpod) {
+			if (soApp != App.BT_MUSIC
+					&& !isDisByIpod
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE)) {
 				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_MUTE);
 				Message msg = Message.obtain();
 				msg.what = MSG_SETSTREAM_MODE;
 				msg.setData(data);
 				handler.sendMessage(msg);
 				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
 			} else if (soApp == App.BT_MUSIC
-					&& (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE || mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
+					&& (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE)) {
 				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
 				Message msg = Message.obtain();
 				msg.what = MSG_SETSTREAM_MODE;
 				msg.setData(data);
@@ -1284,9 +1288,10 @@ public class BluetoothMusicModel {
 			} else {
 				LogUtil.i("cruze", "准备抢占焦点");
 				if (!isAudioFocused) {
-					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,AudioManager.AUDIOFOCUS_GAIN);
+					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+							AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-						LogUtil.i("cruze", "requestAudioFo cus == 获取音频焦点成功");
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
 						isAudioFocused = true;
 						mainAudioChanged(flag);
 						autoConnectA2DP();
@@ -1354,6 +1359,7 @@ public class BluetoothMusicModel {
 		}
 	}
 
+	boolean isPauseByCall;
 	/**
 	 * 音源焦点变化监听
 	 */
@@ -1361,6 +1367,7 @@ public class BluetoothMusicModel {
 
 		@Override
 		public void onAudioFocusChange(int focusChange) {
+			int callstatus = phoneProxy.getPhoneState();
 			switch (focusChange) {
 			case AudioManager.AUDIOFOCUS_GAIN:
 				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_GAIN");
@@ -1378,6 +1385,11 @@ public class BluetoothMusicModel {
 				mainAudioChanged(isCallActivityShow());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
+				if (callstatus != BTConst.Phone.UNKOWN) {
+					isPauseByCall = true;
+				} else {
+					isPauseByCall = false;
+				}
 				LogUtil.i(TAG, "mAFCListener---audio focus change AUDIOFOCUS_LOSS");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
@@ -1400,11 +1412,11 @@ public class BluetoothMusicModel {
 				}
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if (!isPlay) {
+					if (!isPlay && !isPauseByCall) {
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
 				} else {
-					if (isPlay) {
+					if (isPlay && !isPauseByCall) {
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					}
 				}
