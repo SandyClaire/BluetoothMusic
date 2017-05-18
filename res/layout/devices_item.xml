@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center_vertical"
-    android:background="@drawable/bg_list_item_selected"
+    
     android:minHeight="@dimen/devices_item_min_height"
     android:orientation="horizontal" >
 
@@ -12,9 +12,10 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:background="@drawable/bg_list_item_selected"
         android:gravity="center_vertical"
         android:orientation="vertical"
-        android:layout_marginLeft="@dimen/devices_item_margin_left">
+        android:paddingLeft="@dimen/devices_item_margin_left">
 
         <TextView
             android:id="@+id/tv_devicename"
@@ -40,6 +41,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:gravity="center"
+        android:background="@drawable/bg_list_item_selected"
         android:visibility="gone"
         >
         <ImageView

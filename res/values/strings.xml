@@ -11,7 +11,7 @@
     <string name="music_source_ipod">iPod</string>
     <string name="music_source_usb">USB</string>
     <string name="music_source_bluetooth">Bluetooth</string>
-    <string name="music_matedate_unsupport">UnSupport</string>
+    <string name="music_matedate_unsupport">Unknow</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth device</string>
     <string name="music_bluetooth_disconnect_tip">Bluetooth music disconnected</string>
