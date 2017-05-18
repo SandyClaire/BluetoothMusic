@@ -4,8 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
     android:background="@drawable/bg_bluetoothsettings"
-    android:paddingRight="@dimen/music_switch_pandding_right"
-    android:orientation="vertical">
+    android:orientation="horizontal">
+    
+    <LinearLayout 
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        >
 
     <LinearLayout 
         android:layout_width="match_parent"
@@ -99,7 +105,7 @@
         
         <TextView 
             android:id="@+id/text_switch_ipod"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:layout_marginLeft="@dimen/music_switch_text_margin_left"
@@ -107,6 +113,29 @@
             android:gravity="center_vertical"
             android:text="@string/music_source_ipod"
             android:drawableLeft="@drawable/icon_music_source_ipod"
+            />
+        
+        <TextView 
+            android:id="@+id/text_switch_spite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="@dimen/music_switch_text_size"
+            android:gravity="center_vertical"
+            android:text="/"
+            android:layout_marginLeft="@dimen/music_switch_text_margin_left"
+            />
+        
+        <TextView 
+            android:id="@+id/text_switch_usb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:layout_marginLeft="@dimen/music_switch_text_margin_left"
+            android:textSize="@dimen/music_switch_text_size"
+            android:gravity="center_vertical"
+            android:text="@string/music_source_usb"
+            android:drawableLeft="@drawable/icon_music_source_usb"
             />
         
     </LinearLayout>
@@ -135,6 +164,21 @@
             android:gravity="center_vertical"
             android:text="@string/music_source_bluetooth"
             android:drawableLeft="@drawable/icon_music_source_bluetooth"
+            />
+        
+    </LinearLayout>
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="@dimen/music_switch_pandding_right"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical" >
+        
+        <Button 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_close_sliding"
             />
         
     </LinearLayout>

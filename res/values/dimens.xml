@@ -8,12 +8,12 @@
     <dimen name="music_buttom_button_mergin">48dp</dimen>
     <dimen name="music_popup_wigth">171dp</dimen>
     
-    <dimen name="music_left_slide_width">460dp</dimen>
+    <dimen name="music_left_slide_width">425dp</dimen>
     <dimen name="music_image_height">420dp</dimen>
     
     <dimen name="music_text_info_pandding">20dp</dimen>
     
-    <dimen name="music_switch_pandding_right">35dp</dimen>
+    <dimen name="music_switch_pandding_right">40dp</dimen>
     <dimen name="music_switch_text_margin_left">20dp</dimen>
     <dimen name="music_switch_text_size">24dp</dimen>
     <dimen name="bottom_bar_margin_left">170dp</dimen>
