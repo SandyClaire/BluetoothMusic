@@ -3,8 +3,6 @@ package com.hsae.d531mc.bluetooth.music;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.FragmentManager;
@@ -26,7 +24,6 @@ import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -42,7 +39,6 @@ import com.hsae.d531mc.bluetooth.music.observer.IObserver;
 import com.hsae.d531mc.bluetooth.music.observer.ISubject;
 import com.hsae.d531mc.bluetooth.music.observer.ObserverAdapter;
 import com.hsae.d531mc.bluetooth.music.presenter.MusicPersenter;
-import com.hsae.d531mc.bluetooth.music.util.AnimateListener;
 import com.hsae.d531mc.bluetooth.music.util.MusicActionDefine;
 import com.hsae.d531mc.bluetooth.music.util.MySeekBar;
 import com.hsae.d531mc.bluetooth.music.view.IMusicView;
@@ -56,6 +52,9 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 public class MusicMainActivity extends Activity implements ISubject, IMusicView, OnClickListener {
 
 	private static final String TAG = "MusicMainActivity";
+
+	private static final int MSG_DRAWLAYOUT_SHOW = 111;
+
 	private MusicPersenter mPresenter;
 
 	private ImageView mBtnMusicSwith;
@@ -104,7 +103,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		@Override
 		public boolean handleMessage(Message msg) {
 			switch (msg.what) {
-			case 111:
+			case MSG_DRAWLAYOUT_SHOW:
 				showFram(false);
 				break;
 			case LONG_CLICK_NEXT:
@@ -209,14 +208,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mDrawerLayout.setOnTouchListener(touchListener);
 		mDrawerLayout.setDrawerListener(mDrawerListener);
 
-		// anim = ObjectAnimator.ofFloat(ivAlbumCut, "rotation", 0, 360);
-		// anim.setDuration(20000);
-		// LinearInterpolator lin = new LinearInterpolator();
-		// anim.setInterpolator(lin);
-		// anim.setRepeatCount(ValueAnimator.INFINITE);
-		// updateListener = new AnimateListener(anim);
-		// anim.addUpdateListener(updateListener);
-
 		rDrawable = (RotateDrawable) ivAlbumCut.getBackground();
 		rDrawable.setLevel(0);
 	}
@@ -235,7 +226,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	private void resetAnim() {
 		level = 0;
-//		startAnim();
 	}
 
 	private void startAnim() {
@@ -249,24 +239,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			handler.removeMessages(0);
 		}
 	}
-
-	// public void startAnimate() {
-	// if (updateListener.isPause) {
-	// updateListener.play();
-	// } else {
-	// anim.start();
-	// }
-	// }
-	//
-	// public void stopAnimate() {
-	// updateListener.play();
-	// anim.cancel();
-	// anim.end();
-	// }
-	//
-	// public void pauseAnimate() {
-	// updateListener.pause();
-	// }
 
 	DrawerListener mDrawerListener = new DrawerListener() {
 
@@ -474,7 +446,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mRepeatAllowedlist.clear();
 			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
-			mHandler.sendEmptyMessageDelayed(111, 500);
+			mHandler.sendEmptyMessage(MSG_DRAWLAYOUT_SHOW);
 		} else if (status == 1) {
 			updateViewShow(true);
 			if (isFramShow) {
@@ -512,7 +484,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (flag) {
 			ismPlaying = true;
 			mBtnPlay.setImageDrawable(getResources().getDrawable(R.drawable.btn_music_pause));
-				startAnim();
+			startAnim();
 		} else {
 			pauseAnim();
 			ismPlaying = false;

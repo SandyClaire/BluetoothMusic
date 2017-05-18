@@ -86,5 +86,6 @@ public interface IMusicView {
 	 * @param conn
 	 */
 	public void updateTextTipShow(boolean conn);
-
+	
+	
 }
