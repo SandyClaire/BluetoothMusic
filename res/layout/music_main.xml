@@ -177,39 +177,53 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/btn_repeat"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="bottom|right"
                 android:gravity="center"
                 android:orientation="horizontal" >
 
-                <View
-                    android:layout_width="1dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/icon_vertical_split" />
-
-                <Button
-                    android:id="@+id/btn_repeat"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"
-                    android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_repeat_singel" />
-
-                <View
-                    android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:background="@drawable/icon_vertical_split" />
+                    android:orientation="horizontal" >
 
-                <Button
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/icon_vertical_split" />
+
+                    <ImageView
+                        android:id="@+id/img_repeat"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/music_buttom_button_mergin"
+                        android:layout_marginRight="@dimen/music_buttom_button_mergin"
+                        android:background="@drawable/btn_music_repeat_singel" />
+                </LinearLayout>
+
+                <LinearLayout
                     android:id="@+id/btn_shuffle"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginLeft="@dimen/music_buttom_button_mergin"
-                    android:layout_marginRight="@dimen/music_buttom_button_mergin"
-                    android:background="@drawable/btn_music_shuffle_close" />
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal" >
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/icon_vertical_split" />
+
+                    <ImageView
+                        android:id="@+id/img_shuffle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginLeft="@dimen/music_buttom_button_mergin"
+                        android:layout_marginRight="@dimen/music_buttom_button_mergin"
+                        android:background="@drawable/btn_music_shuffle_close" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
