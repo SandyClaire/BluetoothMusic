@@ -1217,8 +1217,8 @@ public class BluetoothMusicModel {
 					+ "BluetoothMusicModel获取音频焦点成功");
 			if (!isAudioFocused) {
 				mainAudioChanged(flag);
-				autoConnectA2DP();
 			}
+			autoConnectA2DP();
 			isAudioFocused = true;
 		} else if (result == AudioManager.AUDIOFOCUS_REQUEST_FAILED) {
 			LogUtil.i(TAG, "requestAudioFocus---" + "BluetoothMusicModel获取音频焦点失败");

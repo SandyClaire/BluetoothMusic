@@ -63,6 +63,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	enum Media {
 		fm, am, usb, bt, ipod;
 	}
+
 	private static final String TAG = "MusicMainActivity";
 
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
@@ -72,12 +73,11 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
 	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
 
-
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
 
 	private MusicPersenter mPresenter;
 
-	private ImageView ivFM, ivAM, ivUSB, ivBT,ivList;
+	private ImageView ivFM, ivAM, ivUSB, ivBT, ivList;
 	// private ImageView mBtnSettings;
 
 	private ImageView ivAlbumCut;
@@ -178,10 +178,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
 		// 透明导航栏
 		getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-		
-		
+
 		setContentView(R.layout.music_main);
-		
+
 		initView();
 		initMvp();
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
@@ -191,19 +190,20 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		MusicModel model = new MusicModel(this);
 		mPresenter = new MusicPersenter(this, model);
 		this.attach(mPresenter);
-		
+
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_LAUNCHED;
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
 	private void initView() {
+
 		ivFM = (ImageView) findViewById(R.id.btn_source_fm);
 		ivAM = (ImageView) findViewById(R.id.btn_source_am);
 		ivUSB = (ImageView) findViewById(R.id.btn_source_usb);
 		ivBT = (ImageView) findViewById(R.id.btn_source_bt);
 		ivList = (ImageView) findViewById(R.id.btn_playlist);
-		
+
 		ivAlbumCut = (ImageView) findViewById(R.id.music_defaultcover);
 		mBtnPrev = (ImageButton) findViewById(R.id.btn_prev);
 		mBtnPlay = (ImageView) findViewById(R.id.btn_play);
@@ -233,6 +233,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		mImageRepeat.setOnClickListener(this);
 		mImageShuffle.setOnClickListener(this);
 		mBtnHome.setOnClickListener(this);
+		findViewById(R.id.right_bg).setOnClickListener(this);
 
 		ivAM.setOnClickListener(this);
 		ivFM.setOnClickListener(this);
@@ -324,9 +325,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-		
+
 		boolean isUsb = isUsbConnected() || !isIpodConnected();
-		ivUSB.setImageResource(isUsb?R.drawable.selector_source_usb:R.drawable.selector_source_ipod);
+		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 		super.onResume();
 	}
 
@@ -431,6 +432,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			switchSource(Media.bt);
 			break;
 		case R.id.btn_playlist:
+		case R.id.right_bg:
 			showFram(false);
 			break;
 
@@ -509,7 +511,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			ivFM.setSelected(false);
 			ivUSB.setSelected(true);
 			ivBT.setSelected(false);
-			
+
 			boolean isUsb = isUsbConnected() || !isIpodConnected();
 			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
 			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
