@@ -808,7 +808,6 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_ReadLocalAddr();
 	}
 
-	
 	/**
 	 * 设置手机声音
 	 * 
@@ -1310,25 +1309,28 @@ public class BluetoothMusicModel {
 			} else {
 				if (!isAudioFocused) {
 					LogUtil.i("cruze", "准备抢占焦点");
-					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
-							AudioManager.AUDIOFOCUS_GAIN);
-					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
-						isAudioFocused = true;
-						mainAudioChanged(flag);
-						autoConnectA2DP();
-						if (!isHandPuse) {
-							AVRCPControl(AudioControl.CONTROL_PLAY);
-							if (!handler.hasMessages(MSG_AUTOPLAY)) {
-								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+					boolean canSwich = tryToSwitchSource();
+					if (canSwich) {
+						int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+								AudioManager.AUDIOFOCUS_GAIN);
+						if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+							LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+							isAudioFocused = true;
+							mainAudioChanged(flag);
+							autoConnectA2DP();
+							if (!isHandPuse) {
+								AVRCPControl(AudioControl.CONTROL_PLAY);
+								if (!handler.hasMessages(MSG_AUTOPLAY)) {
+									handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+								}
 							}
+							getPlayStatus();
+						} else {
+							LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+							isAudioFocused = false;
 						}
-						getPlayStatus();
-					} else {
-						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
-						isAudioFocused = false;
+						notifyLauncherInfo();
 					}
-					notifyLauncherInfo();
 				}
 			}
 		} catch (RemoteException e) {
@@ -1343,7 +1345,7 @@ public class BluetoothMusicModel {
 			LogUtil.i(TAG, "autoConnectA2DP : mIMusicModel is null ");
 			return;
 		}
-		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = "+ a2dpStatus);
+		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = " + a2dpStatus);
 		if (hfpStatus == 1 && a2dpStatus != 1) {
 			mIMusicModel.autoConnectA2DP();
 		}
