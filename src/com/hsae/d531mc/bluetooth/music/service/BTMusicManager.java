@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.RemoteException;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -190,7 +192,14 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void popUpCurrentMode() throws RemoteException {
-		showPopUp(mContext.getResources().getString(R.string.app_name));
+		LogUtil.i(TAG, "popUpCurrentMode ");
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			
+			@Override
+			public void run() {
+				showPopUp(mContext.getResources().getString(R.string.app_name));
+			}
+		});
 	}
 
 	@Override
@@ -283,46 +292,55 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private boolean isTipPopShow = false;
 
 	private void showPopUp(String tip) {
+		LogUtil.i(TAG, "tipListener tipRequest =null " + (tipRequest == null));
+		
 		if (null == tipRequest) {
+
 			final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
 			params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
 			params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
 					| WindowManager.LayoutParams.FLAG_DIM_BEHIND | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 			params.format = PixelFormat.TRANSLUCENT;
-			params.dimAmount = 0.1f;
 
 			params.width = LayoutParams.MATCH_PARENT;
 			params.height = LayoutParams.WRAP_CONTENT;
 
-			params.dimAmount = 0.0f;
+			params.dimAmount = 0.1f;
 			params.gravity = Gravity.TOP;
 
-			View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
-
+			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
 			tipText = (TextView) tipView.findViewById(R.id.text_tip);
-
-			tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
+			tipText.setText(tip);
+			try {
+				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
+			} catch (Exception e) {
+				
+				LogUtil.i(TAG, "Exception "+e);// TODO: handle exception
+			}
+			LogUtil.i(TAG, "tipListener tipRequest =null? " + (tipRequest == null));
 		}
 
-		tipText.setText(tip);
+		LogUtil.i(TAG, "tipListener isTipPopShow = " + isTipPopShow);
+		
 		if (isTipPopShow) {
 			tipRequest.hidePopup();
 			tipRequest.showPopup();
 		} else {
 			tipRequest.showPopup();
 		}
-
 	}
 
 	PopupListener tipListener = new PopupListener() {
 
 		@Override
 		public void onShow() {
+			LogUtil.i(TAG, "tipListener onShow");
 			isTipPopShow = true;
 		}
 
 		@Override
 		public void onHide() {
+			LogUtil.i(TAG, "tipListener onHide");
 			isTipPopShow = false;
 		}
 	};
