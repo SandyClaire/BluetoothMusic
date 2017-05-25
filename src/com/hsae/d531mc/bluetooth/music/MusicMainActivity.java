@@ -305,11 +305,42 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			// TODO Auto-generated method stub
+			float x = event.getX();
+			float y = event.getY();
 			if (event.getAction() == MotionEvent.ACTION_UP) {
-				float x = event.getX();
-				float y = event.getY();
+				ivAM.setImageResource(R.drawable.ic_item_am);
+				ivFM.setImageResource(R.drawable.ic_item_fm);
+				ivUSB.setImageResource(R.drawable.ic_item_usb);
 				if (0 < x && x < 170 && 610 < y && y < 720) {
 					mBtnHome.performClick();
+				}else if (0 < x && x < 85 && 360< y && y < 430) {
+					LogUtil.i(TAG, "touchListener usb");
+					switchSource(Media.usb);
+				}else if (0 < x && x < 85 && 260< y && y < 340) {
+					LogUtil.i(TAG, "touchListener fM");
+					switchSource(Media.fm);
+				}else if (0 < x && x < 85 && 136< y && y < 240) {
+					LogUtil.i(TAG, "touchListener aM");
+					switchSource(Media.am);
+				}
+			}else if (event.getAction() == MotionEvent.ACTION_DOWN  || event.getAction() == MotionEvent.ACTION_MOVE  )  {
+				LogUtil.i(TAG, "touchListener ACTION_DOWN");
+				if (0 < x && x < 85 && 360< y && y < 430) {
+					ivAM.setImageResource(R.drawable.ic_item_am);
+					ivFM.setImageResource(R.drawable.ic_item_fm);
+					ivUSB.setImageResource(R.drawable.ic_item_usb_down);
+				}else if (0 < x && x < 85 && 260< y && y < 340) {
+					ivAM.setImageResource(R.drawable.ic_item_am);
+					ivFM.setImageResource(R.drawable.ic_item_fm_down);
+					ivUSB.setImageResource(R.drawable.ic_item_usb);
+				}else if (0 < x && x < 85 && 136< y && y < 240) {
+					ivAM.setImageResource(R.drawable.ic_item_am_down);
+					ivFM.setImageResource(R.drawable.ic_item_fm);
+					ivUSB.setImageResource(R.drawable.ic_item_usb);
+				}else{
+					ivAM.setImageResource(R.drawable.ic_item_am);
+					ivFM.setImageResource(R.drawable.ic_item_fm);
+					ivUSB.setImageResource(R.drawable.ic_item_usb);
 				}
 			}
 			return false;
@@ -550,9 +581,15 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	public void startOtherAPP(App app, String appId, String activityName, Bundle bundle) {
-		Source source = new Source();
-		boolean tryToSwitchSource = source.tryToSwitchSource(app);
-		LogUtil.i(TAG, "tryToSwitchSource == " + tryToSwitchSource);
+		boolean tryToSwitchSource = true;
+		try {
+			Source source = new Source();
+			LogUtil.i(TAG, "tryToSwitchSource == " + tryToSwitchSource);
+			tryToSwitchSource = source.tryToSwitchSource(app);
+		} catch (Exception e) {
+			LogUtil.i(TAG, "tryToSwitchSource == Exception" + e);
+		}
+
 		if (tryToSwitchSource) {
 
 			if (isAppInstalled(getApplicationContext(), appId)) {
@@ -741,7 +778,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			if (isNumeric(nTime) == true) {
 				try {
 					long iMax = Long.valueOf(nTime) / 1000;
-					mSeekBar.setMax((int)iMax);
+					mSeekBar.setMax((int) iMax);
 					timeStr = toTime(Long.valueOf(nTime));
 				} catch (NumberFormatException e) {
 					LogUtil.i(TAG, " is number but is not long");
@@ -788,7 +825,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 					freshSeekBarTail(pos);
 					return toTime(Integer.valueOf(nTime));
 				} catch (NumberFormatException e) {
-					
+
 					return "00:00";
 				}
 			} else {
