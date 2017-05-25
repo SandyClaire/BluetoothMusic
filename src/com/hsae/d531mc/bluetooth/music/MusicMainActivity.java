@@ -782,10 +782,15 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		} else {
 			if (isNumeric(nTime) == true) {
 				isSupportPlaybackpos = true;
-				int pos = Integer.valueOf(nTime) / 1000;
-				mSeekBar.setProgress(pos);
-				freshSeekBarTail(pos);
-				return toTime(Integer.valueOf(nTime));
+				try {
+					int pos = Integer.valueOf(nTime) / 1000;
+					mSeekBar.setProgress(pos);
+					freshSeekBarTail(pos);
+					return toTime(Integer.valueOf(nTime));
+				} catch (NumberFormatException e) {
+					
+					return "00:00";
+				}
 			} else {
 				return "00:00";
 			}

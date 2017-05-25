@@ -924,6 +924,7 @@ public class BluetoothMusicModel {
 			case MSG_SETSTREAM_MODE:
 				try {
 					audioSetStreamMode(msg.getData().getInt("mode"));
+					LogUtil.i(TAG, "MSG_SETSTREAM_MODE");
 				} catch (RemoteException e) {
 				}
 				break;

@@ -312,7 +312,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			tipText = (TextView) tipView.findViewById(R.id.text_tip);
 			tipText.setText(tip);
 			try {
-				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.WARN, tipView, params, tipListener);
+				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
 			} catch (Exception e) {
 				
 				LogUtil.i(TAG, "Exception "+e);// TODO: handle exception
