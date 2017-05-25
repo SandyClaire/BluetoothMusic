@@ -305,14 +305,14 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			params.width = LayoutParams.MATCH_PARENT;
 			params.height = LayoutParams.WRAP_CONTENT;
 
-			params.dimAmount = 0.1f;
+			params.dimAmount = 0.0f;
 			params.gravity = Gravity.TOP;
 
 			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
 			tipText = (TextView) tipView.findViewById(R.id.text_tip);
 			tipText.setText(tip);
 			try {
-				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
+				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.WARN, tipView, params, tipListener);
 			} catch (Exception e) {
 				
 				LogUtil.i(TAG, "Exception "+e);// TODO: handle exception
