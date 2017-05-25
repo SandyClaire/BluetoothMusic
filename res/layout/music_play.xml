@@ -68,10 +68,10 @@
             android:layout_gravity="start|top"
             android:layout_marginStart="0dp"
             android:layout_marginTop="455dp"
-            android:paddingBottom="20dp"
-            android:paddingEnd="18dp"
-            android:paddingStart="17dp"
-            android:paddingTop="15dp"
+           	android:paddingStart="23dp"
+            android:paddingEnd="25dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="22dp"
             android:src="@drawable/ic_item_bt_music_down" />
 
         <ImageView
