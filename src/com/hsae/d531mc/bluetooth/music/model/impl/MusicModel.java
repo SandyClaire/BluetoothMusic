@@ -340,4 +340,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			mBluetoothMusicModel.removeAutoPlay();
 		}
 	}
+
+	@Override
+	public void requestAudioFoucs(boolean b, boolean c) {
+		mBluetoothMusicModel.requestAudioFocus(true,true);
+	}
 }

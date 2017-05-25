@@ -181,4 +181,6 @@ public interface IMusicModel {
 
 	public void removeAutoPlay();
 
+	public void requestAudioFoucs(boolean b, boolean c);
+
 }

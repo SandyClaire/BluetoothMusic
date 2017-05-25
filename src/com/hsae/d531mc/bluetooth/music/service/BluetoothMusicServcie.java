@@ -134,8 +134,6 @@ public class BluetoothMusicServcie extends Service {
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mBluetoothMusicModel.setMusicStreamMute();
-		// initBackground();
-		// registerContentObserver();
 		mSoc.registerListener(mSocListener);
 		super.onCreate();
 	}
@@ -160,8 +158,15 @@ public class BluetoothMusicServcie extends Service {
 
 	@Override
 	public void onDestroy() {
+		try {
+			mAutoSettings.unregisterDisplayCallback(mPowerListener);
+			mSoc.registerListener(mSocListener);
+		} catch (RemoteException e) {
+		}
+		
 		mContext.unregisterReceiver(mReceiver);
 		// unRegisterContentObserver();
+		
 		mBluetoothMusicModel.releaseModel();
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
@@ -657,7 +662,7 @@ public class BluetoothMusicServcie extends Service {
 		public void onUsbDeviceChanged(int index) {
 			UsbDevices usbDevices = UsbDevices.findByIndex(index);
 			Log.i(TAG, "usbDevices == " + usbDevices);
-
+			
 			Message msg = Message.obtain();
 			if (usbDevices.equals(UsbDevices.CARLIFE)) {
 				msg.what = USB_CONNECTED_CARLIFE;
@@ -739,5 +744,9 @@ public class BluetoothMusicServcie extends Service {
 			}
 		}
 	}
+	
+	
+	
+	
 
 }

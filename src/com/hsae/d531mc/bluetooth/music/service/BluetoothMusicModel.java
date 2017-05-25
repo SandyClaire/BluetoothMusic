@@ -1293,45 +1293,85 @@ public class BluetoothMusicModel {
 
 	/** 获取Android音频焦点 */
 	public void requestAudioFocus(boolean flag) {
+		this.requestAudioFocus(flag, false);
+	}
+
+	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
 		Source source = new Source();
 		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
-
 		try {
-			if (source.getCurrentSource() == App.BT_MUSIC) {
-				mainAudioChanged(flag);
-				// 如果手动点击停止，不进行播放；
-				autoConnectA2DP();
-				if (!isHandPuse) {
-					AVRCPControl(AudioControl.CONTROL_PLAY);
-					if (!handler.hasMessages(MSG_AUTOPLAY)) {
-						handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
-					}
-				}
+			if (fromPlay) {
+				doPlay(showOrBack);
 			} else {
-				if (!isAudioFocused) {
-					LogUtil.i("cruze", "准备抢占焦点");
-					boolean canSwich = tryToSwitchSource();
-					if (canSwich) {
-						int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
-								AudioManager.AUDIOFOCUS_GAIN);
-						if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-							LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
-							isAudioFocused = true;
-							mainAudioChanged(flag);
-							autoConnectA2DP();
-							if (!isHandPuse) {
-								AVRCPControl(AudioControl.CONTROL_PLAY);
-								if (!handler.hasMessages(MSG_AUTOPLAY)) {
-									handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
-								}
-							}
-							getPlayStatus();
-						} else {
-							LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
-							isAudioFocused = false;
+				if (source.getCurrentSource() == App.BT_MUSIC) {
+					mainAudioChanged(showOrBack);
+					// 如果手动点击停止，不进行播放；
+					autoConnectA2DP();
+					if (!isHandPuse) {
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+						if (!handler.hasMessages(MSG_AUTOPLAY)) {
+							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 						}
-						notifyLauncherInfo();
 					}
+				} else {
+					doRequest(showOrBack);
+				}
+			}
+		} catch (RemoteException e) {
+		}
+	}
+
+	private void doPlay(boolean showOrBack) {
+		try {
+			if (!isAudioFocused) {
+				LogUtil.i("cruze", "准备抢占焦点");
+				boolean canSwich = tryToSwitchSource();
+				if (canSwich) {
+					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+							AudioManager.AUDIOFOCUS_GAIN);
+					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+						isAudioFocused = true;
+						mainAudioChanged(showOrBack);
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+					} else {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+						isAudioFocused = false;
+					}
+					notifyLauncherInfo();
+				}
+			}
+		} catch (RemoteException e) {
+		}
+	}
+
+	private void doRequest(boolean showOrBack) {
+		try {
+			if (!isAudioFocused) {
+				LogUtil.i("cruze", "准备抢占焦点");
+				boolean canSwich = tryToSwitchSource();
+				if (canSwich) {
+					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+							AudioManager.AUDIOFOCUS_GAIN);
+					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+						isAudioFocused = true;
+						mainAudioChanged(showOrBack);
+						autoConnectA2DP();
+						if (!isHandPuse) {
+
+							AVRCPControl(AudioControl.CONTROL_PLAY);
+							if (!handler.hasMessages(MSG_AUTOPLAY)) {
+								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+							}
+						}
+						getPlayStatus();
+
+					} else {
+						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+						isAudioFocused = false;
+					}
+					notifyLauncherInfo();
 				}
 			}
 		} catch (RemoteException e) {

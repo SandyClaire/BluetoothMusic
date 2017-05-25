@@ -64,7 +64,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	private static final String TAG = "MusicMainActivity";
-
+	
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
 	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
 	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
@@ -308,41 +308,45 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			float x = event.getX();
 			float y = event.getY();
 			if (event.getAction() == MotionEvent.ACTION_UP) {
-				ivAM.setImageResource(R.drawable.ic_item_am);
-				ivFM.setImageResource(R.drawable.ic_item_fm);
-				ivUSB.setImageResource(R.drawable.ic_item_usb);
+//				ivAM.setImageResource(R.drawable.ic_item_am);
+//				ivFM.setImageResource(R.drawable.ic_item_fm);
+//				ivUSB.setImageResource(R.drawable.ic_item_usb);
 				if (0 < x && x < 170 && 610 < y && y < 720) {
 					mBtnHome.performClick();
-				}else if (0 < x && x < 85 && 360< y && y < 430) {
-					LogUtil.i(TAG, "touchListener usb");
-					switchSource(Media.usb);
-				}else if (0 < x && x < 85 && 260< y && y < 340) {
-					LogUtil.i(TAG, "touchListener fM");
-					switchSource(Media.fm);
-				}else if (0 < x && x < 85 && 136< y && y < 240) {
-					LogUtil.i(TAG, "touchListener aM");
-					switchSource(Media.am);
 				}
-			}else if (event.getAction() == MotionEvent.ACTION_DOWN  || event.getAction() == MotionEvent.ACTION_MOVE  )  {
-				LogUtil.i(TAG, "touchListener ACTION_DOWN");
-				if (0 < x && x < 85 && 360< y && y < 430) {
-					ivAM.setImageResource(R.drawable.ic_item_am);
-					ivFM.setImageResource(R.drawable.ic_item_fm);
-					ivUSB.setImageResource(R.drawable.ic_item_usb_down);
-				}else if (0 < x && x < 85 && 260< y && y < 340) {
-					ivAM.setImageResource(R.drawable.ic_item_am);
-					ivFM.setImageResource(R.drawable.ic_item_fm_down);
-					ivUSB.setImageResource(R.drawable.ic_item_usb);
-				}else if (0 < x && x < 85 && 136< y && y < 240) {
-					ivAM.setImageResource(R.drawable.ic_item_am_down);
-					ivFM.setImageResource(R.drawable.ic_item_fm);
-					ivUSB.setImageResource(R.drawable.ic_item_usb);
-				}else{
-					ivAM.setImageResource(R.drawable.ic_item_am);
-					ivFM.setImageResource(R.drawable.ic_item_fm);
-					ivUSB.setImageResource(R.drawable.ic_item_usb);
-				}
+				
+//				else if (0 < x && x < 85 && 360< y && y < 430) {
+//					LogUtil.i(TAG, "touchListener usb");
+//					switchSource(Media.usb);
+//				}else if (0 < x && x < 85 && 260< y && y < 340) {
+//					LogUtil.i(TAG, "touchListener fM");
+//					switchSource(Media.fm);
+//				}else if (0 < x && x < 85 && 136< y && y < 240) {
+//					LogUtil.i(TAG, "touchListener aM");
+//					switchSource(Media.am);
+//				}
 			}
+			
+//			else if (event.getAction() == MotionEvent.ACTION_DOWN  || event.getAction() == MotionEvent.ACTION_MOVE  )  {
+//				LogUtil.i(TAG, "touchListener ACTION_DOWN");
+//				if (0 < x && x < 85 && 360< y && y < 430) {
+//					ivAM.setImageResource(R.drawable.ic_item_am);
+//					ivFM.setImageResource(R.drawable.ic_item_fm);
+//					ivUSB.setImageResource(R.drawable.ic_item_usb_down);
+//				}else if (0 < x && x < 85 && 260< y && y < 340) {
+//					ivAM.setImageResource(R.drawable.ic_item_am);
+//					ivFM.setImageResource(R.drawable.ic_item_fm_down);
+//					ivUSB.setImageResource(R.drawable.ic_item_usb);
+//				}else if (0 < x && x < 85 && 136< y && y < 240) {
+//					ivAM.setImageResource(R.drawable.ic_item_am_down);
+//					ivFM.setImageResource(R.drawable.ic_item_fm);
+//					ivUSB.setImageResource(R.drawable.ic_item_usb);
+//				}else{
+//					ivAM.setImageResource(R.drawable.ic_item_am);
+//					ivFM.setImageResource(R.drawable.ic_item_fm);
+//					ivUSB.setImageResource(R.drawable.ic_item_usb);
+//				}
+//			}
 			return false;
 		}
 	};
