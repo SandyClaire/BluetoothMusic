@@ -1482,11 +1482,19 @@ public class BluetoothMusicModel {
 					if ( !isPauseByCall && !isHandPuse) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
+						if (!handler.hasMessages(MSG_AUTOPLAY)) {
+							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+						}
 					}
 				} else {
 					if ( !isPauseByCall) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
+						
+						if (handler.hasMessages(MSG_AUTOPLAY)) {
+							handler.removeMessages(MSG_AUTOPLAY);
+						}
+						
 					}
 				}
 			} catch (RemoteException e) {
