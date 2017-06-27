@@ -1340,6 +1340,8 @@ public class BluetoothMusicModel {
 					}
 					notifyLauncherInfo();
 				}
+			}else{
+				AVRCPControl(AudioControl.CONTROL_PLAY);
 			}
 		} catch (RemoteException e) {
 		}
