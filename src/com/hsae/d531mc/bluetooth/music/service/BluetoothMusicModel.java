@@ -57,6 +57,7 @@ public class BluetoothMusicModel {
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = 0;
+	public String mTitel ="";
 
 	public int hfpStatus = 0;
 	public int a2dpStatus = 0;
@@ -1490,7 +1491,6 @@ public class BluetoothMusicModel {
 					// 如果是手动暂停 不执行播放
 					if ( !isPauseByCall && !isHandPuse && !pauseByVr) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-						pauseByVr = false;
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 						if (!handler.hasMessages(MSG_AUTOPLAY)) {
 							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
@@ -1499,6 +1499,7 @@ public class BluetoothMusicModel {
 				} else {
 					if ( !isPauseByCall) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+						pauseByVr = false;
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 						if (handler.hasMessages(MSG_AUTOPLAY)) {
 							handler.removeMessages(MSG_AUTOPLAY);

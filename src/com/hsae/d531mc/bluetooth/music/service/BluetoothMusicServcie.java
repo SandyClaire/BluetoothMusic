@@ -262,7 +262,7 @@ public class BluetoothMusicServcie extends Service {
 						default:
 							break;
 						}
-
+						mBluetoothMusicModel.mTitel = mTitle;
 						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum, mTotalTIme);
 						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
 
@@ -744,9 +744,4 @@ public class BluetoothMusicServcie extends Service {
 			}
 		}
 	}
-	
-	
-	
-	
-
 }

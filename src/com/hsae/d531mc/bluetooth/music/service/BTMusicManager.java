@@ -146,6 +146,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
 				try {
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
+					// showPop();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -153,6 +154,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			} else if (index == HmiConst.HMI.SEEKUP.ordinal()) {
 				try {
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
+					// showPop();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -166,8 +168,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		mBluetoothMusicModel.pauseByVr = true;
-//		mBluetoothMusicModel.isHandPuse = true;
+		mBluetoothMusicModel.isHandPuse = true;
 		LogUtil.i(TAG, "------------- PAUSE ");
 	}
 
@@ -194,8 +195,12 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void popUpCurrentMode() throws RemoteException {
 		LogUtil.i(TAG, "popUpCurrentMode ");
+		showPop();
+	}
+
+	private void showPop() {
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				showPopUp(mContext.getResources().getString(R.string.app_name));
@@ -294,7 +299,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	private void showPopUp(String tip) {
 		LogUtil.i(TAG, "tipListener tipRequest =null " + (tipRequest == null));
-		
+
 		if (null == tipRequest) {
 
 			final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -311,22 +316,26 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
 			tipText = (TextView) tipView.findViewById(R.id.text_tip);
+			// LogUtil.i(TAG, "tipListener mTitel = " +
+			// mBluetoothMusicModel.mTitel);
+			tipText.setText(tip + " " + mBluetoothMusicModel.mTitel);
 			tipText.setText(tip);
 			try {
 				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
 			} catch (Exception e) {
-				
-				LogUtil.i(TAG, "Exception "+e);// TODO: handle exception
+
+				LogUtil.i(TAG, "Exception " + e);// TODO: handle exception
 			}
-			LogUtil.i(TAG, "tipListener tipRequest =null? " + (tipRequest == null));
 		}
 
 		LogUtil.i(TAG, "tipListener isTipPopShow = " + isTipPopShow);
-		
-		if (isTipPopShow) {
+
+		if (isTipPopShow && tipRequest != null) {
 			tipRequest.hidePopup();
+			// tipRequest.release();
 			tipRequest.showPopup();
-		} else {
+			// tipRequest = null;
+		} else if (tipRequest != null) {
 			tipRequest.showPopup();
 		}
 	}
@@ -345,4 +354,11 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			isTipPopShow = false;
 		}
 	};
+
+	@Override
+	public void pauseByVr() throws RemoteException {
+		mBluetoothMusicModel.pauseByVr = true;
+		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+		LogUtil.i(TAG, "------------- pauseByVr ");
+	}
 }
