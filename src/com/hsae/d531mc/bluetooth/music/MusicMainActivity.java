@@ -365,14 +365,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 	}
 
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
-		this.notify(msg, FLAG_RUN_SYNC);
-	}
-
 	/**
 	 * 显示侧边栏
 	 * 
@@ -402,11 +394,19 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		isFramShow = false;
 		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
-
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		pauseAnim();
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
+	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		pauseAnim();
 	}
 
 	public void finishActivity() {

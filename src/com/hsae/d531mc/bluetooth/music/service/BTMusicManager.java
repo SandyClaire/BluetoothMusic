@@ -166,7 +166,8 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		mBluetoothMusicModel.isHandPuse = true;
+		mBluetoothMusicModel.pauseByVr = true;
+//		mBluetoothMusicModel.isHandPuse = true;
 		LogUtil.i(TAG, "------------- PAUSE ");
 	}
 

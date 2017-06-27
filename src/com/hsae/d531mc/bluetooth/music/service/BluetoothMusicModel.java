@@ -62,6 +62,9 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
+	public boolean pauseByVr = false;
+	
+	
 	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
 	// 壁纸缓存
@@ -1027,7 +1030,13 @@ public class BluetoothMusicModel {
 	public void updateBTEnalbStatus(int status) {
 		if (null != mIBluetoothSettingModel) {
 			mIBluetoothSettingModel.updateBtEnableStatus(status);
-			mIBluetoothSettingModel.updateLocalName();
+			handler.postDelayed(new Runnable() {
+				
+				@Override
+				public void run() {
+					mIBluetoothSettingModel.updateLocalName();
+				}
+			}, 2000);
 		}
 	}
 
@@ -1479,8 +1488,9 @@ public class BluetoothMusicModel {
 			try {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if ( !isPauseByCall && !isHandPuse) {
+					if ( !isPauseByCall && !isHandPuse && !pauseByVr) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+						pauseByVr = false;
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 						if (!handler.hasMessages(MSG_AUTOPLAY)) {
 							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
@@ -1490,7 +1500,6 @@ public class BluetoothMusicModel {
 					if ( !isPauseByCall) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
-						
 						if (handler.hasMessages(MSG_AUTOPLAY)) {
 							handler.removeMessages(MSG_AUTOPLAY);
 						}
