@@ -66,9 +66,10 @@
     </style>
 
     <style name="AppTheme" parent="AppBaseTheme">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@null</item>
         <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Animation</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="MusicSeekBar">

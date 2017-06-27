@@ -371,7 +371,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
-		pauseAnim();
 	}
 
 	/**
@@ -608,7 +607,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 					intent.putExtras(bundle);
 				}
 				startActivity(intent);
-				finish();
 			}
 		}
 	}
