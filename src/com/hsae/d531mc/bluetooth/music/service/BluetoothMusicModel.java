@@ -931,7 +931,7 @@ public class BluetoothMusicModel {
 			case MSG_AUTOPLAY:
 				if (!isPlay && playtimes < 4) {
 					playtimes++;
-					LogUtil.i(TAG, "MSG_AUTOPLAY op_code = " + playtimes);
+					LogUtil.i(TAG, "MSG_AUTOPLAY playtimes = " + playtimes);
 					try {
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					} catch (RemoteException e) {

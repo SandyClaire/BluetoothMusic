@@ -725,6 +725,7 @@ public class BluetoothMusicServcie extends Service {
 				Source source = new Source();
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
+					mBluetoothMusicModel.isHandPuse = false;
 					try {
 						mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					} catch (RemoteException e) {
