@@ -1361,7 +1361,6 @@ public class BluetoothMusicModel {
 						mainAudioChanged(showOrBack);
 						autoConnectA2DP();
 						if (!isHandPuse) {
-
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 							if (!handler.hasMessages(MSG_AUTOPLAY)) {
 								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
@@ -1376,7 +1375,7 @@ public class BluetoothMusicModel {
 					notifyLauncherInfo();
 				}
 			}
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -1460,7 +1459,7 @@ public class BluetoothMusicModel {
 				} else {
 					isPauseByCall = false;
 				}
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS");
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="+isPauseByCall);
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
@@ -1476,16 +1475,16 @@ public class BluetoothMusicModel {
 				break;
 			}
 			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
-					+ isHandPuse);
+					+ isHandPuse+"  isPlay = "+ isPlay +" isPauseByCall = "+isPauseByCall);
 			try {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if (!isPlay && !isPauseByCall && !isHandPuse) {
+					if ( !isPauseByCall && !isHandPuse) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
 				} else {
-					if (isPlay && !isPauseByCall) {
+					if ( !isPauseByCall) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					}

@@ -356,7 +356,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		super.onResume();
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
-
+		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);

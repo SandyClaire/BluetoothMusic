@@ -209,8 +209,7 @@ public class BluetoothMusicServcie extends Service {
 							IPodProxy.getInstance().notifyA2dpConnected(
 									mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
 						}
-						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
-								+ mBluetoothMusicModel.a2dpStatus);
+						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "+ mBluetoothMusicModel.a2dpStatus);
 
 						if (mBluetoothMusicModel.isCarlifeConnected()) {
 							// 通知界面不显示
