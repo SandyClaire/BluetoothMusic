@@ -10,6 +10,8 @@ package com.hsae.d531mc.bluetooth.music.util;
  */
 public class MusicActionDefine {
     static public final int ACTION_APP_LAUNCHED = 1;
+    static public final int ACTION_APP_ONINTENT = 2;
+    
     static public final int ACTION_APP_EXIT = 99;
     static public final int ACTION_ISBTSEARCHING = 0X10010;
     public static final int ACTION_SEACH_CALLBACK = 0X10011;

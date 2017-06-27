@@ -182,6 +182,18 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		initMvp();
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
 	}
+	
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		LogUtil.i(TAG, "cruze onNewIntent");
+		//setHandPause false
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_APP_ONINTENT;
+		this.notify(msg, FLAG_RUN_SYNC);
+	}
+	
 
 	private void initMvp() {
 		MusicModel model = new MusicModel(this);

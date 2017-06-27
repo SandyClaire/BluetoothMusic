@@ -89,6 +89,4 @@ public interface IMusicView {
 
 	public void onUsbDesconnet();
 
-
-	
 }

@@ -78,7 +78,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		LogUtil.i(TAG, "--- updateConnectStatusMsg = " + status);
 	}
 
-	
 	/**
 	 * 蓝牙控制命令
 	 */
@@ -343,6 +342,13 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void requestAudioFoucs(boolean b, boolean c) {
-		mBluetoothMusicModel.requestAudioFocus(true,true);
+		mBluetoothMusicModel.requestAudioFocus(true, true);
+	}
+
+	@Override
+	public void setHandPause(boolean b) {
+		if (mBluetoothMusicModel != null) {
+			mBluetoothMusicModel.isHandPuse = false;
+		}
 	}
 }
