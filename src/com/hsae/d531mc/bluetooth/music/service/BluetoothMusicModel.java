@@ -57,14 +57,14 @@ public class BluetoothMusicModel {
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = 0;
-	public String mTitel ="";
+	public String mTitel = "";
 
 	public int hfpStatus = 0;
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
 	public boolean pauseByVr = false;
-	
+
 	
 	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
@@ -1032,7 +1032,7 @@ public class BluetoothMusicModel {
 		if (null != mIBluetoothSettingModel) {
 			mIBluetoothSettingModel.updateBtEnableStatus(status);
 			handler.postDelayed(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					mIBluetoothSettingModel.updateLocalName();
@@ -1229,14 +1229,11 @@ public class BluetoothMusicModel {
 	 * 判断电话界面时候在最前面
 	 */
 	@SuppressWarnings("deprecation")
-	public boolean isCallActivityShow() {
+	public boolean isActive() {
 		ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
 		ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
 		String MusicPlayUI = "com.hsae.d531mc.bluetooth.music.MusicMainActivity";
-		if (cn.getClassName().equals(MusicPlayUI)) {
-			return true;
-		}
-		return false;
+		return cn.getClassName().equals(MusicPlayUI);
 	}
 
 	/**
@@ -1350,7 +1347,7 @@ public class BluetoothMusicModel {
 					}
 					notifyLauncherInfo();
 				}
-			}else{
+			} else {
 				AVRCPControl(AudioControl.CONTROL_PLAY);
 			}
 		} catch (RemoteException e) {
@@ -1451,17 +1448,17 @@ public class BluetoothMusicModel {
 			case AudioManager.AUDIOFOCUS_GAIN:
 				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
-				mainAudioChanged(isCallActivityShow());
+				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
 				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
 				isAudioFocused = true;
-				mainAudioChanged(isCallActivityShow());
+				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
 				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
 				isAudioFocused = true;
-				mainAudioChanged(isCallActivityShow());
+				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
 				if (callstatus != BTConst.Phone.UNKOWN) {
@@ -1469,7 +1466,8 @@ public class BluetoothMusicModel {
 				} else {
 					isPauseByCall = false;
 				}
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="+isPauseByCall);
+				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="
+						+ isPauseByCall);
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
@@ -1485,11 +1483,11 @@ public class BluetoothMusicModel {
 				break;
 			}
 			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
-					+ isHandPuse+"  isPlay = "+ isPlay +" isPauseByCall = "+isPauseByCall);
+					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = " + isPauseByCall);
 			try {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if ( !isPauseByCall && !isHandPuse && !pauseByVr) {
+					if (!isPauseByCall && !isHandPuse && !pauseByVr) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 						if (!handler.hasMessages(MSG_AUTOPLAY)) {
@@ -1497,14 +1495,14 @@ public class BluetoothMusicModel {
 						}
 					}
 				} else {
-					if ( !isPauseByCall) {
+					if (!isPauseByCall) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						pauseByVr = false;
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 						if (handler.hasMessages(MSG_AUTOPLAY)) {
 							handler.removeMessages(MSG_AUTOPLAY);
 						}
-						
+
 					}
 				}
 			} catch (RemoteException e) {
@@ -1604,4 +1602,5 @@ public class BluetoothMusicModel {
 			handler.removeMessages(MSG_AUTOPLAY);
 		}
 	}
+	
 }

@@ -249,6 +249,7 @@ public class BluetoothMusicServcie extends Service {
 						switch (nId) {
 						case AudioControl.MEDIA_ATTR_MEDIA_TITLE:
 							mTitle = strMetadata;
+							mBTMmanager.onTitleChange(mTitle);
 							break;
 						case AudioControl.MEDIA_ATTR_ARTIST_NAME:
 							mAtrist = strMetadata;

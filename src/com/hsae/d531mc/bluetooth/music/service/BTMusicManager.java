@@ -37,6 +37,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private BluetoothMusicModel mBluetoothMusicModel;
 	public IBTMusicListener mListener;
 
+	private String newTitle = " ";
+	private boolean showPop = false;
+
 	private BTMusicManager(Context mContext) {
 		super();
 		this.mContext = mContext;
@@ -146,7 +149,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
 				try {
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
-					// showPop();
+					if (!mBluetoothMusicModel.isActive()) {
+						showPop = true;
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -154,7 +159,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			} else if (index == HmiConst.HMI.SEEKUP.ordinal()) {
 				try {
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
-					// showPop();
+					if (!mBluetoothMusicModel.isActive()) {
+						showPop = true;
+					}
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -195,17 +202,21 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void popUpCurrentMode() throws RemoteException {
 		LogUtil.i(TAG, "popUpCurrentMode ");
-		showPop();
+		showPop(0);
 	}
 
-	private void showPop() {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
+	Handler handler = new Handler(Looper.getMainLooper());
+	Runnable runnable = new Runnable() {
 
-			@Override
-			public void run() {
-				showPopUp(mContext.getResources().getString(R.string.app_name));
-			}
-		});
+		@Override
+		public void run() {
+			showPopUp(mContext.getResources().getString(R.string.app_name));
+		}
+	};
+
+	private void showPop(long delayMillis) {
+		handler.removeCallbacks(runnable);
+		handler.postDelayed(runnable, delayMillis);
 	}
 
 	@Override
@@ -316,10 +327,6 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
 			tipText = (TextView) tipView.findViewById(R.id.text_tip);
-			// LogUtil.i(TAG, "tipListener mTitel = " +
-			// mBluetoothMusicModel.mTitel);
-			tipText.setText(tip + " " + mBluetoothMusicModel.mTitel);
-			tipText.setText(tip);
 			try {
 				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
 			} catch (Exception e) {
@@ -327,12 +334,12 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 				LogUtil.i(TAG, "Exception " + e);// TODO: handle exception
 			}
 		}
-
-		LogUtil.i(TAG, "tipListener isTipPopShow = " + isTipPopShow);
+		newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(
+				R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
+		tipText.setText(tip + " " + newTitle);
 
 		if (isTipPopShow && tipRequest != null) {
 			tipRequest.hidePopup();
-			// tipRequest.release();
 			tipRequest.showPopup();
 			// tipRequest = null;
 		} else if (tipRequest != null) {
@@ -346,12 +353,14 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		public void onShow() {
 			LogUtil.i(TAG, "tipListener onShow");
 			isTipPopShow = true;
+			showPop = true;
 		}
 
 		@Override
 		public void onHide() {
 			LogUtil.i(TAG, "tipListener onHide");
 			isTipPopShow = false;
+			showPop = false;
 		}
 	};
 
@@ -360,5 +369,14 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		mBluetoothMusicModel.pauseByVr = true;
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 		LogUtil.i(TAG, "------------- pauseByVr ");
+	}
+
+	public void onTitleChange(String title) {
+		if (!newTitle.equals(title)) {
+			newTitle = title;
+			if (showPop) {
+				showPop(0);
+			}
+		}
 	}
 }
