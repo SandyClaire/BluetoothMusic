@@ -255,7 +255,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public void sendActivityPauseMsg() {
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
+			LogUtil.i(TAG,"mainAudioChanged false begin");
 			mBluetoothMusicModel.mainAudioChanged(false);
+			LogUtil.i(TAG,"mainAudioChanged false end");
 		}
 	}
 

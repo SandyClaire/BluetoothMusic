@@ -411,6 +411,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	protected void onPause() {
 		super.onPause();
 		pauseAnim();
+		if (mMusicHandler != null)
+			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -423,8 +425,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 
 	public void finishActivity() {
 		// stopAnimate();
-		if (mMusicHandler != null)
-			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_EXIT;
 		this.notify(msg, FLAG_RUN_SYNC);
