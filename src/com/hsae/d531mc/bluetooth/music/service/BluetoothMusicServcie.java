@@ -149,7 +149,6 @@ public class BluetoothMusicServcie extends Service {
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT);
 		filter.addAction(MangerConstant.MSG_ACTION_PAIR_STATUS);
-		filter.addAction(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
 		filter.setPriority(IntentFilter.SYSTEM_HIGH_PRIORITY);
 		mContext.registerReceiver(mReceiver, filter);
 	}
@@ -353,9 +352,6 @@ public class BluetoothMusicServcie extends Service {
 					mBluetoothMusicModel.updatePairRequest(mAddress, mStatus);
 					LogUtil.i(TAG, "--------- pair status = " + mStatus);
 				}
-			} else if (strAction.equals(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT)) {
-				autoConnA2dp();
-				LogUtil.i("BluetoothMusicModel", " autoConnA2dp");
 			}
 		}
 	}

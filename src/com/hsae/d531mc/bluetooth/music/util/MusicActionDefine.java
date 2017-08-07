@@ -70,6 +70,6 @@ public class MusicActionDefine {
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     
-    static public final String ACTION_A2DP_AUTO_CONNECT = "action_A2DP_AUTO_CONNECT";
+//    static public final String ACTION_A2DP_AUTO_CONNECT = "action_A2DP_AUTO_CONNECT";
     
 }

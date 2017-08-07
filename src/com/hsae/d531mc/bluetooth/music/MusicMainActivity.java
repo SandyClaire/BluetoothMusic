@@ -612,16 +612,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * @return
 	 */
 	private boolean isIpodConnected() {
-		boolean isConnected = false;
 		Soc soc = new Soc();
-		UsbDevices deivce = soc.getCurrentDevice();
-		if (deivce != null) {
-			if (deivce == UsbDevices.IPOD) {
-				isConnected = true;
-			}
-		}
-		Log.i(TAG, "isIPodConnected = " + soc.getCurrentDevice());
-		return isConnected;
+		return soc.getCurrentDevice() == UsbDevices.IPOD;
 	}
 
 	public void startOtherAPP(App app, String appId, String activityName, Bundle bundle) {

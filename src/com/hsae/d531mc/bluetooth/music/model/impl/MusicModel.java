@@ -280,10 +280,28 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void autoConnectA2DP() {
-		Intent intent = new Intent(MusicActionDefine.ACTION_A2DP_AUTO_CONNECT);
-		mContext.sendBroadcast(intent);
+		try {
+			mBluetoothMusicModel.A2DPConnect(getConnectedDevice());
+		} catch (RemoteException e) {
+		}
 	}
 
+	/**
+	 * 获取当连接设备地址
+	 * 
+	 * @return
+	 */
+	private String getConnectedDevice() {
+		String[] strAddress = new String[1];
+		String[] strName = new String[1];
+		try {
+			mBluetoothMusicModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return strAddress[0];
+	}
+	
 	@Override
 	public Bitmap getBg() {
 		LogUtil.i(TAG, "getBg");
