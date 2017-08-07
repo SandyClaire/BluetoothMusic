@@ -323,7 +323,6 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			params.width = LayoutParams.MATCH_PARENT;
 			params.height = LayoutParams.WRAP_CONTENT;
 
-			params.dimAmount = 0.0f;
 			params.gravity = Gravity.TOP;
 
 			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
