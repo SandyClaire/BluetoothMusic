@@ -317,7 +317,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
 			params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
 			params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-					| WindowManager.LayoutParams.FLAG_DIM_BEHIND | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+					|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
 			params.format = PixelFormat.TRANSLUCENT;
 
 			params.width = LayoutParams.MATCH_PARENT;
