@@ -175,15 +175,16 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	@Override
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		mBluetoothMusicModel.isHandPuse = true;
+//		mBluetoothMusicModel.isHandPuse = true;
 		LogUtil.i(TAG, "------------- PAUSE ");
 	}
 
 	@Override
 	public void play() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		mBluetoothMusicModel.tryToSwitchSource();
-		mBluetoothMusicModel.requestAudioFocus(false);
+//		mBluetoothMusicModel.isHandPuse = false;
+		if (mBluetoothMusicModel.tryToSwitchSource()) {
+			mBluetoothMusicModel.requestAudioFocus(false);
+		}
 		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
 
