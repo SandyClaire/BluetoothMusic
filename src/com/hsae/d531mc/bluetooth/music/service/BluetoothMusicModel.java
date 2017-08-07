@@ -63,8 +63,15 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
+	
+	/***
+	 * 判断是VR调用stop的接口暂停后音频焦点再次回到BT时不执行播放动作
+	 */
 	public boolean pauseByVr = false;
-
+	/***
+	 * 判断是电话起来时音乐自动暂停、该暂停由手机端发起、DA不发起暂停
+	 */
+	boolean isPauseByCall;
 	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
 	// 壁纸缓存
@@ -485,25 +492,6 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_AudioGetStreamMode();
 	}
 
-	/**
-	 * Use this function to set stream volume to mute or un-mute.
-	 * 
-	 * @param mode
-	 *            [in] 1 means mute, 0 means un-mute
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
-	public int setStreamMode(int mode) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
-	}
 
 	/**
 	 * Use this function to set stream volume gain value.
@@ -553,7 +541,7 @@ public class BluetoothMusicModel {
 		//
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
-			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+//			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
@@ -1432,7 +1420,6 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	boolean isPauseByCall;
 	/**
 	 * 音源焦点变化监听
 	 */
