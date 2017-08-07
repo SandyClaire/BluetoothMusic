@@ -1300,11 +1300,12 @@ public class BluetoothMusicModel {
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					mainAudioChanged(showOrBack);
 					// 如果手动点击停止，不进行播放；
-					autoConnectA2DP();
-					if (!isHandPuse) {
-						AVRCPControl(AudioControl.CONTROL_PLAY);
-						if (!handler.hasMessages(MSG_AUTOPLAY)) {
-							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+					if (!autoConnectA2DP()) {
+						if (!isHandPuse) {
+							AVRCPControl(AudioControl.CONTROL_PLAY);
+							if (!handler.hasMessages(MSG_AUTOPLAY)) {
+								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+							}
 						}
 					}
 				} else {
@@ -1352,15 +1353,15 @@ public class BluetoothMusicModel {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
 					isAudioFocused = true;
 					mainAudioChanged(showOrBack);
-					autoConnectA2DP();
-					if (!isHandPuse) {
-						AVRCPControl(AudioControl.CONTROL_PLAY);
-						if (!handler.hasMessages(MSG_AUTOPLAY)) {
-							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+					if (!autoConnectA2DP()) {
+						if (!isHandPuse) {
+							AVRCPControl(AudioControl.CONTROL_PLAY);
+							if (!handler.hasMessages(MSG_AUTOPLAY)) {
+								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+							}
 						}
+						getPlayStatus();
 					}
-					getPlayStatus();
-
 				} else {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
 					isAudioFocused = false;
@@ -1374,15 +1375,17 @@ public class BluetoothMusicModel {
 	/**
 	 * 自动连接蓝牙音乐
 	 */
-	private void autoConnectA2DP() {
+	private boolean autoConnectA2DP() {
 		if (mIMusicModel == null) {
 			LogUtil.i(TAG, "autoConnectA2DP : mIMusicModel is null ");
-			return;
+			return false;
 		}
 		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = " + a2dpStatus);
 		if (hfpStatus == 1 && a2dpStatus != 1) {
 			mIMusicModel.autoConnectA2DP();
+			return true;
 		}
+		return false;
 	}
 
 	private Handler mHandler = new Handler();
