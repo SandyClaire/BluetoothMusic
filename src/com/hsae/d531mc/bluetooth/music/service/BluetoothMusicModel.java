@@ -541,7 +541,7 @@ public class BluetoothMusicModel {
 		//
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
-//			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);

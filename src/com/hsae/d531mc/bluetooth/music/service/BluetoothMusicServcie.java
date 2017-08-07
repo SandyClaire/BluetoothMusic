@@ -209,21 +209,21 @@ public class BluetoothMusicServcie extends Service {
 						}
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "+ mBluetoothMusicModel.a2dpStatus);
 
-						if (mBluetoothMusicModel.isCarlifeConnected()) {
-							// 通知界面不显示
-							// mBluetoothMusicModel.updateCLConnectStatus();
-							return;
-						}
+//						if (mBluetoothMusicModel.isCarlifeConnected()) {
+//							// 通知界面不显示
+//							// mBluetoothMusicModel.updateCLConnectStatus();
+//							return;
+//						}
 
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-						// getPlayStatus(a2dpStatus);
+//						 getPlayStatus(a2dpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
 						mBluetoothMusicModel.avrcpStatus = mBundle.getInt("Value");
 						LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
 								+ mBluetoothMusicModel.avrcpStatus);
-//						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 					}
 				}
 				/* 蓝牙音乐数据支持状态 */
@@ -377,6 +377,7 @@ public class BluetoothMusicServcie extends Service {
 			LogUtil.i(TAG, "btmusic is connected playMusic  success");
 			try {
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 				mBluetoothMusicModel.getPlayStatus();
 				mBluetoothMusicModel.isPlay = true;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
@@ -386,7 +387,7 @@ public class BluetoothMusicServcie extends Service {
 			try {
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-//				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();

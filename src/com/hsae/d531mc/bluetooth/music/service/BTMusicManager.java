@@ -334,8 +334,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 				LogUtil.i(TAG, "Exception " + e);// TODO: handle exception
 			}
 		}
-		newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(
-				R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
+		newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
 		tipText.setText(tip + " " + newTitle);
 
 		if (isTipPopShow && tipRequest != null) {
