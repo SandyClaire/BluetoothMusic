@@ -373,7 +373,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 
-		boolean isUsb = isUsbConnected() || !isIpodConnected();
+		boolean isUsb =  !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 	}
 

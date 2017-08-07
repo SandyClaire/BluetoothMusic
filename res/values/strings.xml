@@ -20,7 +20,7 @@
     <!-- bluetooth settings -->
     <string name="visible_devices">Available devices</string>
     <string name="pair_devices">Paired devices</string>
-    <string name="search_finish">Search finish</string>
+    <string name="search_finish">Search finished</string>
     <string name="pair_fail">Pair fail</string>
     <string name="pair_success">Pair success</string>
     <string name="bluetooth_connect">Bluetooth connect</string>
