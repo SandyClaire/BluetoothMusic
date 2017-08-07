@@ -539,8 +539,13 @@ public class BluetoothMusicModel {
 		// return -999;
 		// }
 		//
+		
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
+			if (a2dpStatus ==0) {
+				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code+",but now disable to play");
+				return -1;
+			}
 			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
@@ -920,7 +925,7 @@ public class BluetoothMusicModel {
 				}
 				break;
 			case MSG_AUTOPLAY:
-				if (!isPlay && playtimes < 4) {
+				if (!isPlay && playtimes < 4 && App.BT_MUSIC.equals(getCurrentSource())) {
 					playtimes++;
 					LogUtil.i(TAG, "MSG_AUTOPLAY playtimes = " + playtimes);
 					try {
@@ -1588,6 +1593,11 @@ public class BluetoothMusicModel {
 			playtimes = 0;
 			handler.removeMessages(MSG_AUTOPLAY);
 		}
+	}
+	
+	public App getCurrentSource(){
+		Source source = new Source();
+		return source.getCurrentSource();
 	}
 
 }
