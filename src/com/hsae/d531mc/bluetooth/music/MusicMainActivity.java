@@ -64,7 +64,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	private static final String TAG = "MusicMainActivity";
-	
+
 	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
 	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
 	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
@@ -73,6 +73,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.music.MusicPlayActivity";
 
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
+	private static final int MSG_ANIM = 1120;
+	private static final int MSG_SWITCH = 1123;
+	private boolean canSwitch = true;
 
 	private MusicPersenter mPresenter;
 
@@ -182,18 +185,16 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		initMvp();
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
 	}
-	
-	
+
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		LogUtil.i(TAG, "cruze onNewIntent");
-		//setHandPause false
+		// setHandPause false
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_ONINTENT;
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
-	
 
 	private void initMvp() {
 		MusicModel model = new MusicModel(this);
@@ -260,12 +261,22 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	int level = 0;
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
-			if (level >= 10000) {
-				level = 0;
+			switch (msg.what) {
+			case MSG_ANIM:
+				if (level >= 10000) {
+					level = 0;
+				}
+				rDrawable.setLevel(level);
+				level += 10;
+				handler.sendEmptyMessageDelayed(MSG_ANIM, 20);
+				break;
+			case MSG_SWITCH:
+				canSwitch = true;
+				break;
+			default:
+				break;
 			}
-			rDrawable.setLevel(level);
-			level += 10;
-			handler.sendEmptyMessageDelayed(0, 20);
+
 		};
 	};
 
@@ -274,14 +285,14 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	private void startAnim() {
-		if (!handler.hasMessages(0)) {
-			handler.sendEmptyMessage(0);
+		if (!handler.hasMessages(MSG_ANIM)) {
+			handler.sendEmptyMessage(MSG_ANIM);
 		}
 	}
 
 	private void pauseAnim() {
-		if (handler.hasMessages(0)) {
-			handler.removeMessages(0);
+		if (handler.hasMessages(MSG_ANIM)) {
+			handler.removeMessages(MSG_ANIM);
 		}
 	}
 
@@ -320,45 +331,46 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			float x = event.getX();
 			float y = event.getY();
 			if (event.getAction() == MotionEvent.ACTION_UP) {
-//				ivAM.setImageResource(R.drawable.ic_item_am);
-//				ivFM.setImageResource(R.drawable.ic_item_fm);
-//				ivUSB.setImageResource(R.drawable.ic_item_usb);
+				// ivAM.setImageResource(R.drawable.ic_item_am);
+				// ivFM.setImageResource(R.drawable.ic_item_fm);
+				// ivUSB.setImageResource(R.drawable.ic_item_usb);
 				if (0 < x && x < 170 && 610 < y && y < 720) {
 					mBtnHome.performClick();
 				}
-				
-//				else if (0 < x && x < 85 && 360< y && y < 430) {
-//					LogUtil.i(TAG, "touchListener usb");
-//					switchSource(Media.usb);
-//				}else if (0 < x && x < 85 && 260< y && y < 340) {
-//					LogUtil.i(TAG, "touchListener fM");
-//					switchSource(Media.fm);
-//				}else if (0 < x && x < 85 && 136< y && y < 240) {
-//					LogUtil.i(TAG, "touchListener aM");
-//					switchSource(Media.am);
-//				}
+
+				// else if (0 < x && x < 85 && 360< y && y < 430) {
+				// LogUtil.i(TAG, "touchListener usb");
+				// switchSource(Media.usb);
+				// }else if (0 < x && x < 85 && 260< y && y < 340) {
+				// LogUtil.i(TAG, "touchListener fM");
+				// switchSource(Media.fm);
+				// }else if (0 < x && x < 85 && 136< y && y < 240) {
+				// LogUtil.i(TAG, "touchListener aM");
+				// switchSource(Media.am);
+				// }
 			}
-			
-//			else if (event.getAction() == MotionEvent.ACTION_DOWN  || event.getAction() == MotionEvent.ACTION_MOVE  )  {
-//				LogUtil.i(TAG, "touchListener ACTION_DOWN");
-//				if (0 < x && x < 85 && 360< y && y < 430) {
-//					ivAM.setImageResource(R.drawable.ic_item_am);
-//					ivFM.setImageResource(R.drawable.ic_item_fm);
-//					ivUSB.setImageResource(R.drawable.ic_item_usb_down);
-//				}else if (0 < x && x < 85 && 260< y && y < 340) {
-//					ivAM.setImageResource(R.drawable.ic_item_am);
-//					ivFM.setImageResource(R.drawable.ic_item_fm_down);
-//					ivUSB.setImageResource(R.drawable.ic_item_usb);
-//				}else if (0 < x && x < 85 && 136< y && y < 240) {
-//					ivAM.setImageResource(R.drawable.ic_item_am_down);
-//					ivFM.setImageResource(R.drawable.ic_item_fm);
-//					ivUSB.setImageResource(R.drawable.ic_item_usb);
-//				}else{
-//					ivAM.setImageResource(R.drawable.ic_item_am);
-//					ivFM.setImageResource(R.drawable.ic_item_fm);
-//					ivUSB.setImageResource(R.drawable.ic_item_usb);
-//				}
-//			}
+
+			// else if (event.getAction() == MotionEvent.ACTION_DOWN ||
+			// event.getAction() == MotionEvent.ACTION_MOVE ) {
+			// LogUtil.i(TAG, "touchListener ACTION_DOWN");
+			// if (0 < x && x < 85 && 360< y && y < 430) {
+			// ivAM.setImageResource(R.drawable.ic_item_am);
+			// ivFM.setImageResource(R.drawable.ic_item_fm);
+			// ivUSB.setImageResource(R.drawable.ic_item_usb_down);
+			// }else if (0 < x && x < 85 && 260< y && y < 340) {
+			// ivAM.setImageResource(R.drawable.ic_item_am);
+			// ivFM.setImageResource(R.drawable.ic_item_fm_down);
+			// ivUSB.setImageResource(R.drawable.ic_item_usb);
+			// }else if (0 < x && x < 85 && 136< y && y < 240) {
+			// ivAM.setImageResource(R.drawable.ic_item_am_down);
+			// ivFM.setImageResource(R.drawable.ic_item_fm);
+			// ivUSB.setImageResource(R.drawable.ic_item_usb);
+			// }else{
+			// ivAM.setImageResource(R.drawable.ic_item_am);
+			// ivFM.setImageResource(R.drawable.ic_item_fm);
+			// ivUSB.setImageResource(R.drawable.ic_item_usb);
+			// }
+			// }
 			return false;
 		}
 	};
@@ -368,12 +380,12 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		super.onResume();
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
-		
+
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 
-		boolean isUsb =  !isIpodConnected();
+		boolean isUsb = !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_source_usb : R.drawable.selector_source_ipod);
 	}
 
@@ -406,7 +418,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		isFramShow = false;
 		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -417,7 +429,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onStop();
@@ -522,42 +534,50 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * @param source
 	 */
 	private void switchSource(Media source) {
-		Bundle bundle = new Bundle();
-		LogUtil.i(TAG, "switchSource :source is " + source);
-		if (source.equals(Media.am)) {
-			ivAM.setSelected(true);
-			ivFM.setSelected(false);
-			ivUSB.setSelected(false);
-			ivBT.setSelected(false);
-			bundle.putInt("band", 0x01);
-			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
-			closeMusicSwitch();
-		} else if (source.equals(Media.fm)) {
-			ivAM.setSelected(false);
-			ivFM.setSelected(true);
-			ivUSB.setSelected(false);
-			ivBT.setSelected(false);
-			bundle.putInt("band", 0x03);
-			startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
-			closeMusicSwitch();
-		} else if (source.equals(Media.usb)) {
-			ivAM.setSelected(false);
-			ivFM.setSelected(false);
-			ivUSB.setSelected(true);
-			ivBT.setSelected(false);
+		if (canSwitch) {
+			canSwitch = false;
+			if (!handler.hasMessages(MSG_SWITCH)) {
+				handler.sendEmptyMessageDelayed(MSG_SWITCH, 500);
+			}
+			Bundle bundle = new Bundle();
+			LogUtil.i(TAG, "switchSource :source is " + source);
+			if (source.equals(Media.am)) {
+				ivAM.setSelected(true);
+				ivFM.setSelected(false);
+				ivUSB.setSelected(false);
+				ivBT.setSelected(false);
+				bundle.putInt("band", 0x01);
+				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
+				closeMusicSwitch();
+			} else if (source.equals(Media.fm)) {
+				ivAM.setSelected(false);
+				ivFM.setSelected(true);
+				ivUSB.setSelected(false);
+				ivBT.setSelected(false);
+				bundle.putInt("band", 0x03);
+				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
+				closeMusicSwitch();
+			} else if (source.equals(Media.usb)) {
+				ivAM.setSelected(false);
+				ivFM.setSelected(false);
+				ivUSB.setSelected(true);
+				ivBT.setSelected(false);
 
-			boolean isUsb = isUsbConnected() || !isIpodConnected();
-			App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
-			String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
-			String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
-			startOtherAPP(app, strPackage, strClass, bundle);
-			closeMusicSwitch();
-		} else if (source.equals(Media.bt)) {
-			ivAM.setSelected(false);
-			ivFM.setSelected(false);
-			ivUSB.setSelected(false);
-			ivBT.setSelected(true);
-			closeMusicSwitch();
+				boolean isUsb = isUsbConnected() || !isIpodConnected();
+				App app = isUsb ? App.USB_MUSIC : App.IPOD_MUSIC;
+				String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
+				String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
+				startOtherAPP(app, strPackage, strClass, bundle);
+				closeMusicSwitch();
+			} else if (source.equals(Media.bt)) {
+				ivAM.setSelected(false);
+				ivFM.setSelected(false);
+				ivUSB.setSelected(false);
+				ivBT.setSelected(true);
+				closeMusicSwitch();
+			}
+		}else{
+			LogUtil.i(TAG, "switchSource can not switch source twice in 500 ms!");
 		}
 	}
 

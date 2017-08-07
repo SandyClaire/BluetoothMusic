@@ -15,7 +15,7 @@
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth device</string>
     <string name="music_bluetooth_disconnect_tip">Bluetooth music disconnected</string>
-    <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife connection \n Bluetooth music function cannot be used</string>
+    <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife is connected \n Bluetooth music function cannot be used</string>
 
     <!-- bluetooth settings -->
     <string name="visible_devices">Available devices</string>
@@ -29,7 +29,7 @@
     <string name="bluetooth_status_connecting">Connecting...</string>
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>
     <string name="bluetooth_status_pairing">Pairing...</string>
-    <string name="bluetooth_enable_text">Please turn on bluetooth function</string>
+    <string name="bluetooth_enable_text">Please turn on the local Bluetooth device</string>
     <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
     <string name="music_switch_split">/</string>
 

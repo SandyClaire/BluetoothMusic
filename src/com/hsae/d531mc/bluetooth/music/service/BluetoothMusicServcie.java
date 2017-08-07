@@ -160,7 +160,7 @@ public class BluetoothMusicServcie extends Service {
 	public void onDestroy() {
 		try {
 			mAutoSettings.unregisterDisplayCallback(mPowerListener);
-			mSoc.registerListener(mSocListener);
+			mSoc.unregisterListener(mSocListener);
 		} catch (RemoteException e) {
 		}
 		
