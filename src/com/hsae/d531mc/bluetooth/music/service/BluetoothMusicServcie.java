@@ -209,14 +209,8 @@ public class BluetoothMusicServcie extends Service {
 						}
 						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "+ mBluetoothMusicModel.a2dpStatus);
 
-//						if (mBluetoothMusicModel.isCarlifeConnected()) {
-//							// 通知界面不显示
-//							// mBluetoothMusicModel.updateCLConnectStatus();
-//							return;
-//						}
 
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-//						 getPlayStatus(a2dpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
@@ -276,9 +270,9 @@ public class BluetoothMusicServcie extends Service {
 					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = " + nPlayStatus);
 					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
 						mBluetoothMusicModel.isPlay = true;
+						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
 						if (!mTimePosition.equals("-1")) {
 							mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
-							LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
 						}
 						if (!isTicker) {
 							setTimingBegins();
@@ -306,9 +300,9 @@ public class BluetoothMusicServcie extends Service {
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
 				if (mBundle != null) {
 					mTimePosition = mBundle.getString("Position");
+					LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = " + mTimePosition);
 					if (!mTimePosition.equals("-1")) {
 						mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
-						LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = " + mTimePosition);
 					}
 				}
 				/* 蓝牙音乐播放音乐流 */
