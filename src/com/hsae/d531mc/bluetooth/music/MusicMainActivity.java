@@ -186,6 +186,15 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		LogUtil.i("wangda", "MusicMainActivity -- onCreate endTime = " + System.currentTimeMillis());
 	}
 
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		LogUtil.i(TAG, "cruze onStart");
+	}
+	
+	
+	
 	@Override
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
