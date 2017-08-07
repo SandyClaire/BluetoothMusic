@@ -1292,7 +1292,7 @@ public class BluetoothMusicModel {
 
 	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
 		Source source = new Source();
-		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "");
+		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "fromPlay =" +fromPlay);
 		try {
 			if (fromPlay) {
 				doPlay(showOrBack);
@@ -1318,7 +1318,7 @@ public class BluetoothMusicModel {
 	private void doPlay(boolean showOrBack) {
 		try {
 			if (!isAudioFocused) {
-				LogUtil.i("cruze", "准备抢占焦点");
+				LogUtil.i("cruze", "doPlay 准备抢占焦点");
 				boolean canSwich = tryToSwitchSource();
 				if (canSwich) {
 					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
@@ -1343,7 +1343,7 @@ public class BluetoothMusicModel {
 
 	private void doRequest(boolean showOrBack) {
 		try {
-			LogUtil.i("cruze", "准备抢占焦点");
+			LogUtil.i("cruze", "doRequest 准备抢占焦点");
 			boolean canSwich = tryToSwitchSource();
 			if (canSwich) {
 				int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
