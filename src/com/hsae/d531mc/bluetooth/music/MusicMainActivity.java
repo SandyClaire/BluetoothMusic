@@ -456,6 +456,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
+		this.detach(mPresenter);
 	}
 
 	@Override

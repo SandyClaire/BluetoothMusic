@@ -41,6 +41,9 @@ public class BluetoothSettingPresenter implements IObserver {
 		case MusicActionDefine.ACTION_APP_LAUNCHED:
 			init();
 			break;
+		case MusicActionDefine.ACTION_APP_RESUME:
+			initBtEnableStatus();
+			break;
 		case MusicActionDefine.ACTION_SETTING_UPDATE_LOCALNAME:
 			initBtName();
 			break;
@@ -219,7 +222,6 @@ public class BluetoothSettingPresenter implements IObserver {
 		((ISubject) mBluetoothSettingModel).attach(this);
 		((ISubject) mIBluetoothSettingView).attach(this);
 		initBtName();
-		initBtEnableStatus();
 	}
 
 	private void initBtName() {

@@ -156,20 +156,12 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	@Override
 	public void onResume() {
 		super.onResume();
-		// getCaplayStatus();
+		
+		Message msg = Message.obtain();
+		msg.what = MusicActionDefine.ACTION_APP_RESUME;
+		this.notify(msg, FLAG_RUN_SYNC);
 	}
 
-	// private void getCaplayStatus() {
-	// Message msg = Message.obtain();
-	// msg.what = MusicActionDefine.ACTION_SETTING_GET_CARPLAY_STATUS;
-	// this.notify(msg, FLAG_RUN_MAIN_THREAD);
-	// }
-	//
-	// private void getCarlifeStatus() {
-	// Message msg = Message.obtain();
-	// msg.what = MusicActionDefine.ACTION_SETTING_GET_CARLIFE_STATUS;
-	// this.notify(msg, FLAG_RUN_MAIN_THREAD);
-	// }
 
 	@Override
 	public void onDetach() {

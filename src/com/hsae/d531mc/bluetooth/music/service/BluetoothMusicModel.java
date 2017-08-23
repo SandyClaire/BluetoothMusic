@@ -63,7 +63,7 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
-	
+
 	/***
 	 * 判断是VR调用stop的接口暂停后音频焦点再次回到BT时不执行播放动作
 	 */
@@ -71,7 +71,7 @@ public class BluetoothMusicModel {
 	/***
 	 * 判断是电话起来时音乐自动暂停、该暂停由手机端发起、DA不发起暂停
 	 */
-	boolean isPauseByCall;
+	// boolean isPauseByCall;
 	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
 	// 壁纸缓存
@@ -492,7 +492,6 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_AudioGetStreamMode();
 	}
 
-
 	/**
 	 * Use this function to set stream volume gain value.
 	 * 
@@ -539,11 +538,11 @@ public class BluetoothMusicModel {
 		// return -999;
 		// }
 		//
-		
+
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			isHandPuse = false;
-			if (a2dpStatus ==0) {
-				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code+",but now disable to play");
+			if (a2dpStatus == 0) {
+				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",but now disable to play");
 				return -1;
 			}
 			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -1297,7 +1296,8 @@ public class BluetoothMusicModel {
 
 	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
 		Source source = new Source();
-		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse + "fromPlay =" +fromPlay);
+		LogUtil.i(TAG, " BT getCurrentSource = " + source.getCurrentSource() + ",isHandPuse = " + isHandPuse
+				+ "fromPlay =" + fromPlay);
 		try {
 			if (fromPlay) {
 				doPlay(showOrBack);
@@ -1453,13 +1453,14 @@ public class BluetoothMusicModel {
 				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
-				if (callstatus != BTConst.Phone.UNKOWN) {
-					isPauseByCall = true;
-				} else {
-					isPauseByCall = false;
-				}
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="
-						+ isPauseByCall);
+				// if (callstatus != BTConst.Phone.UNKOWN) {
+				// isPauseByCall = true;
+				// } else {
+				// isPauseByCall = false;
+				// }
+				// LogUtil.i(TAG,
+				// "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="
+				// + isPauseByCall);
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
@@ -1475,11 +1476,11 @@ public class BluetoothMusicModel {
 				break;
 			}
 			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
-					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = " + isPauseByCall);
+					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = " );
 			try {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if (!isPauseByCall && !isHandPuse && !pauseByVr) {
+					if (!isHandPuse && !pauseByVr) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 						if (!handler.hasMessages(MSG_AUTOPLAY)) {
@@ -1487,14 +1488,11 @@ public class BluetoothMusicModel {
 						}
 					}
 				} else {
-					if (!isPauseByCall) {
-						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-						pauseByVr = false;
-						AVRCPControl(AudioControl.CONTROL_PAUSE);
-						if (handler.hasMessages(MSG_AUTOPLAY)) {
-							handler.removeMessages(MSG_AUTOPLAY);
-						}
-
+					// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+					pauseByVr = false;
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					if (handler.hasMessages(MSG_AUTOPLAY)) {
+						handler.removeMessages(MSG_AUTOPLAY);
 					}
 				}
 			} catch (RemoteException e) {
@@ -1594,8 +1592,8 @@ public class BluetoothMusicModel {
 			handler.removeMessages(MSG_AUTOPLAY);
 		}
 	}
-	
-	public App getCurrentSource(){
+
+	public App getCurrentSource() {
 		Source source = new Source();
 		return source.getCurrentSource();
 	}
