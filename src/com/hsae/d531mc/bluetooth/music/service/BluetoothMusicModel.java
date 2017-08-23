@@ -545,7 +545,12 @@ public class BluetoothMusicModel {
 				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",but now disable to play");
 				return -1;
 			}
-			audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			if (!handler.hasMessages(MSG_AUTOPLAY)) {
+				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+			}
+		}else if (op_code == AudioControl.CONTROL_PAUSE ) {
+			removeAutoPlay();
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
@@ -931,7 +936,6 @@ public class BluetoothMusicModel {
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					} catch (RemoteException e) {
 					}
-					handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				} else {
 					playtimes = 0;
 					handler.removeMessages(MSG_AUTOPLAY);
@@ -1308,9 +1312,6 @@ public class BluetoothMusicModel {
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-							if (!handler.hasMessages(MSG_AUTOPLAY)) {
-								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
-							}
 						}
 					}
 				} else {
@@ -1361,9 +1362,6 @@ public class BluetoothMusicModel {
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-							if (!handler.hasMessages(MSG_AUTOPLAY)) {
-								handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
-							}
 						}
 						getPlayStatus();
 					}
@@ -1483,16 +1481,13 @@ public class BluetoothMusicModel {
 					if (!isHandPuse) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
-						if (!handler.hasMessages(MSG_AUTOPLAY)) {
-							handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
-						}
 					}
 				} else {
 					// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
 					if (handler.hasMessages(MSG_AUTOPLAY)) {
 						handler.removeMessages(MSG_AUTOPLAY);
 					}
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
 				}
 			} catch (RemoteException e) {
 			}
