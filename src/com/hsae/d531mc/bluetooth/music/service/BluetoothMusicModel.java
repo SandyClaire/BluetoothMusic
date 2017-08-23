@@ -67,7 +67,7 @@ public class BluetoothMusicModel {
 	/***
 	 * 判断是VR调用stop的接口暂停后音频焦点再次回到BT时不执行播放动作
 	 */
-	public boolean pauseByVr = false;
+//	public boolean pauseByVr = false;
 	/***
 	 * 判断是电话起来时音乐自动暂停、该暂停由手机端发起、DA不发起暂停
 	 */
@@ -1480,7 +1480,7 @@ public class BluetoothMusicModel {
 			try {
 				if (isAudioFocused) {
 					// 如果是手动暂停 不执行播放
-					if (!isHandPuse && !pauseByVr) {
+					if (!isHandPuse) {
 						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 						if (!handler.hasMessages(MSG_AUTOPLAY)) {
@@ -1489,7 +1489,6 @@ public class BluetoothMusicModel {
 					}
 				} else {
 					// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					pauseByVr = false;
 					AVRCPControl(AudioControl.CONTROL_PAUSE);
 					if (handler.hasMessages(MSG_AUTOPLAY)) {
 						handler.removeMessages(MSG_AUTOPLAY);
