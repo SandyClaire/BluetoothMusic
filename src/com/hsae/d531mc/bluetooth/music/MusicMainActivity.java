@@ -952,7 +952,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	}
 
 	int mShuffleMode = AudioControl.PLAYER_SHUFFLE_OFF;
-	int mRepeatMode = AudioControl.PLAYER_REPEAT_MODE_OFF;
+	int mRepeatMode = AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK;
 
 	@Override
 	public void UpdatePlayerModeSetting(int nAttrID, int nAttrValue) {
