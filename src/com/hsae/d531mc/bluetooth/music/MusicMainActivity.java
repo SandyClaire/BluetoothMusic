@@ -434,6 +434,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		pauseAnim();
 		if (mMusicHandler != null)
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
 		this.notify(msg, FLAG_RUN_SYNC);

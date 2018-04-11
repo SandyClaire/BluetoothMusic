@@ -449,6 +449,8 @@ public class BluetoothMusicModel {
 		return mIAnwPhoneLink.ANWBT_AudioSetCurrentPlayerAPSetting(nAttrID, nAttrValue);
 	}
 
+	public boolean isFastForward = false;
+	public boolean isRewind = false;
 	/**
 	 * This function sends the AVRCP command to mobile phone for controlling the
 	 * music playing.
@@ -472,6 +474,15 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+		
+		if(op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 0)
+			isFastForward = true;
+		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 0) 
+			isRewind = true;
+		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 1) 
+			isFastForward = false;
+		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 1) 
+			isRewind = false;
 		return mIAnwPhoneLink.ANWBT_AVRCPControlEx(op_code, nActFlag);
 	}
 

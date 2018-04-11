@@ -94,7 +94,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 		LogUtil.i(TAG, "setAVRCPControl -- command = " + command);
 	}
-
+	
 	@Override
 	public void setAVRCPControl(int command, int isRelease) {
 		try {
@@ -253,6 +253,18 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void sendActivityPauseMsg() {
+		//TODO ... 加判断
+		if (mBluetoothMusicModel == null) {
+			return;
+		}
+		if (mBluetoothMusicModel.isFastForward) {
+			setAVRCPControl(AudioControl.CONTROL_FASTFORWARD, 1);
+		}
+		
+		if (mBluetoothMusicModel.isRewind) {
+			setAVRCPControl(AudioControl.CONTROL_REWIND, 1);
+		}
+	
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
 			LogUtil.i(TAG,"mainAudioChanged false begin");
