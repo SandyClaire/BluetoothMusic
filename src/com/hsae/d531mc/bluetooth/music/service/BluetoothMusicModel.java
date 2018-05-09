@@ -561,6 +561,10 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		}else if (op_code == AudioControl.CONTROL_PAUSE ) {
+			if (!isPlay) {
+				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",disable to pause, because now is paused");
+				return -1;
+			}
 			removeAutoPlay();
 		}
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
