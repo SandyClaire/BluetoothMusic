@@ -776,6 +776,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		if (null != bean) {
 			LogUtil.i(TAG, " name  = " + bean.getTitle() + " -- isSupport = " + isSupport);
 			if ("".equals(bean.getTitle())) {
+				musicName = "";
 				mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
 			} else {
 				if (!musicName.equals(bean.getTitle())) {

@@ -64,44 +64,38 @@ public class BluetoothMusicServcie extends Service {
 	 */
 	// private WallContentObserver mObserver;
 
-	private Handler mHandler = new Handler(Looper.getMainLooper(),
-			new Handler.Callback() {
+	private Handler mHandler = new Handler(Looper.getMainLooper(), new Handler.Callback() {
 
-				@Override
-				public boolean handleMessage(Message msg) {
+		@Override
+		public boolean handleMessage(Message msg) {
 
-					switch (msg.what) {
-					case BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE:
-						if (mBluetoothMusicModel.a2dpStatus == 1
-								&& mBluetoothMusicModel.avrcpStatus == 1) {
-							playMusic();
-							notifyAutoCoreConnectStatus(true);
-						} else if (mBluetoothMusicModel.avrcpStatus == 0
-								&& mBluetoothMusicModel.a2dpStatus == 0
-								&& mBluetoothMusicModel.hfpStatus == 0) {
-							resetBtState();
-							notifyAutoCoreConnectStatus(false);
-						} else {
-							resetBtState();
-						}
-						break;
-					case BLUETOOTH_MUSIC_CONNECT_PLAY:
-						try {
-							mBluetoothMusicModel
-									.AVRCPControl(AudioControl.CONTROL_PLAY);
-							mBluetoothMusicModel
-									.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-							mBluetoothMusicModel.getPlayStatus();
-							mBluetoothMusicModel.isPlay = true;
-							mBluetoothMusicModel
-									.updatePlayStatus(mBluetoothMusicModel.isPlay);
-						} catch (RemoteException e) {
-						}
-						break;
-					}
-					return false;
+			switch (msg.what) {
+			case BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE:
+				if (mBluetoothMusicModel.a2dpStatus == 1 && mBluetoothMusicModel.avrcpStatus == 1) {
+					playMusic();
+					notifyAutoCoreConnectStatus(true);
+				} else if (mBluetoothMusicModel.avrcpStatus == 0 && mBluetoothMusicModel.a2dpStatus == 0
+						&& mBluetoothMusicModel.hfpStatus == 0) {
+					resetBtState();
+					notifyAutoCoreConnectStatus(false);
+				} else {
+					resetBtState();
 				}
-			});
+				break;
+			case BLUETOOTH_MUSIC_CONNECT_PLAY:
+				try {
+					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+					mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					mBluetoothMusicModel.getPlayStatus();
+					mBluetoothMusicModel.isPlay = true;
+					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
+				} catch (RemoteException e) {
+				}
+				break;
+			}
+			return false;
+		}
+	});
 
 	/***
 	 * 将蓝牙音乐初始化
@@ -197,75 +191,57 @@ public class BluetoothMusicServcie extends Service {
 			if (strAction.equals(MangerConstant.MSG_ACTION_POWER_STATUS)) {
 				if (mBundle != null) {
 					boolean bPowerON = mBundle.getBoolean("Value");
-					LogUtil.i(TAG, "MSG_ACTION_POWER_STATUS ----- bPowerON = "
-							+ bPowerON);
+					LogUtil.i(TAG, "MSG_ACTION_POWER_STATUS ----- bPowerON = " + bPowerON);
 					if (bPowerON) {
-						mBluetoothMusicModel
-								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
+						mBluetoothMusicModel.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
 					} else {
-						mBluetoothMusicModel
-								.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);
+						mBluetoothMusicModel.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);
 						mBluetoothMusicModel.isPlay = false;
 					}
 				}
 				/* 蓝牙连接状态 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_CONNECT_STATUS)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_CONNECT_STATUS)) {
 				if (mBundle != null) {
 					int nProfile = mBundle.getInt("Profile");
 					if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
-						mBluetoothMusicModel.hfpStatus = mBundle
-								.getInt("Value");
-						mBluetoothMusicModel
-								.updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
-						LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　"
-								+ mBluetoothMusicModel.hfpStatus);
+						mBluetoothMusicModel.hfpStatus = mBundle.getInt("Value");
+						mBluetoothMusicModel.updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
+						LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　" + mBluetoothMusicModel.hfpStatus);
 						// mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
-						mBluetoothMusicModel.a2dpStatus = mBundle
-								.getInt("Value");
+						mBluetoothMusicModel.a2dpStatus = mBundle.getInt("Value");
 
 						if (mBluetoothMusicModel.isDisByIpod) {
 							mBluetoothMusicModel.isDisByIpod = false;
-							IPodProxy
-									.getInstance()
-									.notifyA2dpConnected(
-											mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
+							IPodProxy.getInstance().notifyA2dpConnected(
+									mBluetoothMusicModel.a2dpStatus == MangerConstant.Anw_SUCCESS);
 						}
-						LogUtil.i(TAG,
-								"PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
-										+ mBluetoothMusicModel.a2dpStatus);
+						LogUtil.i(TAG, "PROFILE_AUDIO_STREAM_CHANNEL --- a2dpStatus = "
+								+ mBluetoothMusicModel.a2dpStatus);
 
-						mBluetoothMusicModel
-								.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+						mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 					} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
-						mBluetoothMusicModel.avrcpStatus = mBundle
-								.getInt("Value");
-						LogUtil.i(TAG,
-								"PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
-										+ mBluetoothMusicModel.avrcpStatus);
+						mBluetoothMusicModel.avrcpStatus = mBundle.getInt("Value");
+						LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
+								+ mBluetoothMusicModel.avrcpStatus);
 						mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 					}
 				}
 				/* 蓝牙音乐数据支持状态 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_A2DP_FEATURE_SUPPORT)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_FEATURE_SUPPORT)) {
 				if (mBundle != null) {
 					boolean bSupport_Metadata = mBundle.getBoolean("MetaData");
-					boolean bSupport_PlayStatus = mBundle
-							.getBoolean("PlayStatus");
+					boolean bSupport_PlayStatus = mBundle.getBoolean("PlayStatus");
 
-					LogUtil.i(TAG, "-- bSupport_Metadata = "
-							+ bSupport_Metadata + "-- bSupport_PlayStatus = "
+					LogUtil.i(TAG, "-- bSupport_Metadata = " + bSupport_Metadata + "-- bSupport_PlayStatus = "
 							+ bSupport_PlayStatus);
 				}
 				/* 蓝牙音乐数据信息 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_A2DP_METADATA)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_METADATA)) {
 				if (mBundle != null) {
 					int nDataType = mBundle.getInt("DataType");
 
@@ -291,115 +267,91 @@ public class BluetoothMusicServcie extends Service {
 							break;
 						}
 						mBluetoothMusicModel.mTitel = mTitle;
-						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum,
-								mTotalTIme);
+						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum, mTotalTIme);
 						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
 
-						BTMusicInfo info = new BTMusicInfo(bean.getTitle(),
-								bean.getAtrist(), bean.getAlbum(), null);
+						BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
 						mBluetoothMusicModel.notifyAutroMusicInfo(info);
 					}
 				}
 				/* 蓝牙音乐播放状态 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("PlayStatus");
-					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = "
-							+ nPlayStatus);
-					if (nPlayStatus == AudioControl.PLAYSTATUS_PLAYING) {
-						mBluetoothMusicModel.isPlay = true;
-						LogUtil.i(TAG, "PlayTime -- mPosition = "
-								+ mTimePosition);
-						if (!mTimePosition.equals("-1")) {
-							mBluetoothMusicModel.updateCurrentPlayTime(
-									mTimePosition, mBluetoothMusicModel.isPlay);
-						}
-						if (!isTicker) {
-							setTimingBegins();
-						}
-					} else if (nPlayStatus == AudioControl.PLAYSTATUS_PAUSED
-							|| nPlayStatus == AudioControl.PLAYSTATUS_STOPPED) {
-						setTimingEnd();
-						mBluetoothMusicModel.isPlay = false;
-					} else if (nPlayStatus == AudioControl.PLAYSTATUS_FWD_SEEK
+					LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = " + nPlayStatus);
+					if (nPlayStatus == AudioControl.PLAYSTATUS_FWD_SEEK
 							|| nPlayStatus == AudioControl.PLAYSTATUS_REV_SEEK) {
 						if (mBluetoothMusicModel.isPlay) {
 							try {
-								mBluetoothMusicModel
-										.AVRCPControl(AudioControl.CONTROL_PLAY);
+								mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 							} catch (RemoteException e) {
 							}
 						}
 					}
-					mBluetoothMusicModel
-							.updatePlayStatus(mBluetoothMusicModel.isPlay);
+					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 					mBluetoothMusicModel.setMusicStreamMute();
-					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus
-							+ "mTitle = " + mTitle + ",mAtrist = " + mAtrist
-							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = "
-							+ mAlbum);
+					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
+							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
 
 				}
 				/* 蓝牙音乐播放当前时间信息 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
 				if (mBundle != null) {
 					mTimePosition = mBundle.getString("Position");
-					LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = "
-							+ mTimePosition);
+					LogUtil.i(TAG, "A2DP_PLAYBACKPOS -- strPos = " + mTimePosition);
 					if (!mTimePosition.equals("-1")) {
-						mBluetoothMusicModel.updateCurrentPlayTime(
-								mTimePosition, mBluetoothMusicModel.isPlay);
+						mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
 					}
 				}
 				/* 蓝牙音乐播放音乐流 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("StreamStatus");
-					LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = "
-							+ nPlayStatus);
+					LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = " + nPlayStatus);
+					try {
+						mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
+					} catch (RemoteException e) {
+					}
 					switch (nPlayStatus) {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						mBluetoothMusicModel.isPlay = false;
+						setTimingEnd();
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
 						mBluetoothMusicModel.isPlay = true;
-						// mBluetoothMusicModel.updatePlayStatus(true);
+						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
+						if (!mTimePosition.equals("-1")) {
+							mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
+						}
+						if (!isTicker) {
+							setTimingBegins();
+						}
 						break;
 					}
 				}
 				/* 蓝牙音乐播放模式变化 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT)) {
 				if (mBundle != null) {
 					int nAttrID = mBundle.getInt("AttributeID");
 					int nAttrValue = mBundle.getInt("Value");
-					LogUtil.i(TAG, "current model nAttrID = " + nAttrID
-							+ " --- nAttrValue = " + nAttrValue);
+					LogUtil.i(TAG, "current model nAttrID = " + nAttrID + " --- nAttrValue = " + nAttrValue);
 
-					mBluetoothMusicModel.updatePlayerModelSetting(nAttrID,
-							nAttrValue);
+					mBluetoothMusicModel.updatePlayerModelSetting(nAttrID, nAttrValue);
 				}
 				/* 蓝牙音乐播放模式数据 */
-			} else if (strAction
-					.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT)) {
+			} else if (strAction.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_SUPPORTED_EVENT)) {
 				if (mBundle != null) {
 					int nAttrID = mBundle.getInt("AttributeID");
-					ArrayList<Integer> AllowList = mBundle
-							.getIntegerArrayList("Allowed");
+					ArrayList<Integer> AllowList = mBundle.getIntegerArrayList("Allowed");
 					switch (nAttrID) {
 					case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
 						mBluetoothMusicModel.updateRepeatModel(AllowList);
-						LogUtil.i(TAG,
-								"REPEAT AllowList size = " + AllowList.size());
+						LogUtil.i(TAG, "REPEAT AllowList size = " + AllowList.size());
 
 						break;
 					case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
 						mBluetoothMusicModel.updateShuffleModel(AllowList);
-						LogUtil.i(TAG,
-								"SHUFFLE AllowList size = " + AllowList.size());
+						LogUtil.i(TAG, "SHUFFLE AllowList size = " + AllowList.size());
 						break;
 					}
 				}
@@ -430,14 +382,11 @@ public class BluetoothMusicServcie extends Service {
 				if (mHandler.hasMessages(BLUETOOTH_MUSIC_CONNECT_PLAY)) {
 					mHandler.removeMessages(BLUETOOTH_MUSIC_CONNECT_PLAY);
 				}
-				LogUtil.i(TAG,
-						"audioSetStreamMode: btmusic is connected playMusic fail");
+				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				mBluetoothMusicModel
-						.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
-				mBluetoothMusicModel
-						.updatePlayStatus(mBluetoothMusicModel.isPlay);
+				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -456,8 +405,7 @@ public class BluetoothMusicServcie extends Service {
 		// if (usbDevices.equals(UsbDevices.IPOD) ||
 		// usbDevices.equals(UsbDevices.CARLIFE)) {
 		try {
-			LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = "
-					+ getConnectedDevice());
+			LogUtil.i("BluetoothMusicModel", " autoConnA2dp MAC Address = " + getConnectedDevice());
 			// if (mBluetoothMusicModel.isCurrentInquiring()) {
 			// mBluetoothMusicModel.inquiryBtStop();
 			// }
@@ -476,8 +424,7 @@ public class BluetoothMusicServcie extends Service {
 		String[] strAddress = new String[1];
 		String[] strName = new String[1];
 		try {
-			mBluetoothMusicModel.getConnectedDeviceInfo(
-					MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
+			mBluetoothMusicModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -598,8 +545,8 @@ public class BluetoothMusicServcie extends Service {
 	@SuppressLint("NewApi")
 	public void initBackground() {
 		LogUtil.i(TAG, "initBackground");
-		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI,
-				Util.METHOD_GET_VALUE_WALL, Util.WALLPAPER_SET, null);
+		Bundle bd = getContentResolver().call(Util.WALL_CONTENT_URI, Util.METHOD_GET_VALUE_WALL, Util.WALLPAPER_SET,
+				null);
 		if (bd != null) {
 			BitmapWorkerTask mTask = new BitmapWorkerTask();
 			mTask.execute(bd);
@@ -776,8 +723,7 @@ public class BluetoothMusicServcie extends Service {
 			if (power) {
 				Source source = new Source();
 				if (source.getCurrentSource() == App.BT_MUSIC) {
-					LogUtil.i(TAG,
-							"--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
+					LogUtil.i(TAG, "--- onScreenStateResponse AUDIO_STREAM_MODE_ENABLE");
 					// try {
 					// mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					// } catch (RemoteException e) {
@@ -785,8 +731,7 @@ public class BluetoothMusicServcie extends Service {
 					// }
 				}
 			} else {
-				LogUtil.i(TAG,
-						"audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
+				LogUtil.i(TAG, "audioSetStreamMode --- onScreenStateResponse AUDIO_STREAM_MODE_DISABLE");
 				// try {
 				// if (mBluetoothMusicModel.getStreamMode() !=
 				// MangerConstant.AUDIO_STREAM_MODE_DISABLE) {

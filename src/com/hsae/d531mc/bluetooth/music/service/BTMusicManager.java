@@ -380,4 +380,10 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			}
 		}
 	}
+
+	@Override
+	public int getPlayState() throws RemoteException {
+		
+		return mBluetoothMusicModel.isPlay?0:1;
+	}
 }
