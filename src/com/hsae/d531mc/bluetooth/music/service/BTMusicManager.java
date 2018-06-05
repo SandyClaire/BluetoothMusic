@@ -293,11 +293,6 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void exitDiagnoseMode() throws RemoteException {
-		LogUtil.i(TAG, "------------- exitDiagnoseMode ");
-		Source source = new Source();
-		if (source.getCurrentSource() == App.BT_MUSIC) {
-			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-		}
 	}
 
 	@Override

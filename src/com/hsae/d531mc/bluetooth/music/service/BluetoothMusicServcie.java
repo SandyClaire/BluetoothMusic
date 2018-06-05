@@ -88,7 +88,6 @@ public class BluetoothMusicServcie extends Service {
 			case BLUETOOTH_MUSIC_CONNECT_PLAY:
 				try {
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
-					mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					mBluetoothMusicModel.getPlayStatus();
 					mBluetoothMusicModel.isPlay = true;
 					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
@@ -140,7 +139,6 @@ public class BluetoothMusicServcie extends Service {
 		registBroadcast();
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
-		mBluetoothMusicModel.setMusicStreamMute();
 		mSoc.registerListener(mSocListener);
 		super.onCreate();
 	}
@@ -287,7 +285,6 @@ public class BluetoothMusicServcie extends Service {
 						}
 					}
 					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
-					mBluetoothMusicModel.setMusicStreamMute();
 					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
 							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
 
@@ -380,7 +377,6 @@ public class BluetoothMusicServcie extends Service {
 				}
 				LogUtil.i(TAG, "audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 				mBluetoothMusicModel.getPlayStatus();

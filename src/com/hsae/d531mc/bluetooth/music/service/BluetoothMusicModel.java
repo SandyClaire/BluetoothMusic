@@ -62,14 +62,14 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
-	//从点击pause到收到回调的这段时间都算是pausing状态
+	// 从点击pause到收到回调的这段时间都算是pausing状态
 	public boolean isPausing = false;
-	//从点击play到收到回调的这段时间都算是playing状态
+	// 从点击play到收到回调的这段时间都算是playing状态
 	public boolean isPlaying = false;
 	/***
 	 * 判断是VR调用stop的接口暂停后音频焦点再次回到BT时不执行播放动作
 	 */
-//	public boolean pauseByVr = false;
+	// public boolean pauseByVr = false;
 	/***
 	 * 判断是电话起来时音乐自动暂停、该暂停由手机端发起、DA不发起暂停
 	 */
@@ -455,6 +455,7 @@ public class BluetoothMusicModel {
 
 	public boolean isFastForward = false;
 	public boolean isRewind = false;
+
 	/**
 	 * This function sends the AVRCP command to mobile phone for controlling the
 	 * music playing.
@@ -478,14 +479,14 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		
-		if(op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 0)
+
+		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 0)
 			isFastForward = true;
-		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 0) 
+		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 0)
 			isRewind = true;
-		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 1) 
+		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 1)
 			isFastForward = false;
-		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 1) 
+		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 1)
 			isRewind = false;
 		return mIAnwPhoneLink.ANWBT_AVRCPControlEx(op_code, nActFlag);
 	}
@@ -555,7 +556,7 @@ public class BluetoothMusicModel {
 		//
 
 		if (op_code == AudioControl.CONTROL_PLAY) {
-			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code+ " , isPausing = " + isPausing);
+			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + " , isPausing = " + isPausing);
 			if (!isPausing && isPlay) {
 				LogUtil.i(TAG, "now is playing , filter out this op_code");
 				return -998;
@@ -571,8 +572,9 @@ public class BluetoothMusicModel {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
-		}else if (op_code == AudioControl.CONTROL_PAUSE ) {
-			if (!isPlay&& isPlaying) {
+		} else if (op_code == AudioControl.CONTROL_PAUSE) {
+			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code );
+			if (!isPlay && isPlaying) {
 				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",disable to pause, because now is paused");
 				return -1;
 			}
@@ -791,6 +793,8 @@ public class BluetoothMusicModel {
 	 * Use this function to set stream volume to mute or un-mute.
 	 * 
 	 * @param mode
+	 *            public static final int AUDIO_STREAM_MODE_ENABLE = 2; public
+	 *            static final int AUDIO_STREAM_MODE_DISABLE = 3;
 	 * @return
 	 * @throws RemoteException
 	 */
@@ -802,7 +806,15 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode);
+		int currentAudioMode = getStreamMode();
+		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode + " , currentAudioMode = " + currentAudioMode);
+		if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+
+		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
+			if (currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
+				return -1;
+			}
+		}
 		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
 	}
 
@@ -940,20 +952,12 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	private static final int MSG_SETSTREAM_MODE = 2;
 	private static final int MSG_AUTOPLAY = 3;
 
 	Handler handler = new Handler() {
 		public void handleMessage(final android.os.Message msg) {
 
 			switch (msg.what) {
-			case MSG_SETSTREAM_MODE:
-				try {
-					audioSetStreamMode(msg.getData().getInt("mode"));
-					LogUtil.i(TAG, "MSG_SETSTREAM_MODE");
-				} catch (RemoteException e) {
-				}
-				break;
 			case MSG_AUTOPLAY:
 				if (!isPlay && playtimes < 4 && App.BT_MUSIC.equals(getCurrentSource())) {
 					playtimes++;
@@ -1267,54 +1271,6 @@ public class BluetoothMusicModel {
 		source.mainAudioChanged(App.BT_MUSIC, isActivite);
 	}
 
-	/**
-	 * 如果焦点不再蓝牙音乐，将蓝牙音乐mute/在就只为unmute
-	 */
-	public void setMusicStreamMute() {
-		Source source = new Source();
-		App soApp = source.getCurrentSource();
-		AutoSettings mAutoSettings = AutoSettings.getInstance();
-		try {
-			int mode = getStreamMode();
-			LogUtil.i(TAG, "audioSetStreamMode : getCurrentSource = " + soApp);
-			if (mAutoSettings.isDiagnoseMode() || !mAutoSettings.getPowerState()) {
-				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-				return;
-			}
-
-			LogUtil.i(TAG, "audioSetStreamMode : mode = " + mode);
-			if (soApp != App.BT_MUSIC
-					&& !isDisByIpod
-					&& (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE || mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE)) {
-				Bundle data = new Bundle();
-				data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-				Message msg = Message.obtain();
-				msg.what = MSG_SETSTREAM_MODE;
-				msg.setData(data);
-				handler.sendMessage(msg);
-				LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_DISABLE");
-			} else if (soApp == App.BT_MUSIC) {
-				if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-					Bundle data = new Bundle();
-					data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-					Message msg = Message.obtain();
-					msg.what = MSG_SETSTREAM_MODE;
-					msg.setData(data);
-					handler.sendMessage(msg);
-					LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_ENABLE");
-				} else if (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE) {
-					Bundle data = new Bundle();
-					data.putInt("mode", MangerConstant.AUDIO_STREAM_MODE_UNMUTE);
-					Message msg = Message.obtain();
-					msg.what = MSG_SETSTREAM_MODE;
-					msg.setData(data);
-					handler.sendMessage(msg);
-					LogUtil.i(TAG, "audioSetStreamMode : AUDIO_STREAM_MODE_UNMUTE");
-				}
-			}
-		} catch (RemoteException e) {
-		}
-	}
 
 	public boolean isAudioFocused = false;
 	int playtimes = 0;
@@ -1385,13 +1341,13 @@ public class BluetoothMusicModel {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
 					isAudioFocused = true;
 					mainAudioChanged(showOrBack);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 							if (isTicker) {
 								setTimingBegins();
 							}
-								
 						}
 					}
 				} else {
@@ -1468,8 +1424,13 @@ public class BluetoothMusicModel {
 				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
 				mainAudioChanged(isActive());
-				if (!isTicker) {
+				try {
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					if (!isHandPuse) {
+						AVRCPControl(AudioControl.CONTROL_PLAY);
+					}
 					setTimingBegins();
+				} catch (RemoteException e) {
 				}
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
@@ -1483,16 +1444,13 @@ public class BluetoothMusicModel {
 				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
-				// if (callstatus != BTConst.Phone.UNKOWN) {
-				// isPauseByCall = true;
-				// } else {
-				// isPauseByCall = false;
-				// }
-				// LogUtil.i(TAG,
-				// "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="
-				// + isPauseByCall);
-				if (isTicker) {
-					setTimingEnd();
+				try {
+					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+					if (isTicker) {
+						setTimingEnd();
+					}
+				} catch (RemoteException e1) {
 				}
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
@@ -1509,23 +1467,7 @@ public class BluetoothMusicModel {
 				break;
 			}
 			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
-					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = " );
-			try {
-				if (isAudioFocused) {
-					// 如果是手动暂停 不执行播放
-					if (!isHandPuse) {
-						// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-						AVRCPControl(AudioControl.CONTROL_PLAY);
-					}
-				} else {
-					// audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					if (handler.hasMessages(MSG_AUTOPLAY)) {
-						handler.removeMessages(MSG_AUTOPLAY);
-					}
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
-				}
-			} catch (RemoteException e) {
-			}
+					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = ");
 		}
 	};
 
@@ -1669,7 +1611,7 @@ public class BluetoothMusicModel {
 		@Override
 		public void run() {
 			try {
-				if (a2dpStatus ==1 && avrcpStatus == 1) {
+				if (a2dpStatus == 1 && avrcpStatus == 1) {
 					getPlayStatus();
 					stepTimeHandler.postDelayed(this, 1000);
 				}
@@ -1677,4 +1619,5 @@ public class BluetoothMusicModel {
 			}
 		}
 	}
+
 }
