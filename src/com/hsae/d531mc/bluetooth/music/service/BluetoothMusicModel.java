@@ -26,7 +26,6 @@ import com.anwsdk.service.BT_ADV_DATA;
 import com.anwsdk.service.IAnwInquiryCallBackEx;
 import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
-import com.hsae.autosdk.bt.BTConst;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.phone.BtPhoneProxy;
 import com.hsae.autosdk.os.Soc;
@@ -63,7 +62,10 @@ public class BluetoothMusicModel {
 	public int a2dpStatus = 0;
 	public int avrcpStatus = 0;
 	public boolean isDisByIpod = false;
-
+	//从点击pause到收到回调的这段时间都算是pausing状态
+	public boolean isPausing = false;
+	//从点击play到收到回调的这段时间都算是playing状态
+	public boolean isPlaying = false;
 	/***
 	 * 判断是VR调用stop的接口暂停后音频焦点再次回到BT时不执行播放动作
 	 */
@@ -154,6 +156,8 @@ public class BluetoothMusicModel {
 		public void onServiceDisconnected(ComponentName name) {
 			LogUtil.i(TAG, "---------- onServiceDisconnected ------------");
 			mIAnwPhoneLink = null;
+			isPausing = false;
+			isPlaying = false;
 		}
 	}
 
@@ -551,23 +555,30 @@ public class BluetoothMusicModel {
 		//
 
 		if (op_code == AudioControl.CONTROL_PLAY) {
+			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code+ " , isPausing = " + isPausing);
+			if (!isPausing && isPlay) {
+				LogUtil.i(TAG, "now is playing , filter out this op_code");
+				return -998;
+			}
+
 			isHandPuse = false;
 			if (a2dpStatus == 0) {
 				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",but now disable to play");
 				return -1;
 			}
+			isPlaying = true;
 			if (!handler.hasMessages(MSG_AUTOPLAY)) {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		}else if (op_code == AudioControl.CONTROL_PAUSE ) {
-			if (!isPlay) {
+			if (!isPlay&& isPlaying) {
 				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",disable to pause, because now is paused");
 				return -1;
 			}
+			isPausing = true;
 			removeAutoPlay();
 		}
-		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
 	}
 
@@ -1377,8 +1388,11 @@ public class BluetoothMusicModel {
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
+							if (isTicker) {
+								setTimingBegins();
+							}
+								
 						}
-						getPlayStatus();
 					}
 				} else {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
@@ -1454,6 +1468,9 @@ public class BluetoothMusicModel {
 				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
 				mainAudioChanged(isActive());
+				if (!isTicker) {
+					setTimingBegins();
+				}
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
 				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
@@ -1474,6 +1491,9 @@ public class BluetoothMusicModel {
 				// LogUtil.i(TAG,
 				// "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS &&  isPauseByCall ="
 				// + isPauseByCall);
+				if (isTicker) {
+					setTimingEnd();
+				}
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
@@ -1607,4 +1627,54 @@ public class BluetoothMusicModel {
 		return source.getCurrentSource();
 	}
 
+	private Handler stepTimeHandler = new Handler();
+	private Ticker mTicker;
+	/**
+	 * 计时器是否正在工作
+	 */
+	public boolean isTicker = false;
+
+	/**
+	 * set timer start
+	 */
+	public void setTimingBegins() {
+		if (mTicker == null) {
+			mTicker = new Ticker();
+			stepTimeHandler.post(mTicker);
+			isTicker = true;
+			LogUtil.i(TAG, "setTimingBegins");
+		}
+	}
+
+	/**
+	 * set timer end
+	 */
+	public void setTimingEnd() {
+		if (stepTimeHandler != null) {
+			stepTimeHandler.removeCallbacks(mTicker);
+			mTicker = null;
+			isTicker = false;
+			LogUtil.i(TAG, "setTimingEnd");
+		}
+	}
+
+	/**
+	 * ticker
+	 * 
+	 * @author wangda
+	 *
+	 */
+	private class Ticker implements Runnable {
+
+		@Override
+		public void run() {
+			try {
+				if (a2dpStatus ==1 && avrcpStatus == 1) {
+					getPlayStatus();
+					stepTimeHandler.postDelayed(this, 1000);
+				}
+			} catch (RemoteException e) {
+			}
+		}
+	}
 }

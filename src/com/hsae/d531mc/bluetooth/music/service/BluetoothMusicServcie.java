@@ -74,6 +74,9 @@ public class BluetoothMusicServcie extends Service {
 				if (mBluetoothMusicModel.a2dpStatus == 1 && mBluetoothMusicModel.avrcpStatus == 1) {
 					playMusic();
 					notifyAutoCoreConnectStatus(true);
+					if (!mBluetoothMusicModel.isTicker) {
+						mBluetoothMusicModel.setTimingBegins();
+					}
 				} else if (mBluetoothMusicModel.avrcpStatus == 0 && mBluetoothMusicModel.a2dpStatus == 0
 						&& mBluetoothMusicModel.hfpStatus == 0) {
 					resetBtState();
@@ -101,8 +104,8 @@ public class BluetoothMusicServcie extends Service {
 	 * 将蓝牙音乐初始化
 	 */
 	private void resetBtState() {
-		if (isTicker) {
-			setTimingEnd();
+		if (mBluetoothMusicModel.isTicker) {
+			mBluetoothMusicModel.setTimingEnd();
 		}
 		mTitle = "";
 		mAtrist = "";
@@ -111,13 +114,8 @@ public class BluetoothMusicServcie extends Service {
 		mBluetoothMusicModel.removeAutoPlay();
 	}
 
-	private Handler stepTimeHandler = new Handler();
-	private Ticker mTicker;
 
-	/**
-	 * 计时器是否正在工作
-	 */
-	private boolean isTicker = false;
+
 
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -314,17 +312,15 @@ public class BluetoothMusicServcie extends Service {
 					}
 					switch (nPlayStatus) {
 					case AudioControl.STREAM_STATUS_SUSPEND:
+						mBluetoothMusicModel.isPausing = false;
 						mBluetoothMusicModel.isPlay = false;
-						setTimingEnd();
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
+						mBluetoothMusicModel.isPlaying = false;
 						mBluetoothMusicModel.isPlay = true;
 						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
 						if (!mTimePosition.equals("-1")) {
 							mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
-						}
-						if (!isTicker) {
-							setTimingBegins();
 						}
 						break;
 					}
@@ -445,47 +441,7 @@ public class BluetoothMusicServcie extends Service {
 		}
 	}
 
-	/**
-	 * set timer start
-	 */
-	public void setTimingBegins() {
-		if (mTicker == null) {
-			mTicker = new Ticker();
-			stepTimeHandler.post(mTicker);
-			isTicker = true;
-			LogUtil.i(TAG, "setTimingBegins");
-		}
-	}
 
-	/**
-	 * set timer end
-	 */
-	public void setTimingEnd() {
-		if (stepTimeHandler != null) {
-			stepTimeHandler.removeCallbacks(mTicker);
-			mTicker = null;
-			isTicker = false;
-			LogUtil.i(TAG, "setTimingEnd");
-		}
-	}
-
-	/**
-	 * ticker
-	 * 
-	 * @author wangda
-	 *
-	 */
-	private class Ticker implements Runnable {
-
-		@Override
-		public void run() {
-			try {
-				mBluetoothMusicModel.getPlayStatus();
-				stepTimeHandler.postDelayed(this, 1000);
-			} catch (RemoteException e) {
-			}
-		}
-	}
 
 	// /**
 	// * 注册背景数据库监听
