@@ -20,7 +20,7 @@ public class MusicBean implements Serializable {
 	private String album;
 	//歌曲总时间
 	private String totalTime;
-
+	
 	public MusicBean() {
 	}
 

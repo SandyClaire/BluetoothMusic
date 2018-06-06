@@ -46,10 +46,9 @@ public class BluetoothMusicServcie extends Service {
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Context mContext;
 	private BTBroadcastReceiver mReceiver = null;
-	private String mTitle = "";
-	private String mAtrist = "";
-	private String mAlbum = "";
-	private String mTotalTIme = "";
+	private String mTitle = "", mTotalTIme = "", mAlbum = "", mAtrist = "";
+	private String mLastTitle = "", mLastAlbum = "", mLastAtrist = "";
+	private int mLastPlayStatus = -1;
 	private BTMusicManager mBTMmanager;
 	private String mTimePosition = "-1";
 	private Soc mSoc;
@@ -109,10 +108,15 @@ public class BluetoothMusicServcie extends Service {
 		mTitle = "";
 		mAtrist = "";
 		mAlbum = "";
+		
+		mLastTitle = "";
+		mLastAtrist = "";
+		mLastAlbum = "";
+		mLastPlayStatus = -1;
+		
 		mBluetoothMusicModel.isPlay = false;
 		mBluetoothMusicModel.removeAutoPlay();
 	}
-
 
 
 
@@ -258,16 +262,20 @@ public class BluetoothMusicServcie extends Service {
 							break;
 						case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
 							mTotalTIme = strMetadata;
+							if(mTitle !=mLastTitle || mAtrist !=mLastAtrist || mAlbum != mLastAlbum ){
+								mLastTitle = mTitle;
+								mLastAtrist =mAtrist;
+								mLastAlbum =mAlbum;
+								MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum, mTotalTIme);
+								mBluetoothMusicModel.updateCurrentMusicInfo(bean);
+								BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
+								mBluetoothMusicModel.notifyAutroMusicInfo(info);
+							}
 							break;
 						default:
 							break;
 						}
 						mBluetoothMusicModel.mTitel = mTitle;
-						MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum, mTotalTIme);
-						mBluetoothMusicModel.updateCurrentMusicInfo(bean);
-
-						BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
-						mBluetoothMusicModel.notifyAutroMusicInfo(info);
 					}
 				}
 				/* 蓝牙音乐播放状态 */
@@ -302,10 +310,14 @@ public class BluetoothMusicServcie extends Service {
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("StreamStatus");
-					LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = " + nPlayStatus);
-					try {
-						mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
-					} catch (RemoteException e) {
+					if (nPlayStatus != mLastPlayStatus) {
+						mLastPlayStatus = nPlayStatus;
+						LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = " + nPlayStatus);
+						try {
+							mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
+							//TODO .. 
+						} catch (RemoteException e) {
+						}
 					}
 					switch (nPlayStatus) {
 					case AudioControl.STREAM_STATUS_SUSPEND:
