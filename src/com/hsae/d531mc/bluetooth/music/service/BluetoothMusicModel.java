@@ -1345,7 +1345,7 @@ public class BluetoothMusicModel {
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-							if (isTicker) {
+							if (!isTicker) {
 								setTimingBegins();
 							}
 						}
