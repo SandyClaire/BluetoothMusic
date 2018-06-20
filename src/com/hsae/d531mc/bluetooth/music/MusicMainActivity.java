@@ -690,6 +690,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mSeekTail.setVisibility(View.GONE);
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
+			mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
+			mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
 			mSeekBar.setMax(0);
 			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT, AudioControl.PLAYER_REPEAT_MODE_OFF);
 			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE, AudioControl.PLAYER_SHUFFLE_OFF);

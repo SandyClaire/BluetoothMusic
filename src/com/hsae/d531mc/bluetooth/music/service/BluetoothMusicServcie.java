@@ -276,6 +276,8 @@ public class BluetoothMusicServcie extends Service {
 							break;
 						}
 						mBluetoothMusicModel.mTitel = mTitle;
+					}else{
+						LogUtil.i(TAG, "MSG_ACTION_A2DP_METADATA");
 					}
 				}
 				/* 蓝牙音乐播放状态 */
