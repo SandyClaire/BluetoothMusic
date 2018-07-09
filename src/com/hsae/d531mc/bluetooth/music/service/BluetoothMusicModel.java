@@ -13,10 +13,8 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 import android.util.Log;
@@ -30,7 +28,6 @@ import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.phone.BtPhoneProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
-import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
@@ -1411,6 +1408,7 @@ public class BluetoothMusicModel {
 		}
 	}
 
+	private boolean pauseByMobile = false;
 	/**
 	 * 音源焦点变化监听
 	 */
@@ -1427,7 +1425,11 @@ public class BluetoothMusicModel {
 				try {
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					if (!isHandPuse) {
-						AVRCPControl(AudioControl.CONTROL_PLAY);
+						if (!pauseByMobile) {
+							AVRCPControl(AudioControl.CONTROL_PLAY);
+						}else{
+							LogUtil.i(TAG, "play by mobile self");	
+						}
 					}
 					setTimingBegins();
 				} catch (RemoteException e) {
@@ -1444,8 +1446,14 @@ public class BluetoothMusicModel {
 				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
+				LogUtil.i("cruze", "cruze  AUDIOFOCUS_LOSS");
 				try {
-					AVRCPControl(AudioControl.CONTROL_PAUSE);
+					if (callstatus==0 || callstatus==-1) {
+						AVRCPControl(AudioControl.CONTROL_PAUSE);
+					}else{
+						pauseByMobile = true;
+						LogUtil.i(TAG,"audiofocus loss caused by callstatus , pause by mobile self");
+					}
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 					if (isTicker) {
 						setTimingEnd();
@@ -1466,8 +1474,6 @@ public class BluetoothMusicModel {
 				notifyAutroMusicInfo(null);
 				break;
 			}
-			LogUtil.i("cruze", "cruze  mAFCListener : isAudioFocused =  " + isAudioFocused + " ,isHandPuse = "
-					+ isHandPuse + "  isPlay = " + isPlay + " isPauseByCall = ");
 		}
 	};
 

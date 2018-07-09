@@ -1114,6 +1114,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 */
 	private void prevDown() {
 		LogUtil.i(TAG, " --- prevDown ");
+		isNormalPrev = true;
+		mHandler.removeMessages(LONG_CLICK_PREV);
 		mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV, 1000);
 	}
 
@@ -1153,7 +1155,9 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	 * 下一曲按下
 	 */
 	private void nextDown() {
+		isNormalNext = true;
 		LogUtil.i(TAG, " --- nextDown ");
+		mHandler.removeMessages(LONG_CLICK_NEXT);
 		mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, 1000);
 	}
 
@@ -1165,8 +1169,8 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		LogUtil.i(TAG, "nextUp --- nextUp ");
 		if (isNormalNext) {
 			LogUtil.i(TAG, " --- nextUp ");
-			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
 			mHandler.removeMessages(LONG_CLICK_NEXT);
+			mHandler.sendEmptyMessage(SHORT_CLICK_NEXT);
 		} else {
 			LogUtil.i(TAG, "LONG_CLICK_NEXT --- nextUp ");
 			mHandler.sendEmptyMessage(LONG_FAST_FORWORD_CANCLE);
