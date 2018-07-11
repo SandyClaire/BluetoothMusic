@@ -565,6 +565,9 @@ public class BluetoothMusicModel {
 				return -1;
 			}
 			isPlaying = true;
+			if (!isTicker) {
+				setTimingBegins();
+			}
 			if (!handler.hasMessages(MSG_AUTOPLAY)) {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -1342,9 +1345,6 @@ public class BluetoothMusicModel {
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-							if (!isTicker) {
-								setTimingBegins();
-							}
 						}
 					}
 				} else {
@@ -1427,11 +1427,11 @@ public class BluetoothMusicModel {
 					if (!isHandPuse) {
 						if (!pauseByMobile) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
+							
 						}else{
 							LogUtil.i(TAG, "play by mobile self");	
 						}
 					}
-					setTimingBegins();
 				} catch (RemoteException e) {
 				}
 				break;
@@ -1455,9 +1455,6 @@ public class BluetoothMusicModel {
 						LogUtil.i(TAG,"audiofocus loss caused by callstatus , pause by mobile self");
 					}
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-					if (isTicker) {
-						setTimingEnd();
-					}
 				} catch (RemoteException e1) {
 				}
 				isAudioFocused = false;

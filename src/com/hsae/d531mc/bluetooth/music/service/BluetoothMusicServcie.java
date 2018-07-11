@@ -73,9 +73,6 @@ public class BluetoothMusicServcie extends Service {
 				if (mBluetoothMusicModel.a2dpStatus == 1 && mBluetoothMusicModel.avrcpStatus == 1) {
 					playMusic();
 					notifyAutoCoreConnectStatus(true);
-					if (!mBluetoothMusicModel.isTicker) {
-						mBluetoothMusicModel.setTimingBegins();
-					}
 				} else if (mBluetoothMusicModel.avrcpStatus == 0 && mBluetoothMusicModel.a2dpStatus == 0
 						&& mBluetoothMusicModel.hfpStatus == 0) {
 					resetBtState();
@@ -325,8 +322,14 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						mBluetoothMusicModel.isPausing = false;
 						mBluetoothMusicModel.isPlay = false;
+						if (mBluetoothMusicModel.isTicker) {
+							mBluetoothMusicModel.setTimingEnd();
+						}
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
+						if (!mBluetoothMusicModel.isTicker) {
+							mBluetoothMusicModel.setTimingBegins();
+						}
 						mBluetoothMusicModel.isPlaying = false;
 						mBluetoothMusicModel.isPlay = true;
 						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);

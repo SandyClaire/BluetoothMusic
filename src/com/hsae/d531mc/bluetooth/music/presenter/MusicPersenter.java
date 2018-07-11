@@ -81,7 +81,6 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY:
 			mIMusicModel.requestAudioFoucs(true,true);
-//			mIMusicModel.setAVRCPControl(AudioControl.CONTROL_PLAY);
 			LogUtil.i(TAG, "CONTROL_PLAY");
 			break;
 		case MusicActionDefine.ACTION_A2DP_NEXT:
