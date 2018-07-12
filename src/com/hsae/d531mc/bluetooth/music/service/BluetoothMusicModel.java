@@ -798,7 +798,7 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public int audioSetStreamMode(int mode) throws RemoteException {
+	public synchronized int audioSetStreamMode(int mode) throws RemoteException {
 		if (null == mIAnwPhoneLink) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
@@ -808,12 +808,10 @@ public class BluetoothMusicModel {
 		}
 		int currentAudioMode = getStreamMode();
 		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode + " , currentAudioMode = " + currentAudioMode);
-		if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-
-		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
-			if (currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
-				return -1;
-			}
+		if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE && currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
+			return -1;
+		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE && currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
+			return -1;
 		}
 		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
 	}
