@@ -565,9 +565,7 @@ public class BluetoothMusicModel {
 				return -1;
 			}
 			isPlaying = true;
-			if (!isTicker) {
-				setTimingBegins();
-			}
+			setTimingBegins();
 			if (!handler.hasMessages(MSG_AUTOPLAY)) {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -1425,7 +1423,6 @@ public class BluetoothMusicModel {
 					if (!isHandPuse) {
 						if (!pauseByMobile) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-							
 						}else{
 							LogUtil.i(TAG, "play by mobile self");	
 						}
@@ -1447,6 +1444,7 @@ public class BluetoothMusicModel {
 				LogUtil.i("cruze", "cruze  AUDIOFOCUS_LOSS");
 				try {
 					if (callstatus==0 || callstatus==-1) {
+						pauseByMobile = false;
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					}else{
 						pauseByMobile = true;
@@ -1570,35 +1568,24 @@ public class BluetoothMusicModel {
 		return source.getCurrentSource();
 	}
 
-	private Handler stepTimeHandler = new Handler();
-	private Ticker mTicker;
-	/**
-	 * 计时器是否正在工作
-	 */
-	public boolean isTicker = false;
+	private final Handler stepTimeHandler = new Handler();
+	private final Ticker mTicker = new Ticker();
 
 	/**
 	 * set timer start
 	 */
 	public void setTimingBegins() {
-		if (mTicker == null) {
-			mTicker = new Ticker();
-			stepTimeHandler.post(mTicker);
-			isTicker = true;
-			LogUtil.i(TAG, "setTimingBegins");
-		}
+		stepTimeHandler.removeCallbacks(mTicker);
+		stepTimeHandler.post(mTicker);
+		LogUtil.i(TAG, "setTimingBegins");
 	}
 
 	/**
 	 * set timer end
 	 */
 	public void setTimingEnd() {
-		if (stepTimeHandler != null) {
-			stepTimeHandler.removeCallbacks(mTicker);
-			mTicker = null;
-			isTicker = false;
-			LogUtil.i(TAG, "setTimingEnd");
-		}
+		stepTimeHandler.removeCallbacks(mTicker);
+		LogUtil.i(TAG, "setTimingEnd");
 	}
 
 	/**

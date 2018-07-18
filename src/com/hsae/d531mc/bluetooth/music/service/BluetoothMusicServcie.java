@@ -99,9 +99,7 @@ public class BluetoothMusicServcie extends Service {
 	 * 将蓝牙音乐初始化
 	 */
 	private void resetBtState() {
-		if (mBluetoothMusicModel.isTicker) {
-			mBluetoothMusicModel.setTimingEnd();
-		}
+		mBluetoothMusicModel.setTimingEnd();
 		mTitle = "";
 		mAtrist = "";
 		mAlbum = "";
@@ -309,9 +307,9 @@ public class BluetoothMusicServcie extends Service {
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_STREAMSTATUS)) {
 				if (mBundle != null) {
 					int nPlayStatus = mBundle.getInt("StreamStatus");
+					LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = " + nPlayStatus);
 					if (nPlayStatus != mLastPlayStatus) {
 						mLastPlayStatus = nPlayStatus;
-						LogUtil.i(TAG, "A2DP_STREAMSTATUS -- nPlayStatus = " + nPlayStatus);
 						try {
 							mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
 							//TODO .. 
@@ -322,14 +320,10 @@ public class BluetoothMusicServcie extends Service {
 					case AudioControl.STREAM_STATUS_SUSPEND:
 						mBluetoothMusicModel.isPausing = false;
 						mBluetoothMusicModel.isPlay = false;
-						if (mBluetoothMusicModel.isTicker) {
-							mBluetoothMusicModel.setTimingEnd();
-						}
+						mBluetoothMusicModel.setTimingEnd();
 						break;
 					case AudioControl.STREAM_STATUS_STREAMING:
-						if (!mBluetoothMusicModel.isTicker) {
-							mBluetoothMusicModel.setTimingBegins();
-						}
+						mBluetoothMusicModel.setTimingBegins();
 						mBluetoothMusicModel.isPlaying = false;
 						mBluetoothMusicModel.isPlay = true;
 						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
