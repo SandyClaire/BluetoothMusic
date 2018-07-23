@@ -1299,7 +1299,7 @@ public class BluetoothMusicModel {
 
 	private void doPlay(boolean showOrBack) {
 		try {
-			if (!isAudioFocused) {
+			if (!mSource.getFocusedApp().equals(App.BT_MUSIC)) {
 				LogUtil.i("cruze", "doPlay 准备抢占焦点");
 				boolean canSwich = tryToSwitchSource();
 				if (canSwich) {
