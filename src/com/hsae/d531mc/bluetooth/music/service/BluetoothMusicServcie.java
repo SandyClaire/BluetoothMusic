@@ -289,10 +289,6 @@ public class BluetoothMusicServcie extends Service {
 							}
 						}
 					}
-					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
-					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
-							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
-
 				}
 				/* 蓝牙音乐播放当前时间信息 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_A2DP_PLAYBACKPOS)) {
@@ -326,12 +322,13 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.setTimingBegins();
 						mBluetoothMusicModel.isPlaying = false;
 						mBluetoothMusicModel.isPlay = true;
+						mBluetoothMusicModel.setStreamMute();
 						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
-						if (!mTimePosition.equals("-1")) {
-							mBluetoothMusicModel.updateCurrentPlayTime(mTimePosition, mBluetoothMusicModel.isPlay);
-						}
 						break;
 					}
+					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
+					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
+							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
 				}
 				/* 蓝牙音乐播放模式变化 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT)) {

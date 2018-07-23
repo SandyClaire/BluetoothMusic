@@ -23,8 +23,6 @@ import com.hsae.autosdk.hmi.HmiConst;
 import com.hsae.autosdk.popup.PopupListener;
 import com.hsae.autosdk.popup.PopupRequest;
 import com.hsae.autosdk.popup.constant.PopupConst.Popup;
-import com.hsae.autosdk.source.Source;
-import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.R;
 
@@ -293,6 +291,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void exitDiagnoseMode() throws RemoteException {
+		mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 	}
 
 	@Override

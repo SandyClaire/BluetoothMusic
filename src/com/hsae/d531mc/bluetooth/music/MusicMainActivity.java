@@ -918,14 +918,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		// if (isSupportMetadata) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
-		// }
-		// if (isPlaying && (mMusicHandler != null)) {
-		// mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-		// mMusicHandler.postDelayed(updateMusicPlayTimer, 1000);
-		// }
-		// if (!isPlaying) {
-		// mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-		// }
 	}
 
 	private ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();

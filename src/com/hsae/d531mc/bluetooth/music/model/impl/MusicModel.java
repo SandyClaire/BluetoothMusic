@@ -3,7 +3,6 @@ package com.hsae.d531mc.bluetooth.music.model.impl;
 import java.util.ArrayList;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
