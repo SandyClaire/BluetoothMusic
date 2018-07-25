@@ -1609,7 +1609,7 @@ public class BluetoothMusicModel {
 
 	public void setStreamMute() {
 		try {
-			if (mSource.getCurrentSource() ==App.BT_MUSIC || AutoSettings.getInstance().isDiagnoseMode()) {
+			if (mSource.getCurrentSource() !=App.BT_MUSIC || AutoSettings.getInstance().isDiagnoseMode()) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 			}
 		} catch (IllegalStateException e) {
