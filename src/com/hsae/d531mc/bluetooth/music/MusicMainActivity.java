@@ -690,6 +690,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 			mSeekTail.setVisibility(View.GONE);
 			mTextTotalTime.setText("00:00");
 			mTextCurTime.setText("00:00");
+			musicName = "";
 			mTextTitle.setText(getResources().getString(R.string.music_matedate_unsupport));
 			mTextArtist.setText(getResources().getString(R.string.music_matedate_unsupport));
 			mSeekBar.setMax(0);
@@ -785,7 +786,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 					musicName = bean.getTitle();
 					resetAnim();
 					mTextTitle.setText(bean.getTitle());
-				} else {
 				}
 			}
 			if ("".equals(bean.getAtrist())) {

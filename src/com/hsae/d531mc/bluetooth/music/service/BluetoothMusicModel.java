@@ -1389,7 +1389,7 @@ public class BluetoothMusicModel {
 		}
 	}
 
-	public void notifyAutroMusicInfo(BTMusicInfo info) {
+	public synchronized void notifyAutroMusicInfo(BTMusicInfo info) {
 		if (null == mBTMmanager) {
 			mBTMmanager = BTMusicManager.getInstance(mContext);
 		}
