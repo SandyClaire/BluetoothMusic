@@ -207,4 +207,14 @@ public class MusicPersenter implements IObserver {
 				mIMusicModel.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE));
 	}
 
+	
+	boolean playStatus = false;
+	/***
+	 * 获取当前事实的播放状态
+	 * @return
+	 */
+	public boolean getPlayStatus() {
+		LogUtil.i(TAG, "getPlayStatus : playStatus = " + playStatus);
+		return playStatus;
+	}
 }

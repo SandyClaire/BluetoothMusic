@@ -1136,8 +1136,8 @@ public class BluetoothMusicModel {
 	 * @param bean
 	 */
 	public void updateCurrentMusicInfo(MusicBean bean) {
+		mBean = bean;
 		if (null != mIMusicModel) {
-			mBean = bean;
 			mIMusicModel.getCurrentMusicBean(bean);
 		}
 	}
@@ -1374,13 +1374,7 @@ public class BluetoothMusicModel {
 	 * 通知launcher 音乐信息
 	 */
 	private void notifyLauncherInfo() {
-		int connStatus = 0;
-		try {
-			connStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		if (connStatus == MangerConstant.Anw_SUCCESS && mBean != null) {
+		if (a2dpStatus == 1 && mBean != null) {
 			BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(), mBean.getAlbum(), null);
 			notifyAutroMusicInfo(info);
 		} else {

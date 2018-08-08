@@ -262,7 +262,7 @@ public class BluetoothMusicServcie extends Service {
 								mLastAtrist =mAtrist;
 								mLastAlbum =mAlbum;
 								MusicBean bean = new MusicBean(mTitle, mAtrist, mAlbum, mTotalTIme);
-								mBluetoothMusicModel.updateCurrentMusicInfo(bean);
+								mBluetoothMusicModel.updateCurrentMusicInfo(bean); 
 								BTMusicInfo info = new BTMusicInfo(bean.getTitle(), bean.getAtrist(), bean.getAlbum(), null);
 								mBluetoothMusicModel.notifyAutroMusicInfo(info);
 							}
@@ -323,12 +323,10 @@ public class BluetoothMusicServcie extends Service {
 						mBluetoothMusicModel.isPlaying = false;
 						mBluetoothMusicModel.isPlay = true;
 						mBluetoothMusicModel.setStreamMute();
-						LogUtil.i(TAG, "PlayTime -- mPosition = " + mTimePosition);
 						break;
 					}
 					mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
-					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist
-							+ ",mTotalTIme = " + mTotalTIme + " ,mAlbum = " + mAlbum);
+					LogUtil.i(TAG, "-- nPlayStatus = " + nPlayStatus + "mTitle = " + mTitle + ",mAtrist = " + mAtrist+ ",mTotalTIme = " + mTotalTIme + "mTimePosition = " +mTimePosition + " ,mAlbum = " + mAlbum);
 				}
 				/* 蓝牙音乐播放模式变化 */
 			} else if (strAction.equals(MangerConstant.MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT)) {

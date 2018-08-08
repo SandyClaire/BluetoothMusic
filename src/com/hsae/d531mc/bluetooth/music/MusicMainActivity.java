@@ -432,8 +432,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 	protected void onPause() {
 		super.onPause();
 		pauseAnim();
-		if (mMusicHandler != null)
-			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
+		mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
@@ -676,7 +675,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 				intent.addCategory(Intent.CATEGORY_HOME);
 				startActivity(intent);
-				finishActivity();
 			}
 		}
 		return super.onKeyDown(keyCode, event);
@@ -909,7 +907,6 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.addCategory(Intent.CATEGORY_HOME);
 		startActivity(intent);
-		finishActivity();
 		super.onBackPressed();
 	}
 
