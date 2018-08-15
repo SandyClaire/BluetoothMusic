@@ -1603,13 +1603,17 @@ public class BluetoothMusicModel {
 
 	public void setStreamMute() {
 		try {
-			if (mSource.getCurrentSource() !=App.BT_MUSIC || AutoSettings.getInstance().isDiagnoseMode()) {
+			App currentSource = mSource.getCurrentSource();
+			boolean isDiagnoseMode = AutoSettings.getInstance().isDiagnoseMode();
+			if ( currentSource !=App.BT_MUSIC ||isDiagnoseMode) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
+			}
+			else if(currentSource ==App.BT_MUSIC && !isDiagnoseMode){
+				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (IllegalStateException e) {
 		} catch (IllegalArgumentException e) {
 		} catch (RemoteException e) {
 		}
 	}
-
 }
