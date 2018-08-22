@@ -806,9 +806,7 @@ public class BluetoothMusicModel {
 		}
 		int currentAudioMode = getStreamMode();
 		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode + " , currentAudioMode = " + currentAudioMode);
-		if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE && currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
-			return -1;
-		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE && currentAudioMode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
+		if (mode == currentAudioMode) {
 			return -1;
 		}
 		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
