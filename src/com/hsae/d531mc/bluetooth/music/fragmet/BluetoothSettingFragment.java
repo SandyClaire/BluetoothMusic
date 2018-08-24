@@ -134,7 +134,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 		this.notify(msg_search, FLAG_RUN_SYNC);
 	}
 
-	public void stopDeviceSearching() {
+	private void stopDeviceSearching() {
 		updateSearchBtnShow(false);
 		Message msg_stop = Message.obtain();
 		msg_stop.what = MusicActionDefine.ACTION_SETTING_STOP_INQUIRY;
