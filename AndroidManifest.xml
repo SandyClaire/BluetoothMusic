@@ -42,6 +42,7 @@
                 <action android:name="com.hsae.auto.BT_MUSIC_SERVICE" />
             </intent-filter>
         </service>
+        
     </application>
 
 </manifest>

@@ -307,7 +307,8 @@ public class BluetoothMusicServcie extends Service {
 					if (nPlayStatus != mLastPlayStatus) {
 						mLastPlayStatus = nPlayStatus;
 						try {
-							mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
+							if(mBTMmanager.mListener !=null)
+								mBTMmanager.mListener.onPlaybackStateChanged(nPlayStatus ==1?0:1);
 							//TODO .. 
 						} catch (RemoteException e) {
 						}

@@ -23,7 +23,6 @@ import com.hsae.autosdk.hmi.HmiConst;
 import com.hsae.autosdk.popup.PopupListener;
 import com.hsae.autosdk.popup.PopupRequest;
 import com.hsae.autosdk.popup.constant.PopupConst.Popup;
-import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.R;
@@ -336,7 +335,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		tipText.setText(tip + " " + newTitle);
 
 		if (isTipPopShow && tipRequest != null) {
-			tipRequest.hidePopup();
+//			tipRequest.hidePopup();
 			tipRequest.showPopup();
 			// tipRequest = null;
 		} else if (tipRequest != null) {

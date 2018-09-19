@@ -134,7 +134,7 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 		this.notify(msg_search, FLAG_RUN_SYNC);
 	}
 
-	private void stopDeviceSearching() {
+	public void stopDeviceSearching() {
 		updateSearchBtnShow(false);
 		Message msg_stop = Message.obtain();
 		msg_stop.what = MusicActionDefine.ACTION_SETTING_STOP_INQUIRY;
@@ -144,24 +144,27 @@ public class BluetoothSettingFragment extends Fragment implements ISubject, IBlu
 	private void updateSearchBtnShow(boolean flag) {
 		if (flag) {
 			isSearching = true;
-			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);
-			mProSearch.setVisibility(View.VISIBLE);
+			if (mBtnSearch != null && mProSearch != null) {
+				mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search_stop);
+				mProSearch.setVisibility(View.VISIBLE);
+			}
 		} else {
 			isSearching = false;
-			mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
-			mProSearch.setVisibility(View.INVISIBLE);
+			if (mBtnSearch != null && mProSearch != null) {
+				mBtnSearch.setBackgroundResource(R.drawable.btn_bluetoothsettings_search);
+				mProSearch.setVisibility(View.INVISIBLE);
+			}
 		}
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		
+
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_RESUME;
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
-
 
 	@Override
 	public void onDetach() {

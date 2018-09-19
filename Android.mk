@@ -9,9 +9,8 @@ include $(BUILD_MULTI_PREBUILT)
 
 include $(CLEAR_VARS)
 
-LOCAL_JAVA_LIBRARIES := autosdk
 
-LOCAL_STATIC_JAVA_LIBRARIES := libsupportbtmusicv4
+LOCAL_STATIC_JAVA_LIBRARIES := libsupportbtmusicv4 autosdk
 
 LOCAL_AIDL_INCLUDES := $(LOCAL_PATH)/src
 
