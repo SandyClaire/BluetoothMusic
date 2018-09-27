@@ -15,6 +15,7 @@ import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 import android.util.Log;
@@ -26,10 +27,12 @@ import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.phone.BtPhoneProxy;
+import com.hsae.autosdk.ipod.IPodProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
+import com.hsae.autosdk.source.SourceConst;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
@@ -46,6 +49,8 @@ import com.hsae.d531mc.bluetooth.music.util.Util;
 public class BluetoothMusicModel {
 
 	private static final String TAG = "BluetoothMusicModel";
+	
+	private final Object lockOfBTMmanager = new Object();
 	private static BluetoothMusicModel mInstance;
 	private static Context mContext;
 	private IAnwPhoneLink mIAnwPhoneLink;
@@ -477,7 +482,7 @@ public class BluetoothMusicModel {
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-
+		isOnFW = nActFlag == 0;
 		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 0)
 			isFastForward = true;
 		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 0)
@@ -1288,6 +1293,10 @@ public class BluetoothMusicModel {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 						}
 					}
+					if (a2dpStatus == 0) {
+						LogUtil.i(TAG, "notifyAutoCoreWarning DDDDDDDDD");
+						notifyAutoCoreWarning();
+					}
 				} else {
 					doRequest(showOrBack);
 				}
@@ -1341,6 +1350,10 @@ public class BluetoothMusicModel {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 						}
 					}
+					if (a2dpStatus == 0) {
+						LogUtil.i(TAG, "notifyAutoCoreWarning doRequest 1111111");
+						notifyAutoCoreWarning();
+					}
 				} else {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
 					isAudioFocused = false;
@@ -1369,32 +1382,6 @@ public class BluetoothMusicModel {
 
 	private Handler mHandler = new Handler();
 
-	/**
-	 * 通知launcher 音乐信息
-	 */
-	private void notifyLauncherInfo() {
-		if (a2dpStatus == 1 && mBean != null) {
-			BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(), mBean.getAlbum(), null);
-			notifyAutroMusicInfo(info);
-		} else {
-			BTMusicInfo info = new BTMusicInfo("", "", "", null);
-			notifyAutroMusicInfo(info);
-		}
-	}
-
-	public synchronized void notifyAutroMusicInfo(BTMusicInfo info) {
-		if (null == mBTMmanager) {
-			mBTMmanager = BTMusicManager.getInstance(mContext);
-		}
-		try {
-			if (null != mBTMmanager.mListener) {
-				mBTMmanager.mListener.syncBtMusicInfo(info);
-			}
-
-		} catch (Exception e) {
-			LogUtil.i(TAG, " ---- Exception = " + e.toString());
-		}
-	}
 
 	private boolean pauseByMobile = false;
 	/**
@@ -1410,6 +1397,17 @@ public class BluetoothMusicModel {
 				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
 				mSource.setFocusedApp(App.BT_MUSIC.ordinal());
+				if (a2dpStatus == 1) {
+					LogUtil.i(TAG, "notifyAutroMusicInfo 33333333333333");
+					notifyAutroMusicInfo(mBean);
+					if (mBean != null) {
+						mBean.setAudioFocus(true);
+					}
+					setTimingBegins();
+				} else {
+					LogUtil.i(TAG, "notifyAutoCoreWarning 1111111111");
+					notifyAutoCoreWarning();
+				}
 				mainAudioChanged(isActive());
 				try {
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -1462,6 +1460,8 @@ public class BluetoothMusicModel {
 			}
 		}
 	};
+	
+	
 
 	/**
 	 * 清除缓存壁纸
@@ -1559,17 +1559,234 @@ public class BluetoothMusicModel {
 	public App getCurrentSource() {
 		return mSource.getCurrentSource();
 	}
+	
+	public synchronized void notifyAutroMusicInfo(MusicBean bean) {
+		notifyAutroMusicInfo(bean, false, false);
+	}
+	
+	
+	private String lastTitle = "";
+	private String lastAtrist = "";
+	private String lastAlbum = "";
+	private int lastPlayStatus = 1;
+	public boolean powerStatus = false;
+	public boolean accStatus = true;
+	private boolean hasSet = false;
+	private boolean isOnFW = false; // 是否处于快进快退之中
+	public int streamStatus = 0;
+	
+	public synchronized void notifyAutroMusicInfo(MusicBean bean, boolean fromStream, boolean fromPoweroff) {
+		if (null == mBTMmanager) {
+			mBTMmanager = BTMusicManager.getInstance(mContext);
+		}
+		if (bean == null) {
+			LogUtil.i(TAG, "notifyAutroMusicInfo : bean == null");
+			syncMusicInfo(null);
+			return;
+		}
+		String title = bean.getTitle();
+		String atrist = bean.getAtrist();
+		String album = bean.getAlbum();
 
-	private final Handler stepTimeHandler = new Handler();
+		boolean audioFocus = bean.isAudioFocus();
+
+		if (isPowerOff()) {
+			LogUtil.i(TAG, "notifyAutroMusicInfo isPowerOff");
+			return;
+		}
+
+		if (!accStatus) {
+			LogUtil.i(TAG, "notifyAutroMusicInfo accStatus is false");
+			return;
+		}
+
+		if (fromStream) {
+			if (!hasSet) {
+				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+				syncMusicInfo(info);
+			} else {
+				hasSet = false;
+			}
+			return;
+		}
+
+		if (fromPoweroff) {
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			syncMusicInfo(info);
+			return;
+		}
+
+		if (isOnFW) {
+			lastTitle = title;
+			lastAtrist = atrist;
+			lastAlbum = album;
+			// lastPlayStatus = streamStatus;
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			syncMusicInfo(info);
+		} else if (!lastTitle.equalsIgnoreCase(title) || !lastAtrist.equalsIgnoreCase(atrist)
+				|| !lastAlbum.equalsIgnoreCase(album) || audioFocus != isAudioFocused) {
+			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
+			lastTitle = title;
+			lastAtrist = atrist;
+			lastAlbum = album;
+			// lastPlayStatus = streamStatus;
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			syncMusicInfo(info);
+		}
+	}
+	
+	
+	public boolean isPowerOff() {
+		boolean status = false;
+		try {
+			status = !AutoSettings.getInstance().getPowerState();
+		} catch (RemoteException e) {
+		}
+		return status;
+	}
+	
+	private void syncMusicInfo(BTMusicInfo info) {
+		synchronized (lockOfBTMmanager) {
+			if (info == null) {
+				LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo info is null");
+				try {
+					int n = mBTMmanager.mListeners.beginBroadcast();
+					for (int i = 0; i < n; i++) {
+						mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+					}
+					mBTMmanager.mListeners.finishBroadcast();
+				} catch (Exception e) {
+					LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+				}
+			} else {
+				LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo : lastTitle = " + lastTitle + " , lastAtrist = "
+						+ lastAtrist + " , lastAlbum = " + lastAlbum + " , lastPlayStatus = " + lastPlayStatus
+						+ streamStatus);
+
+				if (isAudioFocused) {
+					try {
+						int n = mBTMmanager.mListeners.beginBroadcast();
+						for (int i = 0; i < n; i++) {
+							mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+						}
+						mBTMmanager.mListeners.finishBroadcast();
+					} catch (Exception e) {
+						LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+					}
+				}
+			}
+		}
+	}
+	
+	
+	/****
+	 * 通知中间件蓝牙没有连接
+	 */
+	public void notifyAutoCoreWarning() {
+		if (mBTMmanager == null) {
+			mBTMmanager = BTMusicManager.getInstance(mContext);
+		}
+
+		// if (new Source().getCurrentSource() != App.BT_MUSIC) {
+		// LogUtil.i(TAG,
+		// "notifyAutoCoreWarning : current source is not btmusic");
+		// return;
+		// }
+		if (!accStatus) {
+			LogUtil.i(TAG, "notifyAutoCoreWarning : accStatus");
+			return;
+		}
+
+		if (!isAudioFocused) {
+			LogUtil.i(TAG, "notifyAutoCoreWarning : isAudioFocused");
+			return;
+		}
+
+		synchronized (lockOfBTMmanager) {
+			LogUtil.i(TAG, "notifyAutoCoreWarning : NONDISPLAY");
+			int n = mBTMmanager.mListeners.beginBroadcast();
+			for (int i = 0; i < n; i++) {
+
+				try {
+					mBTMmanager.mListeners.getBroadcastItem(i).syncAudioWarningInfo(
+							SourceConst.AudioWarningState.NONDISPLAY);
+				} catch (RemoteException e) {
+				}
+			}
+			mBTMmanager.mListeners.finishBroadcast();
+		}
+	}
+	
+	
+	/**
+	 * 通知launcher 音乐信息
+	 */
+	private void notifyLauncherInfo() {
+		int connStatus = 0;
+		try {
+			connStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		LogUtil.i(TAG, "notifyAutroMusicInfo mBean ==null? " + (mBean == null));
+		if (connStatus == MangerConstant.Anw_SUCCESS && mBean != null) {
+			LogUtil.i(TAG, "notifyAutroMusicInfo EEEEEEEEEE");
+			notifyAutroMusicInfo(mBean);
+			hasSet = true;
+			mBean.setAudioFocus(true);
+		} else {
+			LogUtil.i(TAG, "notifyAutroMusicInfo FFFFFFFFFFFFFF");
+			notifyAutroMusicInfo(null);
+		}
+	}
+	
+	
+	public void syncBtStatus(int a2dpStatus2) {
+		if (isDisByIpod) {
+			isDisByIpod = false;
+			IPodProxy.getInstance().notifyA2dpConnected(a2dpStatus == MangerConstant.Anw_SUCCESS);
+		}
+
+		synchronized (lockOfBTMmanager) {
+			if (null == mBTMmanager) {
+				mBTMmanager = BTMusicManager.getInstance(mContext);
+			}
+			int n = mBTMmanager.mListeners.beginBroadcast();
+			for (int i = 0; i < n; i++) {
+				try {
+					mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicProtocolState(a2dpStatus);
+				} catch (RemoteException e) {
+				}
+			}
+			mBTMmanager.mListeners.finishBroadcast();
+		}
+	}
+	
+	private static final int MSG_TICKER = 100;
+	private final Handler stepTimeHandler = new Handler(){
+		public void handleMessage(Message msg) {
+			if (msg.what == MSG_TICKER) {
+				try {
+					stepTimeHandler.sendEmptyMessageDelayed(MSG_TICKER, 1000);	
+					getPlayStatus();
+				} catch (RemoteException e) {
+				}
+			}
+		};
+	};
+	
 	private final Ticker mTicker = new Ticker();
 
 	/**
 	 * set timer start
 	 */
 	public void setTimingBegins() {
-		stepTimeHandler.removeCallbacks(mTicker);
-		stepTimeHandler.post(mTicker);
 		LogUtil.i(TAG, "setTimingBegins");
+		if (a2dpStatus == 1 && avrcpStatus == 1) {
+			if (!stepTimeHandler.hasMessages(MSG_TICKER)) {
+				stepTimeHandler.sendEmptyMessage(MSG_TICKER);
+			}
+		}
 	}
 
 	/**
@@ -1615,4 +1832,5 @@ public class BluetoothMusicModel {
 		} catch (RemoteException e) {
 		}
 	}
+
 }

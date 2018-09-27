@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -34,8 +35,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	private Context mContext;
 	private static BTMusicManager mManager;
 	private BluetoothMusicModel mBluetoothMusicModel;
-	public IBTMusicListener mListener;
-
+	public RemoteCallbackList<IBTMusicListener> mListeners = new RemoteCallbackList<IBTMusicListener>();
 	private String newTitle = " ";
 	private boolean showPop = false;
 
@@ -235,8 +235,10 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void registerBTMusicListener(IBTMusicListener arg0) throws RemoteException {
-		mListener = arg0;
-		LogUtil.e(TAG, " ----------- mListener" + mListener);
+		LogUtil.e(TAG, "registerBTMusicListener");
+		if (arg0 !=null) {
+			mListeners.register(arg0);
+		}
 	}
 
 	@Override
@@ -268,10 +270,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void unregisterBTMusicListener(IBTMusicListener arg0) throws RemoteException {
-		mListener = null;
+		mListeners.unregister(arg0); 
 		System.gc();
 	}
-
 	public BTMusicInfo getBtMusicInfo() throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
