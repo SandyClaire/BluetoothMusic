@@ -1751,6 +1751,9 @@ public class BluetoothMusicModel {
 			if (null == mBTMmanager) {
 				mBTMmanager = BTMusicManager.getInstance(mContext);
 			}
+			if (mBTMmanager.mListeners ==null) {
+				return;
+			}
 			int n = mBTMmanager.mListeners.beginBroadcast();
 			for (int i = 0; i < n; i++) {
 				try {

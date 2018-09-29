@@ -36,6 +36,7 @@ import android.widget.TextView;
 import com.anwsdk.service.AudioControl;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
+import com.hsae.autosdk.radio.RadioConst;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
@@ -560,7 +561,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				ivFM.setSelected(false);
 				ivUSB.setSelected(false);
 				ivBT.setSelected(false);
-				bundle.putInt("band", 0x01);
+				bundle.putInt("band",RadioConst.RadioBandType.AM1);
 				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
 				closeMusicSwitch();
 			} else if (source.equals(Media.fm)) {
@@ -568,7 +569,7 @@ public class MusicMainActivity extends Activity implements ISubject, IMusicView,
 				ivFM.setSelected(true);
 				ivUSB.setSelected(false);
 				ivBT.setSelected(false);
-				bundle.putInt("band", 0x03);
+				bundle.putInt("band", RadioConst.RadioBandType.FM1);
 				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM, bundle);
 				closeMusicSwitch();
 			} else if (source.equals(Media.usb)) {
