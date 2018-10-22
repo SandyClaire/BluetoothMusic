@@ -147,7 +147,9 @@ public class BluetoothMusicModel {
 			LogUtil.i(TAG, "---------- onServiceConnected ------------");
 			mIAnwPhoneLink = IAnwPhoneLink.Stub.asInterface(service);
 			try {
-				if (getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0) == 1) {
+				a2dpStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+				avrcpStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0);
+				if ( avrcpStatus == 1) {
 					getCurrentPlayerAPSetting();
 				}
 			} catch (RemoteException e) {
@@ -161,7 +163,10 @@ public class BluetoothMusicModel {
 			mIAnwPhoneLink = null;
 			isPausing = false;
 			isPlaying = false;
+			a2dpStatus = 0;
+			avrcpStatus = 0;
 		}
+
 	}
 
 	/**
