@@ -1,5 +1,6 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -1282,7 +1284,7 @@ public class BluetoothMusicModel {
 	public void requestAudioFocus(boolean flag) {
 		this.requestAudioFocus(flag, false);
 	}
-
+	
 	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
 		LogUtil.i(TAG, " BT getCurrentSource = " + mSource.getCurrentSource() + ",isHandPuse = " + isHandPuse
 				+ "fromPlay =" + fromPlay);
