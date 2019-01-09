@@ -43,6 +43,8 @@ LOCAL_DEX_PREOPT := false
 
 LOCAL_PROGUARD_FLAG_FILES := proguard-project.txt
 
+LOCAL_SDK_VERSION := current
+
 LOCAL_CERTIFICATE := platform
 
 include $(BUILD_PACKAGE)
