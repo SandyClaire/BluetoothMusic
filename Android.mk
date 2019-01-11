@@ -16,8 +16,6 @@ LOCAL_AIDL_INCLUDES := $(LOCAL_PATH)/src
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) 
 
-LOCAL_SDK_VERSION := current
-
 LOCAL_SRC_FILES += \
 	src/com/anwsdk/service/IAnwAudioGetMediaInfoStatusCallBack.aidl\
 	src/com/anwsdk/service/IAnwBLEConnectionCallBack.aidl\
@@ -43,7 +41,8 @@ LOCAL_DEX_PREOPT := false
 
 LOCAL_PROGUARD_FLAG_FILES := proguard-project.txt
 
-LOCAL_SDK_VERSION := current
+LOCAL_PRIVATE_PLATFORM_APIS := true
+LOCAL_PRIVILEGED_MODULE := true
 
 LOCAL_CERTIFICATE := platform
 
