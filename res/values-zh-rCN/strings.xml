@@ -7,9 +7,11 @@
     <string name="music_source_title">音源选择</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
+    <string name="music_source_radio">收音机</string>
     <string name="music_source_ipod">iPod</string>
-    <string name="music_source_usb">USB</string>
+    <string name="music_source_usb">USB音乐</string>
     <string name="music_source_bluetooth">蓝牙音乐</string>
+    <string name="device_management">设备管理</string>
     <string name="music_matedate_unsupport">未知</string>
     <string name="music_bluetooth_disconnect">未连接</string>
     <string name="music_bluetooth_disconnect_summery">请连接蓝牙设备</string>
@@ -29,5 +31,11 @@
     <string name="bluetooth_enable_carplay_text">Apple Carplay 连接时，蓝牙功能无法使用。</string>
     <string name="music_switch_split">/</string>
     <string name="bluetooth_disconnect">断开</string>
+    <string name="bluetooth_power_not_open">蓝牙未打开</string>
+    <string name="no_support_bluetooth_music">您连接的设备不支持蓝牙音乐功能</string>
+   
 
+     <string name="tip_text_main_no_device_connected">蓝牙设备未连接</string>
+    <string name="tip_text_main_no_device_connected2">如右图:\n请确保手机蓝牙已打开\n且处于可被发现的状态</string>
+    <string name="tip_text_main_no_device_connected3">手机可参照如下流程:\n设置->蓝牙->打开蓝牙->允许新连接</string>
 </resources>

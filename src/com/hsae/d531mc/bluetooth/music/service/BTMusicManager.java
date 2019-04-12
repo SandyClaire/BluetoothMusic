@@ -282,13 +282,13 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	public void disconnectA2dp() throws RemoteException {
 		LogUtil.i(TAG, "--------- disconnectA2dp ");
 		mBluetoothMusicModel.isDisByIpod = true;
-		mBluetoothMusicModel.a2dpDisconnect();
+		//mBluetoothMusicModel.a2dpDisconnect();
 	}
 
 	@Override
 	public String getBtMacAddress() throws RemoteException {
 		LogUtil.i(TAG, "--------- getBtMacAddress ");
-		return mBluetoothMusicModel.getLocalAddress();
+		return null;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.RemoteException;
+import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
@@ -274,11 +275,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void setDeviceVol(boolean flag, int vol) {
-		try {
-			mBluetoothMusicModel.setDeviceVol(flag, vol);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
@@ -291,10 +288,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void autoConnectA2DP() {
-		try {
-			mBluetoothMusicModel.A2DPConnect(getConnectedDevice());
-		} catch (RemoteException e) {
-		}
+		
 	}
 
 	/**
@@ -305,11 +299,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	private String getConnectedDevice() {
 		String[] strAddress = new String[1];
 		String[] strName = new String[1];
-		try {
-			mBluetoothMusicModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 		return strAddress[0];
 	}
 	
@@ -381,5 +371,41 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		if (mBluetoothMusicModel != null) {
 			mBluetoothMusicModel.isHandPuse = false;
 		}
+	}
+	
+	/**
+	 * 得到当前蓝牙连接状态
+	 * @return 
+	 */
+	@Override
+	public int getBTPowerStatus() {
+
+		int backCode = 0;
+		try {
+			backCode = mBluetoothMusicModel.getBTPowerStatus();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			backCode = -3;
+		}
+		LogUtil.i(TAG, "--- getBTPowerStatus = " + backCode);
+		return backCode;
+	
+	}
+
+	@Override
+	public void updateBTPowerStatus(int status) {
+		
+		if(status != MangerConstant.BTPOWER_STATUS_ON){
+			status = -2;
+		}else if(status != MangerConstant.BTPOWER_STATUS_OFF){
+			status = 0;
+		}
+			Message msg = Message.obtain();
+			msg.what = MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE;
+			Bundle mBundle = new Bundle();
+			mBundle.putInt("enableStatus", status);
+			msg.setData(mBundle);
+			this.notify(msg, FLAG_RUN_SYNC);
+	
 	}
 }

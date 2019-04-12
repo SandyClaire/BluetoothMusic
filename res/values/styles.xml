@@ -110,6 +110,7 @@
 
     <style name="timeText">
         <item name="android:textSize">24sp</item>
+        <item name="android:gravity">center</item>
         <item name="android:textColor">@android:color/white</item>
     </style>
 

@@ -18,7 +18,6 @@ public class MusicActionDefine {
     public static final int ACTION_SEACH_CALLBACK = 0X10011;
     public static final int ACTION_SETTING_UPDATE_LOCALNAME = 0X1012;
     
-    
     static public final int ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE = 100;
     
     // CONNECT status

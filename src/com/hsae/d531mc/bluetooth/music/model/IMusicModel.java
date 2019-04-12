@@ -17,7 +17,9 @@ public interface IMusicModel {
 	 * release model
 	 */
 	public void releaseModel();
-
+	
+	public int getBTPowerStatus();
+	
 	/**
 	 * get a2dp connect status
 	 */
@@ -28,6 +30,8 @@ public interface IMusicModel {
 	 * @param status
 	 */
 	public void updateConnectStatusMsg(int status);
+	
+	public void updateBTPowerStatus(int status);
 
 	/**
 	 * set avrcp control command
@@ -118,7 +122,7 @@ public interface IMusicModel {
 	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
 			int nArraySize);
 	/**
-	 * 获取当前模式
+	 * 获取当前模式的状态值
 	 * @param nAttrID
 	 * @return
 	 */

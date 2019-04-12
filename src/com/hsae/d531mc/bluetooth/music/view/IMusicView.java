@@ -52,7 +52,7 @@ public interface IMusicView {
 	public void updateShuffleAllowList(ArrayList<Integer> allowList);
 	
 	/**
-	 * 跟新播放模式状态
+	 * 更新播放模式状态
 	 * @param nAttrID
 	 * @param nAttrValue
 	 */

@@ -8,14 +8,19 @@
     <string name="music_source_title">Audio source selection</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
+    <string name="music_source_radio">Radio</string>
     <string name="music_source_ipod">iPod</string>
-    <string name="music_source_usb">USB</string>
+    <string name="music_source_usb">USB Music</string>
     <string name="music_source_bluetooth">Bluetooth</string>
+    <string name="device_management">Device Management</string>
     <string name="music_matedate_unsupport">Unknown</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth.</string>
     <string name="music_bluetooth_disconnect_tip">Bluetooth Device Disconnected</string>
     <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife is connected \n Bluetooth music function cannot be used</string>
+    <string name="tip_text_main_no_device_connected">Bluetooth Device Disconnected</string>
+    <string name="tip_text_main_no_device_connected2">as the right picture:\nplease ensure your mobile bluetooth is powered on,and can be found.</string>
+    <string name="tip_text_main_no_device_connected3">Mobile phones can refer to the following process:\nSettings->Bluetooth -> Open bluetooth -> Allow new connections</string>
 
     <!-- bluetooth settings -->
     <string name="visible_devices">Available Devices</string>
@@ -32,5 +37,7 @@
     <string name="bluetooth_enable_text">Please turn on bluetooth</string>
     <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
     <string name="music_switch_split">/</string>
+    <string name="bluetooth_power_not_open">Bluetooth not open</string>
+    <string name="no_support_bluetooth_music">The device you are connected to does not support bluetooth music</string>
 
 </resources>

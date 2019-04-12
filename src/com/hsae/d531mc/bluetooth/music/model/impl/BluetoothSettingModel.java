@@ -105,13 +105,9 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	@Override
 	public int stopInquiry() {
 		int backcode = -1;
-		try {
-			backcode = mBluetoothModel.inquiryBtStop();
-			if (backcode == -1) {
-				SearchFinish();
-			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+		//	backcode = mBluetoothModel.inquiryBtStop();
+		if (backcode == -1) {
+			SearchFinish();
 		}
 		LogUtil.i(TAG, " --- stopInquiry");
 		return backcode;
@@ -128,10 +124,8 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 			@Override
 			public void run() {
 				try {
-					mBluetoothModel.pair(address, "0000", Integer.parseInt(strCOD, 16));
+					//mBluetoothModel.pair(address, "0000", Integer.parseInt(strCOD, 16));
 				} catch (NumberFormatException e) {
-					e.printStackTrace();
-				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
 			}
@@ -168,11 +162,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	@Override
 	public boolean isCurrentInquring() {
 
-		try {
-			return mBluetoothModel.isCurrentInquiring();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 		return false;
 	}
 
@@ -189,39 +179,32 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 		String[] strAddress = new String[1];
 		String[] strName = new String[1];
 		mListPairedBeans.clear();
-		try {
-
-			mBluetoothModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
-			mBluetoothModel.getPairedList(nCount, Name, Address, COD);
-			for (int i = 0; i < nCount[0]; i++) {
-				BluetoothDevice bean;
-				if (nCount[0] < PAIRED_DEVICES_MAX_NUM) {
-					if (null != Address[i] && Address[i].equals(strAddress[0])) {
-						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
-								BluetoothDevice.DEVICE_CONNECTED);
-						mListPairedBeans.add(bean);
-					} else {
-						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
-								BluetoothDevice.DEVICE_PAIRED);
-						mListPairedBeans.add(bean);
-					}
-				} else if (i < nCount[0] && i >= (nCount[0] - PAIRED_DEVICES_MAX_NUM)) {
-					if (null != Address[i] && Address[i].equals(strAddress[0])) {
-						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
-								BluetoothDevice.DEVICE_CONNECTED);
-						mListPairedBeans.add(bean);
-					} else {
-						bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
-								BluetoothDevice.DEVICE_PAIRED);
-						mListPairedBeans.add(bean);
-					}
+		for (int i = 0; i < nCount[0]; i++) {
+			BluetoothDevice bean;
+			if (nCount[0] < PAIRED_DEVICES_MAX_NUM) {
+				if (null != Address[i] && Address[i].equals(strAddress[0])) {
+					bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
+							BluetoothDevice.DEVICE_CONNECTED);
+					mListPairedBeans.add(bean);
 				} else {
-					mBluetoothModel.unPair(Address[i]);
+					bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
+							BluetoothDevice.DEVICE_PAIRED);
+					mListPairedBeans.add(bean);
 				}
-				LogUtil.i(TAG, "Name[i] = " + Name[i]);
+			} else if (i < nCount[0] && i >= (nCount[0] - PAIRED_DEVICES_MAX_NUM)) {
+				if (null != Address[i] && Address[i].equals(strAddress[0])) {
+					bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
+							BluetoothDevice.DEVICE_CONNECTED);
+					mListPairedBeans.add(bean);
+				} else {
+					bean = new BluetoothDevice(Name[i], Address[i], String.valueOf(COD[i]), 0,
+							BluetoothDevice.DEVICE_PAIRED);
+					mListPairedBeans.add(bean);
+				}
+			} else {
+				
 			}
-		} catch (RemoteException e) {
-			e.printStackTrace();
+			LogUtil.i(TAG, "Name[i] = " + Name[i]);
 		}
 
 		LogUtil.i(TAG, " getPairedDevies -- SIZE = " + mListPairedBeans.size());
@@ -233,11 +216,7 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	public String getConnectedDevice() {
 		String[] strAddress = new String[1];
 		String[] strName = new String[1];
-		try {
-			mBluetoothModel.getConnectedDeviceInfo(MangerConstant.PROFILE_HF_CHANNEL, strAddress, strName, 0);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 		return strAddress[0];
 	}
 
@@ -261,22 +240,13 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 
 	@Override
 	public void disconnectMoblie() {
-		try {
-			mBluetoothModel.a2dpDisconnect();
-			mBluetoothModel.disconnectMobiel();
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
 	public int unpairDevice(String pairedAddress) {
 		int backcode = -1;
-		try {
-			backcode = mBluetoothModel.unPair(pairedAddress);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 		return backcode;
 	}
 
@@ -300,23 +270,13 @@ public class BluetoothSettingModel extends ContactsSubjecter implements IBluetoo
 	 * @param address
 	 */
 	private void connect(String address) {
-		try {
-			mBluetoothModel.connectMobile(address);
-			LogUtil.i(TAG, "connect --- address = " + address);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+		
 	}
 
 	@Override
 	public String getLocalName() {
 		String name = "";
-		try {
-			name = mBluetoothModel.getDeviceName();
-			LogUtil.i(TAG, "getLocalName --- name = " + name);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+	
 		return name;
 	}
 

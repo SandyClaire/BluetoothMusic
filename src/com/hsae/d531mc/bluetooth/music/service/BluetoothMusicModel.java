@@ -37,6 +37,10 @@ import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
+import com.hsae.bluetoothsdk.music.MusicCallback;
+import com.hsae.bluetoothsdk.music.MusicProxy;
+import com.hsae.bluetoothsdk.setting.BluetoothCallback;
+import com.hsae.bluetoothsdk.setting.BluetoothProxy;
 import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
@@ -46,17 +50,16 @@ import com.hsae.d531mc.bluetooth.music.util.Util;
 /**
  * 
  * @author wangda
- *
+ * 
  */
 public class BluetoothMusicModel {
 
 	private static final String TAG = "BluetoothMusicModel";
-	
+
 	private final Object lockOfBTMmanager = new Object();
 	private static BluetoothMusicModel mInstance;
 	private static Context mContext;
-	private IAnwPhoneLink mIAnwPhoneLink;
-	private BluetoothConnection mConnection = new BluetoothConnection();
+	// private IAnwPhoneLink mIAnwPhoneLink;
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
 	private IBluetoothSettingModel mIBluetoothSettingModel;
@@ -100,9 +103,8 @@ public class BluetoothMusicModel {
 
 	// 音乐是否播放
 	public boolean isPlay = false;
-	
-	public final Source mSource = new Source();
 
+	public final Source mSource = new Source();
 
 	/**
 	 * 循环集合
@@ -110,6 +112,11 @@ public class BluetoothMusicModel {
 	public ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
 
 	private AudioManager audioManager;
+
+	private MusicProxy mMusicProxy;
+	private BluetoothProxy mBluetoothProxy;
+	
+	private BluetoothAllCallback mBluetoothAllCallback;
 
 	/**
 	 * 随机集合
@@ -124,52 +131,138 @@ public class BluetoothMusicModel {
 		}
 		return mInstance;
 	}
-
+	
 	public BluetoothMusicModel() {
-		audioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
+		audioManager = (AudioManager) mContext
+				.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
+
+		Log.i(TAG, "BluetoothMusicModel init");
+
+		mMusicProxy = MusicProxy.getInstance(mContext);
+		mMusicProxy.registCallback(mMusicProxyCallback);
+
+		/*
+		 * mMusicProxy.fastbackward(touchup); //快退
+		 * mMusicProxy.fastForward(touchup); //快进 mMusicProxy.getId3(); //ID3
+		 * mMusicProxy.getMusicInfo(); mMusicProxy.getMuteStatus(); //当前静音状态
+		 * mMusicProxy.getPlayMode(); //当前播放模式 mMusicProxy.getPlayStatus(); //
+		 * mMusicProxy.getPosition(); // mMusicProxy.mute(); //静音
+		 * mMusicProxy.next(); mMusicProxy.pause(); mMusicProxy.play();
+		 * mMusicProxy.previous(); //向前 mMusicProxy.setPlayMode(mode); //参数
+		 * mMusicProxy.supportPlayMode(); // mMusicProxy.unmute(); //解除静音
+		 */
+		mBluetoothProxy = BluetoothProxy.getInstance(mContext);
+		mBluetoothProxy.registCallback(mBluetoothProxyCallback);
+
+		/*
+		 * mBluetoothProxy.acceptConnect(profile);
+		 * mBluetoothProxy.acceptPair(address, ssp); //
+		 * 
+		 * mBluetoothProxy.getConnectStatus(profile);
+		 * 
+		 * mBluetoothProxy.getPowerStatus(); mBluetoothProxy.isA2dpConnect();
+		 * mBluetoothProxy.isAvrcpConnect(); mBluetoothProxy.isHfpConnect();
+		 */
+
 	}
 
-	public void bindService() {
-		Intent intent = new Intent(MangerConstant.ServiceActionName);
-		intent.setPackage("com.anwsdk.service");
-		mContext.startService(intent);
-		mContext.bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
+	public void bindService() {/*
+								 * Intent intent = new
+								 * Intent(MangerConstant.ServiceActionName); //
+								 * intent.setPackage("com.anwsdk.service");
+								 * mContext.startService(intent);
+								 * mContext.bindService(intent, mConnection,
+								 * Context.BIND_AUTO_CREATE);
+								 */
 	}
 
 	public void releaseModel() {
 		mRepeatAllowedlist.clear();
 		mShuffleAllowedlist.clear();
 		mListDevices.clear();
+
 	}
 
-	private class BluetoothConnection implements ServiceConnection {
+	public MusicCallback mMusicProxyCallback = new MusicCallback() {
 
 		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			LogUtil.i(TAG, "---------- onServiceConnected ------------");
-			mIAnwPhoneLink = IAnwPhoneLink.Stub.asInterface(service);
-			try {
-				a2dpStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
-				avrcpStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, 0);
-				if ( avrcpStatus == 1) {
-					getCurrentPlayerAPSetting();
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
+		public void onA2dpStatusChanged(int status) {
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onA2dpStatusChanged(status);
 			}
 		}
 
 		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			LogUtil.i(TAG, "---------- onServiceDisconnected ------------");
-			mIAnwPhoneLink = null;
-			isPausing = false;
-			isPlaying = false;
-			a2dpStatus = 0;
-			avrcpStatus = 0;
+		public void onPlayStatusChanged(int state) throws RemoteException {
+			super.onPlayStatusChanged(state);
+
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onPlayStatusChanged(state);
+			}
+		
 		}
 
-	}
+		@Override
+		public void onPositionChanged(String position) throws RemoteException {
+			super.onPositionChanged(position);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onPositionChanged(position);
+			}
+		}
+
+		@Override
+		public void onID3Changed(String title, String album, String artist,
+				String totalTime) throws RemoteException {
+			super.onID3Changed(title, album, artist, totalTime);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onID3Changed(title, album, artist, totalTime);
+			}
+		}
+
+		@Override
+		public void onPlayModelChanged(int modelStatus) throws RemoteException {
+			super.onPlayModelChanged(modelStatus);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onPlayModelChanged(modelStatus);
+			}
+		};
+
+	};
+
+	public BluetoothCallback mBluetoothProxyCallback = new BluetoothCallback() {
+
+		@Override
+		public void onConnectStateChanged(int profile, int state, int reason) {
+			super.onConnectStateChanged(profile, state, reason);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onConnectStateChanged(profile, state, reason);
+			}
+		}
+
+		@Override
+		public void onPairStateChanged(String address, int status) {
+			super.onPairStateChanged(address, status);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onPairStateChanged(address, status);
+			}
+		}
+
+		@Override
+		public void onPowerStateChanged(int state) {
+			super.onPowerStateChanged(state);
+			
+			if(mBluetoothAllCallback != null){
+				mBluetoothAllCallback.onPowerStateChanged(state);
+			}
+		}
+
+	};
 
 	/**
 	 * This function returns the current power status
@@ -179,15 +272,16 @@ public class BluetoothMusicModel {
 	 *         3 In power off process
 	 * @throws RemoteException
 	 */
+	// 得到当前蓝牙连接状态
 	public int getBTPowerStatus() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+		if (null == mBluetoothProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_GetBTPowerStatus();
+		return mBluetoothProxy.getPowerStatus();
 	}
 
 	/**
@@ -202,54 +296,16 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int getConnectStatus(int nProfileType, int nIndex) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+	public int getConnectStatus(int nProfileType, int nIndex)
+			throws RemoteException {
+		if (null == mBluetoothProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_GetConnectStatus(nProfileType, nIndex);
-	}
-
-	/**
-	 * Use this function to retrieve the current status of A2DP. When A2DP is
-	 * playing, this function will return true, otherwise return false.
-	 * 
-	 * @return Returns the current status of A2DP.
-	 * @throws RemoteException
-	 */
-	public boolean isCurrentA2DPPlaying() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return false;
-		}
-		return mIAnwPhoneLink.ANWBT_IsCurrentA2DPPlaying();
-	}
-
-	/**
-	 * Use this function to establish the Bluetooth connection with the paired
-	 * device. It connects to the A2DP profile.
-	 * 
-	 * @param address
-	 *            [in] The Bluetooth address of remote device
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
-	public int A2DPConnect(String address) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_A2DPConnect(address);
+		return mBluetoothProxy.getConnectStatus(nProfileType);
 	}
 
 	/**
@@ -260,16 +316,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int A2DPDisconnect() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_A2DPDisconnect();
-	}
+	/*
+	 * public int A2DPDisconnect() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_A2DPDisconnect(); }
+	 */
 
 	/**
 	 * This function retrieves the information of current connected device.
@@ -287,17 +341,16 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int getConnectedDeviceInfo(int nProfileType, String[] strAddress, String[] strName, int nIndex)
-			throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_GetConnectedDeviceInfo(nProfileType, strAddress, strName, nIndex);
-	}
+	/*
+	 * public int getConnectedDeviceInfo(int nProfileType, String[] strAddress,
+	 * String[] strName, int nIndex) throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_GetConnectedDeviceInfo(nProfileType, strAddress,
+	 * strName, nIndex); }
+	 */
 
 	/**
 	 * This function retrieves A2DP Meta data of current connected A2DP
@@ -310,16 +363,30 @@ public class BluetoothMusicModel {
 	 * @throws RemoteException
 	 *             Remarks This function is valid after AVRCP is connected.
 	 */
-	public String A2DPGetCurrentAttributes(int attributesID) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return "";
+	
+	  public String A2DPGetCurrentAttributes(int attributesID) throws
+	  RemoteException { 
+		  if (null == mMusicProxy) { 
+			  return "";
+		  }
+		  if (mMusicProxy.getId3() !=null) {
+			
+			  switch (attributesID) {
+			  case AudioControl.MEDIA_ATTR_MEDIA_TITLE:
+				  return mMusicProxy.getId3().getTitle();
+			  case AudioControl.MEDIA_ATTR_ARTIST_NAME:	
+				  return mMusicProxy.getId3().getArtist();
+			  case AudioControl.MEDIA_ATTR_ALBUM_NAME:
+				  return mMusicProxy.getId3().getAlbum();
+			  case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
+				  return mMusicProxy.getId3().getTotalTime();
+			  }
 		}
-		return mIAnwPhoneLink.ANWBT_A2DPGetCurrentAttributes(attributesID);
-	}
+		  
+		return "";
+	   
+	  }
+	 
 
 	/**
 	 * Use this function to get the current play status, the current play
@@ -333,15 +400,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int getPlayStatus() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+	public void getPlayStatus() throws RemoteException {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
-			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioGetPlayStatus();
+		 mMusicProxy.getMusicInfo();
 	}
 
 	/**
@@ -353,15 +419,10 @@ public class BluetoothMusicModel {
 	 * @throws RemoteException
 	 *             Remarks This function is valid after A2DP is connected.
 	 */
+	// 是否支持A2DP
 	public boolean isA2DPSupportMetadata() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return false;
-		}
-		return mIAnwPhoneLink.ANWBT_IsA2DPSupportMetadata();
+
+		return mMusicProxy.supportPlayMode();
 	}
 
 	/**
@@ -379,15 +440,17 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray, int nArraySize) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+	// 获取nAttrID对应的播放模式集合，返回值为数组大小
+	public int retrieveCurrentPlayerAPSupported(int nAttrID,
+			int[] nAllowArray, int nArraySize) throws RemoteException {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioRetrieveCurrentPlayerAPSupported(nAttrID, nAllowArray, nArraySize);
+		 return 1;
 	}
 
 	/**
@@ -400,36 +463,17 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int retrieveCurrentPlayerAPSetting(int nAttrID) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+	// 获取当前模式的状态值、nAttrId用于区别 随机\顺序
+	public int retrieveCurrentPlayerAPSetting(int nAttrID)
+			throws RemoteException {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioRetrieveCurrentPlayerAPSetting(nAttrID);
-	}
-
-	/**
-	 * Use this function to get the current player application setting by send
-	 * avrcp command to target.. This function returns immediately. You must use
-	 * registerReceiver to register a BroadcastReceiver with action
-	 * MSG_ACTION_AVRCP_PLAYERSETTING_CHANGED_EVENT to get those informations
-	 * 
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
-	public int getCurrentPlayerAPSetting() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_AudioGetCurrentPlayerAPSetting();
+		return mMusicProxy.getPlayMode();
 	}
 
 	/**
@@ -452,20 +496,22 @@ public class BluetoothMusicModel {
 	 *             ANWBT_AudioSetCurrentPlayerAPSetting to set the player
 	 *             attribute value if it has supported.
 	 */
-	public int setCurrentPlayerAPSetting(int nAttrID, int nAttrValue) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+	// 设置当前播放模式，nAttrId用于区别 随机\顺序
+	public int setCurrentPlayerAPSetting(int nAttrID, int mode)
+			throws RemoteException {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioSetCurrentPlayerAPSetting(nAttrID, nAttrValue);
+		mMusicProxy.setPlayMode(mode);
+		return 1;
 	}
 
 	public boolean isFastForward = false;
 	public boolean isRewind = false;
-
 	/**
 	 * This function sends the AVRCP command to mobile phone for controlling the
 	 * music playing.
@@ -481,24 +527,38 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
+
+	// 快进,快退
 	public int AVRCPControlEx(int op_code, int nActFlag) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+		Log.i(TAG, "op_code = " + op_code + " ,nActFlag = " + nActFlag);
 		isOnFW = nActFlag == 0;
-		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 0)
-			isFastForward = true;
-		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 0)
-			isRewind = true;
-		if (op_code == AudioControl.CONTROL_FASTFORWARD && nActFlag == 1)
-			isFastForward = false;
-		if (op_code == AudioControl.CONTROL_REWIND && nActFlag == 1)
-			isRewind = false;
-		return mIAnwPhoneLink.ANWBT_AVRCPControlEx(op_code, nActFlag);
+		
+		if (op_code == AudioControl.CONTROL_FASTFORWARD ){
+			
+			if (nActFlag == 0) {
+				mMusicProxy.fastForward(false); 
+				isFastForward = true;
+			}else{
+				mMusicProxy.fastForward(true);
+				isFastForward = false;
+			}
+		}else if (op_code == AudioControl.CONTROL_REWIND ){
+			if (nActFlag == 0) {
+				mMusicProxy.fastbackward(false); 
+				isRewind = true;
+			}else{
+				mMusicProxy.fastbackward(true);
+				isRewind = false;
+			}
+		}
+		return 1;
 	}
 
 	/**
@@ -508,36 +568,14 @@ public class BluetoothMusicModel {
 	 * @throws RemoteException
 	 */
 	public int getStreamMode() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioGetStreamMode();
-	}
-
-	/**
-	 * Use this function to set stream volume gain value.
-	 * 
-	 * @param volume
-	 *            [in] The volume gain value (0.0f ~ 1.0f)
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 *             This function must be used on streaming start, otherwise
-	 *             return an error.
-	 */
-	public int setStreamVolume(float volume) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_AudioSetStreamVolume(volume);
+		return mMusicProxy.getMuteStatus();
 	}
 
 	/**
@@ -551,8 +589,9 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
+	// 播放，暂停，上一曲，下一曲
 	public int AVRCPControl(int op_code) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
@@ -563,9 +602,9 @@ public class BluetoothMusicModel {
 		// LogUtil.i(TAG, "未获得焦点、无法操作蓝牙音乐");
 		// return -999;
 		// }
-		//
-
-		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + " , isPausing = " + isPausing);
+		
+		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + " , isPausing = "
+				+ isPausing);
 		if (op_code == AudioControl.CONTROL_PLAY) {
 			if (!isPausing && isPlay) {
 				LogUtil.i(TAG, "now is playing , filter out this op_code");
@@ -574,7 +613,8 @@ public class BluetoothMusicModel {
 
 			isHandPuse = false;
 			if (a2dpStatus == 0) {
-				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",but now disable to play");
+				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code
+						+ ",but now disable to play");
 				return -1;
 			}
 			isPlaying = true;
@@ -583,16 +623,29 @@ public class BluetoothMusicModel {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
+			mMusicProxy.play();
 		} else if (op_code == AudioControl.CONTROL_PAUSE) {
-			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code );
+			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
 			if (!isPlay && isPlaying) {
-				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + ",disable to pause, because now is paused");
+				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code
+						+ ",disable to pause, because now is paused");
 				return -1;
 			}
 			isPausing = true;
 			removeAutoPlay();
+			mMusicProxy.pause();
 		}
-		return mIAnwPhoneLink.ANWBT_AVRCPControl(op_code);
+		
+		if (op_code == AudioControl.CONTROL_FORWARD) {
+			
+			mMusicProxy.next();
+		}
+		
+		if(op_code == AudioControl.CONTROL_BACKWARD){
+			mMusicProxy.previous();
+		}
+		
+		return 1;
 	}
 
 	/**
@@ -603,12 +656,11 @@ public class BluetoothMusicModel {
 	 * 
 	 * @throws RemoteException
 	 */
-	public int inquiryBtDevices(IAnwInquiryCallBackEx mInquiryCallBack) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack);
-	}
+	/*
+	 * public int inquiryBtDevices(IAnwInquiryCallBackEx mInquiryCallBack)
+	 * throws RemoteException { if (null == mIAnwPhoneLink) { return errorCode;
+	 * } return mIAnwPhoneLink.ANWBT_DeviceInquiryEx(mInquiryCallBack); }
+	 */
 
 	/**
 	 * This function cancels the current inquiry operation.
@@ -616,13 +668,11 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public int inquiryBtStop() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_DeviceInquiryStop();
-	}
-
+	/*
+	 * public int inquiryBtStop() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_DeviceInquiryStop(); }
+	 */
 	/**
 	 * This function is used to pair with Bluetooth remote device.
 	 * 
@@ -637,16 +687,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int pair(String address, String pin_code, int cod) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_DevicePair(address, pin_code, cod);
-	}
+	/*
+	 * public int pair(String address, String pin_code, int cod) throws
+	 * RemoteException { if (null == mIAnwPhoneLink) { // In this case the
+	 * service has crashed before we could even // do anything with it; we can
+	 * count on soon being // disconnected (and then reconnected if it can be
+	 * restarted) // so there is no need to do anything here. return errorCode;
+	 * } return mIAnwPhoneLink.ANWBT_DevicePair(address, pin_code, cod); }
+	 */
 
 	/**
 	 * Use this function to retrieve the current status of inquiry.
@@ -654,16 +702,14 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public boolean isCurrentInquiring() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return false;
-		}
-		return mIAnwPhoneLink.ANWBT_IsCurrentInquiring();
-	}
+	/*
+	 * public boolean isCurrentInquiring() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return false; } return
+	 * mIAnwPhoneLink.ANWBT_IsCurrentInquiring(); }
+	 */
 
 	/**
 	 * This function retrieves the paired list.
@@ -681,17 +727,16 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int getPairedList(int[] nCount, String[] Name, String[] Address, int[] cod) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-
-		return mIAnwPhoneLink.ANWBT_GetPairedList(nCount, Name, Address, cod);
-	}
+	/*
+	 * public int getPairedList(int[] nCount, String[] Name, String[] Address,
+	 * int[] cod) throws RemoteException { if (null == mIAnwPhoneLink) { // In
+	 * this case the service has crashed before we could even // do anything
+	 * with it; we can count on soon being // disconnected (and then reconnected
+	 * if it can be restarted) // so there is no need to do anything here.
+	 * return errorCode; }
+	 * 
+	 * return mIAnwPhoneLink.ANWBT_GetPairedList(nCount, Name, Address, cod); }
+	 */
 
 	/**
 	 * This function is used to disconnect a previous connected Bluetooth
@@ -701,16 +746,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int disconnectMobiel() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_DisconnectMobile();
-	}
+	/*
+	 * public int disconnectMobiel() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_DisconnectMobile(); }
+	 */
 
 	/**
 	 * This function is used to disconnect a previous connected Bluetooth
@@ -720,16 +763,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int a2dpDisconnect() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_A2DPDisconnect();
-	}
+	/*
+	 * public int a2dpDisconnect() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_A2DPDisconnect(); }
+	 */
 
 	/**
 	 * This function is used to un-pair the Bluetooth device which is already
@@ -741,16 +782,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int unPair(String address) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_DeviceUnPair(address);
-	}
+	/*
+	 * public int unPair(String address) throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_DeviceUnPair(address); }
+	 */
 
 	/**
 	 * Use this function to establish the Bluetooth connection with the paired
@@ -762,16 +801,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int a2dpConnect(String address) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_A2DPConnect(address);
-	}
+	/*
+	 * public int a2dpConnect(String address) throws RemoteException { if (null
+	 * == mIAnwPhoneLink) { // In this case the service has crashed before we
+	 * could even // do anything with it; we can count on soon being //
+	 * disconnected (and then reconnected if it can be restarted) // so there is
+	 * no need to do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_A2DPConnect(address); }
+	 */
 
 	/**
 	 * Use this function to establish the Bluetooth connection with the paired
@@ -789,16 +826,14 @@ public class BluetoothMusicModel {
 	 *         failure.
 	 * @throws RemoteException
 	 */
-	public int connectMobile(String address) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return errorCode;
-		}
-		return mIAnwPhoneLink.ANWBT_ConnectMobile(address);
-	}
+	/*
+	 * public int connectMobile(String address) throws RemoteException { if
+	 * (null == mIAnwPhoneLink) { // In this case the service has crashed before
+	 * we could even // do anything with it; we can count on soon being //
+	 * disconnected (and then reconnected if it can be restarted) // so there is
+	 * no need to do anything here. return errorCode; } return
+	 * mIAnwPhoneLink.ANWBT_ConnectMobile(address); }
+	 */
 
 	/**
 	 * Use this function to set stream volume to mute or un-mute.
@@ -809,20 +844,31 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
+	// 设置静音模式
 	public synchronized int audioSetStreamMode(int mode) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
+		if (null == mMusicProxy) {
 			// In this case the service has crashed before we could even
 			// do anything with it; we can count on soon being
 			// disconnected (and then reconnected if it can be restarted)
 			// so there is no need to do anything here.
 			return errorCode;
 		}
+
 		int currentAudioMode = getStreamMode();
-		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode + " , currentAudioMode = " + currentAudioMode);
+		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode
+				+ " , currentAudioMode = " + currentAudioMode);
 		if (mode == currentAudioMode) {
 			return -1;
 		}
-		return mIAnwPhoneLink.ANWBT_AudioSetStreamMode(mode);
+
+		if (mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE) {
+			mMusicProxy.unmute();
+
+		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE) {
+			mMusicProxy.mute();
+
+		}
+		return 1;
 	}
 
 	/**
@@ -831,46 +877,23 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public String getDeviceName() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return "";
-		}
-		return mIAnwPhoneLink.ANWBT_GetDeviceName();
-	}
-
-	public String getLocalAddr() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return "";
-		}
-		return mIAnwPhoneLink.ANWBT_ReadLocalAddr();
-	}
-
-	/**
-	 * 设置手机声音
-	 * 
-	 * @param bSpeaker
-	 * @param nVal
-	 * @return
-	 * @throws RemoteException
+	/*
+	 * public String getDeviceName() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return ""; } return
+	 * mIAnwPhoneLink.ANWBT_GetDeviceName(); }
 	 */
-	public boolean setDeviceVol(boolean bSpeaker, int nVal) throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return false;
-		}
-		return mIAnwPhoneLink.ANWBT_SetDeviceVol(bSpeaker, nVal);
-	}
+
+	/*
+	 * public String getLocalAddr() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return ""; } return
+	 * mIAnwPhoneLink.ANWBT_ReadLocalAddr(); }
+	 */
 
 	/**
 	 * Use this function to retrieve the Bluetooth name of remote device.
@@ -878,23 +901,22 @@ public class BluetoothMusicModel {
 	 * @return
 	 * @throws RemoteException
 	 */
-	public String getLocalAddress() throws RemoteException {
-		if (null == mIAnwPhoneLink) {
-			// In this case the service has crashed before we could even
-			// do anything with it; we can count on soon being
-			// disconnected (and then reconnected if it can be restarted)
-			// so there is no need to do anything here.
-			return "";
-		}
-		return mIAnwPhoneLink.ANWBT_ReadLocalAddr();
-	}
+	/*
+	 * public String getLocalAddress() throws RemoteException { if (null ==
+	 * mIAnwPhoneLink) { // In this case the service has crashed before we could
+	 * even // do anything with it; we can count on soon being // disconnected
+	 * (and then reconnected if it can be restarted) // so there is no need to
+	 * do anything here. return ""; } return
+	 * mIAnwPhoneLink.ANWBT_ReadLocalAddr(); }
+	 */
 
 	/**
 	 * 注册 Blutooth Setting 监听
 	 * 
 	 * @param bluetoothSettingModel
 	 */
-	public void registBluetoothSettingListener(IBluetoothSettingModel bluetoothSettingModel) {
+	public void registBluetoothSettingListener(
+			IBluetoothSettingModel bluetoothSettingModel) {
 		mIBluetoothSettingModel = bluetoothSettingModel;
 	}
 
@@ -939,11 +961,7 @@ public class BluetoothMusicModel {
 
 		@Override
 		protected Integer doInBackground(Void... params) {
-			try {
-				mListDevices.clear();
-				return inquiryBtDevices(InquiryCallBack);
-			} catch (RemoteException e) {
-			}
+
 			return 0;
 		}
 
@@ -966,7 +984,8 @@ public class BluetoothMusicModel {
 
 			switch (msg.what) {
 			case MSG_AUTOPLAY:
-				if (!isPlay && playtimes < 4 && App.BT_MUSIC.equals(getCurrentSource())) {
+				if (!isPlay && playtimes < 4
+						&& App.BT_MUSIC.equals(getCurrentSource())) {
 					playtimes++;
 					LogUtil.i(TAG, "MSG_AUTOPLAY playtimes = " + playtimes);
 					try {
@@ -988,8 +1007,9 @@ public class BluetoothMusicModel {
 	private IAnwInquiryCallBackEx InquiryCallBack = new IAnwInquiryCallBackEx.Stub() {
 
 		@Override
-		public void InquiryDataRsp(String address, String strName, int cod, int RSSI, BT_ADV_DATA EirData,
-				boolean bComplete) throws RemoteException {
+		public void InquiryDataRsp(String address, String strName, int cod,
+				int RSSI, BT_ADV_DATA EirData, boolean bComplete)
+				throws RemoteException {
 			final boolean mComplete = bComplete;
 			final String mName = strName;
 			final String mAddress = address;
@@ -1007,24 +1027,24 @@ public class BluetoothMusicModel {
 						StringBuilder mBuilder = new StringBuilder();
 						mBuilder.append("0x");
 						mBuilder.append(Integer.toHexString(mCod));
-						try {
-							getPairedList(mCount, Name, Address, COD);
-						} catch (RemoteException e) {
-						}
+
 						for (int i = 0; i < mCount[0]; i++) {
 							if (mAddress.equals(Address[i])) {
 								return;
 							}
 						}
-						BluetoothDevice bean = new BluetoothDevice(mName, mAddress, mBuilder.toString(), mRSSI,
+						BluetoothDevice bean = new BluetoothDevice(mName,
+								mAddress, mBuilder.toString(), mRSSI,
 								BluetoothDevice.DEVICE_UNPAIR);
 						mListDevices.add(bean);
 						if (mIBluetoothSettingModel != null) {
-							mIBluetoothSettingModel.getVisibleDevices(bean, false);
+							mIBluetoothSettingModel.getVisibleDevices(bean,
+									false);
 						}
 					} else {
 						if (mIBluetoothSettingModel != null) {
-							mIBluetoothSettingModel.getVisibleDevices(null, true);
+							mIBluetoothSettingModel.getVisibleDevices(null,
+									true);
 						}
 					}
 				}
@@ -1039,7 +1059,8 @@ public class BluetoothMusicModel {
 	 * @param address
 	 */
 	public void updateUnpairListByStatus(int status, String address) {
-		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status + "-- address = " + address);
+		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
+				+ "-- address = " + address);
 		if (status == MangerConstant.Anw_SUCCESS) {
 			for (int i = 0; i < mListDevices.size(); i++) {
 				if (mListDevices.get(i).getAddress().equals(address)) {
@@ -1049,28 +1070,24 @@ public class BluetoothMusicModel {
 		} else {
 			for (int i = 0; i < mListDevices.size(); i++) {
 				if (mListDevices.get(i).getAddress().equals(address)) {
-					mListDevices.get(i).setStatus(BluetoothDevice.DEVICE_UNPAIR);
+					mListDevices.get(i)
+							.setStatus(BluetoothDevice.DEVICE_UNPAIR);
 				}
 			}
 		}
 	}
 
 	/**
-	 * 监听蓝牙开关状体
+	 * 监听蓝牙开关状态
 	 * 
 	 * @param status
 	 */
 	public void updateBTEnalbStatus(int status) {
-		if (null != mIBluetoothSettingModel) {
-			mIBluetoothSettingModel.updateBtEnableStatus(status);
-			handler.postDelayed(new Runnable() {
 
-				@Override
-				public void run() {
-					mIBluetoothSettingModel.updateLocalName();
-				}
-			}, 2000);
+		if (mIMusicModel != null) {
+			mIMusicModel.updateBTPowerStatus(status);
 		}
+
 	}
 
 	/**
@@ -1129,7 +1146,7 @@ public class BluetoothMusicModel {
 	}
 
 	/**
-	 * 跟新播放状态
+	 * 更新播放状态
 	 * 
 	 * @param flag
 	 */
@@ -1210,7 +1227,8 @@ public class BluetoothMusicModel {
 	 * @param AllowedList
 	 * @param nCurrentMode
 	 */
-	public void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList, int nCurrentMode) {
+	public void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
+			int nCurrentMode) {
 		int nSupportSize = 0;
 		if (AllowedList != null) {
 			nSupportSize = AllowedList.size();
@@ -1261,7 +1279,8 @@ public class BluetoothMusicModel {
 	 */
 	@SuppressWarnings("deprecation")
 	public boolean isActive() {
-		ActivityManager am = (ActivityManager) mContext.getSystemService(Context.ACTIVITY_SERVICE);
+		ActivityManager am = (ActivityManager) mContext
+				.getSystemService(Context.ACTIVITY_SERVICE);
 		ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
 		String MusicPlayUI = "com.hsae.d531mc.bluetooth.music.MusicMainActivity";
 		return cn.getClassName().equals(MusicPlayUI);
@@ -1272,10 +1291,10 @@ public class BluetoothMusicModel {
 	 * @param isChanged
 	 */
 	public void mainAudioChanged(boolean isActivite) {
-		LogUtil.i(TAG, "mainAudioChanged == " + mSource.getCurrentSource() + "isActivite = " + isActivite);
+		LogUtil.i(TAG, "mainAudioChanged == " + mSource.getCurrentSource()
+				+ "isActivite = " + isActivite);
 		mSource.mainAudioChanged(App.BT_MUSIC, isActivite);
 	}
-
 
 	public boolean isAudioFocused = false;
 	int playtimes = 0;
@@ -1284,10 +1303,10 @@ public class BluetoothMusicModel {
 	public void requestAudioFocus(boolean flag) {
 		this.requestAudioFocus(flag, false);
 	}
-	
+
 	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
-		LogUtil.i(TAG, " BT getCurrentSource = " + mSource.getCurrentSource() + ",isHandPuse = " + isHandPuse
-				+ "fromPlay =" + fromPlay);
+		LogUtil.i(TAG, " BT getCurrentSource = " + mSource.getCurrentSource()
+				+ ",isHandPuse = " + isHandPuse + "fromPlay =" + fromPlay);
 		try {
 			if (fromPlay) {
 				doPlay(showOrBack);
@@ -1318,7 +1337,8 @@ public class BluetoothMusicModel {
 				LogUtil.i("cruze", "doPlay 准备抢占焦点");
 				boolean canSwich = tryToSwitchSource();
 				if (canSwich) {
-					int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
+					int result = audioManager.requestAudioFocus(mAFCListener,
+							AudioManager.STREAM_MUSIC,
 							AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
@@ -1344,8 +1364,10 @@ public class BluetoothMusicModel {
 			LogUtil.i("cruze", "doRequest 准备抢占焦点");
 			boolean canSwich = tryToSwitchSource();
 			if (canSwich) {
-				int result = audioManager.requestAudioFocus(mAFCListener, AudioManager.STREAM_MUSIC,
-						AudioManager.AUDIOFOCUS_GAIN);
+				int result = audioManager
+						.requestAudioFocus(mAFCListener,
+								AudioManager.STREAM_MUSIC,
+								AudioManager.AUDIOFOCUS_GAIN);
 				if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
 					isAudioFocused = true;
@@ -1358,7 +1380,8 @@ public class BluetoothMusicModel {
 						}
 					}
 					if (a2dpStatus == 0) {
-						LogUtil.i(TAG, "notifyAutoCoreWarning doRequest 1111111");
+						LogUtil.i(TAG,
+								"notifyAutoCoreWarning doRequest 1111111");
 						notifyAutoCoreWarning();
 					}
 				} else {
@@ -1379,7 +1402,8 @@ public class BluetoothMusicModel {
 			LogUtil.i(TAG, "autoConnectA2DP : mIMusicModel is null ");
 			return false;
 		}
-		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus + " --- a2dpStatus = " + a2dpStatus);
+		LogUtil.i(TAG, "autoConnA2dp : hfpStatus = " + hfpStatus
+				+ " --- a2dpStatus = " + a2dpStatus);
 		if (hfpStatus == 1 && a2dpStatus != 1) {
 			mIMusicModel.autoConnectA2DP();
 			return true;
@@ -1388,7 +1412,6 @@ public class BluetoothMusicModel {
 	}
 
 	private Handler mHandler = new Handler();
-
 
 	private boolean pauseByMobile = false;
 	/**
@@ -1401,7 +1424,8 @@ public class BluetoothMusicModel {
 			int callstatus = phoneProxy.getPhoneState();
 			switch (focusChange) {
 			case AudioManager.AUDIOFOCUS_GAIN:
-				LogUtil.i(TAG, "cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
+				LogUtil.i(TAG,
+						"cruze mAFCListener---audio focus change AUDIOFOCUS_GAIN");
 				isAudioFocused = true;
 				mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 				if (a2dpStatus == 1) {
@@ -1421,32 +1445,35 @@ public class BluetoothMusicModel {
 					if (!isHandPuse) {
 						if (!pauseByMobile) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-						}else{
-							LogUtil.i(TAG, "play by mobile self");	
+						} else {
+							LogUtil.i(TAG, "play by mobile self");
 						}
 					}
 				} catch (RemoteException e) {
 				}
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
+				LogUtil.i(TAG,
+						"cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
 				isAudioFocused = true;
 				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
+				LogUtil.i(TAG,
+						"cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
 				isAudioFocused = true;
 				mainAudioChanged(isActive());
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
 				LogUtil.i("cruze", "cruze  AUDIOFOCUS_LOSS");
 				try {
-					if (callstatus==0 || callstatus==-1) {
+					if (callstatus == 0 || callstatus == -1) {
 						pauseByMobile = false;
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
-					}else{
+					} else {
 						pauseByMobile = true;
-						LogUtil.i(TAG,"audiofocus loss caused by callstatus , pause by mobile self");
+						LogUtil.i(TAG,
+								"audiofocus loss caused by callstatus , pause by mobile self");
 					}
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				} catch (RemoteException e1) {
@@ -1455,20 +1482,20 @@ public class BluetoothMusicModel {
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
+				LogUtil.i(TAG,
+						"cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-				LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
+				LogUtil.i(TAG,
+						"cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
 				isAudioFocused = false;
 				notifyAutroMusicInfo(null);
 				break;
 			}
 		}
 	};
-	
-	
 
 	/**
 	 * 清除缓存壁纸
@@ -1566,12 +1593,11 @@ public class BluetoothMusicModel {
 	public App getCurrentSource() {
 		return mSource.getCurrentSource();
 	}
-	
+
 	public synchronized void notifyAutroMusicInfo(MusicBean bean) {
 		notifyAutroMusicInfo(bean, false, false);
 	}
-	
-	
+
 	private String lastTitle = "";
 	private String lastAtrist = "";
 	private String lastAlbum = "";
@@ -1581,8 +1607,9 @@ public class BluetoothMusicModel {
 	private boolean hasSet = false;
 	private boolean isOnFW = false; // 是否处于快进快退之中
 	public int streamStatus = 0;
-	
-	public synchronized void notifyAutroMusicInfo(MusicBean bean, boolean fromStream, boolean fromPoweroff) {
+
+	public synchronized void notifyAutroMusicInfo(MusicBean bean,
+			boolean fromStream, boolean fromPoweroff) {
 		if (null == mBTMmanager) {
 			mBTMmanager = BTMusicManager.getInstance(mContext);
 		}
@@ -1609,7 +1636,8 @@ public class BluetoothMusicModel {
 
 		if (fromStream) {
 			if (!hasSet) {
-				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
+						lastAlbum, null);
 				syncMusicInfo(info);
 			} else {
 				hasSet = false;
@@ -1618,7 +1646,8 @@ public class BluetoothMusicModel {
 		}
 
 		if (fromPoweroff) {
-			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
+					lastAlbum, null);
 			syncMusicInfo(info);
 			return;
 		}
@@ -1628,21 +1657,24 @@ public class BluetoothMusicModel {
 			lastAtrist = atrist;
 			lastAlbum = album;
 			// lastPlayStatus = streamStatus;
-			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
+					lastAlbum, null);
 			syncMusicInfo(info);
-		} else if (!lastTitle.equalsIgnoreCase(title) || !lastAtrist.equalsIgnoreCase(atrist)
-				|| !lastAlbum.equalsIgnoreCase(album) || audioFocus != isAudioFocused) {
+		} else if (!lastTitle.equalsIgnoreCase(title)
+				|| !lastAtrist.equalsIgnoreCase(atrist)
+				|| !lastAlbum.equalsIgnoreCase(album)
+				|| audioFocus != isAudioFocused) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
 			lastTitle = title;
 			lastAtrist = atrist;
 			lastAlbum = album;
 			// lastPlayStatus = streamStatus;
-			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist, lastAlbum, null);
+			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
+					lastAlbum, null);
 			syncMusicInfo(info);
 		}
 	}
-	
-	
+
 	public boolean isPowerOff() {
 		boolean status = false;
 		try {
@@ -1651,30 +1683,36 @@ public class BluetoothMusicModel {
 		}
 		return status;
 	}
-	
+
 	private void syncMusicInfo(BTMusicInfo info) {
 		synchronized (lockOfBTMmanager) {
 			if (info == null) {
-				LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo info is null");
+				LogUtil.i(TAG,
+						"notifyAutroMusicInfo syncMusicInfo info is null");
 				try {
 					int n = mBTMmanager.mListeners.beginBroadcast();
 					for (int i = 0; i < n; i++) {
-						mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+						mBTMmanager.mListeners.getBroadcastItem(i)
+								.syncBtMusicInfo(info);
 					}
 					mBTMmanager.mListeners.finishBroadcast();
 				} catch (Exception e) {
 					LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
 				}
 			} else {
-				LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo : lastTitle = " + lastTitle + " , lastAtrist = "
-						+ lastAtrist + " , lastAlbum = " + lastAlbum + " , lastPlayStatus = " + lastPlayStatus
-						+ streamStatus);
+				LogUtil.i(TAG,
+						"notifyAutroMusicInfo syncMusicInfo : lastTitle = "
+								+ lastTitle + " , lastAtrist = " + lastAtrist
+								+ " , lastAlbum = " + lastAlbum
+								+ " , lastPlayStatus = " + lastPlayStatus
+								+ streamStatus);
 
 				if (isAudioFocused) {
 					try {
 						int n = mBTMmanager.mListeners.beginBroadcast();
 						for (int i = 0; i < n; i++) {
-							mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+							mBTMmanager.mListeners.getBroadcastItem(i)
+									.syncBtMusicInfo(info);
 						}
 						mBTMmanager.mListeners.finishBroadcast();
 					} catch (Exception e) {
@@ -1684,8 +1722,7 @@ public class BluetoothMusicModel {
 			}
 		}
 	}
-	
-	
+
 	/****
 	 * 通知中间件蓝牙没有连接
 	 */
@@ -1711,27 +1748,27 @@ public class BluetoothMusicModel {
 
 		synchronized (lockOfBTMmanager) {
 			LogUtil.i(TAG, "notifyAutoCoreWarning : NONDISPLAY");
-			int n = mBTMmanager.mListeners.beginBroadcast();
-			for (int i = 0; i < n; i++) {
-
-				try {
-					mBTMmanager.mListeners.getBroadcastItem(i).syncAudioWarningInfo(
-							SourceConst.AudioWarningState.NONDISPLAY);
-				} catch (RemoteException e) {
-				}
-			}
-			mBTMmanager.mListeners.finishBroadcast();
+			// int n = mBTMmanager.mListeners.beginBroadcast();
+			// for (int i = 0; i < n; i++) {
+			//
+			// try {
+			// mBTMmanager.mListeners.getBroadcastItem(i).syncAudioWarningInfo(
+			// SourceConst.AudioWarningState.NONDISPLAY);
+			// } catch (RemoteException e) {
+			// }
+			// }
+			// mBTMmanager.mListeners.finishBroadcast();
 		}
 	}
-	
-	
+
 	/**
 	 * 通知launcher 音乐信息
 	 */
 	private void notifyLauncherInfo() {
 		int connStatus = 0;
 		try {
-			connStatus = getConnectStatus(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
+			connStatus = getConnectStatus(
+					MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, 0);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -1746,45 +1783,45 @@ public class BluetoothMusicModel {
 			notifyAutroMusicInfo(null);
 		}
 	}
-	
-	
+
 	public void syncBtStatus(int a2dpStatus2) {
 		if (isDisByIpod) {
 			isDisByIpod = false;
-			IPodProxy.getInstance().notifyA2dpConnected(a2dpStatus == MangerConstant.Anw_SUCCESS);
+			IPodProxy.getInstance().notifyA2dpConnected(
+					a2dpStatus == MangerConstant.Anw_SUCCESS);
 		}
 
 		synchronized (lockOfBTMmanager) {
 			if (null == mBTMmanager) {
 				mBTMmanager = BTMusicManager.getInstance(mContext);
 			}
-			if (mBTMmanager.mListeners ==null) {
+			if (mBTMmanager.mListeners == null) {
 				return;
 			}
-			int n = mBTMmanager.mListeners.beginBroadcast();
-			for (int i = 0; i < n; i++) {
-				try {
-					mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicProtocolState(a2dpStatus);
-				} catch (RemoteException e) {
-				}
-			}
-			mBTMmanager.mListeners.finishBroadcast();
+			// int n = mBTMmanager.mListeners.beginBroadcast();
+			// for (int i = 0; i < n; i++) {
+			// try {
+			// mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicProtocolState(a2dpStatus);
+			// } catch (RemoteException e) {
+			// }
+			// }
+			// mBTMmanager.mListeners.finishBroadcast();
 		}
 	}
-	
+
 	private static final int MSG_TICKER = 100;
-	private final Handler stepTimeHandler = new Handler(){
+	private final Handler stepTimeHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			if (msg.what == MSG_TICKER) {
 				try {
-					stepTimeHandler.sendEmptyMessageDelayed(MSG_TICKER, 1000);	
+					stepTimeHandler.sendEmptyMessageDelayed(MSG_TICKER, 1000);
 					getPlayStatus();
 				} catch (RemoteException e) {
 				}
 			}
 		};
 	};
-	
+
 	private final Ticker mTicker = new Ticker();
 
 	/**
@@ -1811,7 +1848,7 @@ public class BluetoothMusicModel {
 	 * ticker
 	 * 
 	 * @author wangda
-	 *
+	 * 
 	 */
 	private class Ticker implements Runnable {
 
@@ -1830,11 +1867,11 @@ public class BluetoothMusicModel {
 	public void setStreamMute() {
 		try {
 			App currentSource = mSource.getCurrentSource();
-			boolean isDiagnoseMode = AutoSettings.getInstance().isDiagnoseMode();
-			if ( currentSource !=App.BT_MUSIC ||isDiagnoseMode) {
+			boolean isDiagnoseMode = AutoSettings.getInstance()
+					.isDiagnoseMode();
+			if (currentSource != App.BT_MUSIC || isDiagnoseMode) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-			}
-			else if(currentSource ==App.BT_MUSIC && !isDiagnoseMode){
+			} else if (currentSource == App.BT_MUSIC && !isDiagnoseMode) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (IllegalStateException e) {
@@ -1842,5 +1879,8 @@ public class BluetoothMusicModel {
 		} catch (RemoteException e) {
 		}
 	}
-
+	
+	public void setBluetoothAllCallback (BluetoothAllCallback mBluetoothAllCallback){
+		this.mBluetoothAllCallback = mBluetoothAllCallback;
+	}
 }

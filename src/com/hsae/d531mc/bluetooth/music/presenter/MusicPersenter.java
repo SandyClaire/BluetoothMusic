@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Message;
+import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
@@ -39,6 +40,11 @@ public class MusicPersenter implements IObserver {
 			break;
 		case MusicActionDefine.ACTION_USB_DISCONNECT:
 			mIMusicView.onUsbDesconnet();
+			break;
+		case MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE:
+			
+			int enableStatus = inMessage.getData().getInt("enableStatus");
+			mIMusicView.updateViewByConnectStatus(enableStatus);
 			break;
 		case MusicActionDefine.ACTION_APP_EXIT:
 			exit();
@@ -150,15 +156,20 @@ public class MusicPersenter implements IObserver {
 	private void init() {
 		((ISubject) mIMusicModel).attach(this);
 		((ISubject) mIMusicView).attach(this);
+		int btPowerStatus = mIMusicModel.getBTPowerStatus();
 		int status = mIMusicModel.getA2DPConnectStatus();
-		boolean isCarlifeConnected = mIMusicModel.getCarlifeConnectStatus(); 
+		//boolean isCarlifeConnected = mIMusicModel.getCarlifeConnectStatus(); 
 		
-		if (isCarlifeConnected) {
-			status = -1;
+		if(btPowerStatus != MangerConstant.BTPOWER_STATUS_ON){
+			status = -2;
 		}
+		
+		/*if (isCarlifeConnected) {
+			status = -1;
+		}*/
 		LogUtil.i(TAG, " --- init +++ status = " + status);
-		mIMusicView.updateViewByConnectStatus(status);
-		initBg();
+		LogUtil.i(TAG, " --- init +++ btPowerStatus = " + btPowerStatus);
+		
 		LogUtil.i(TAG, " --- init +++ ");
 		if (status == MangerConstant.Anw_SUCCESS) {
 			mIMusicModel.getMusicMatedata();
@@ -172,6 +183,10 @@ public class MusicPersenter implements IObserver {
 			boolean isPlay = mIMusicModel.initPlayStatus();
 			mIMusicView.updatePlayBtnByStatus(isPlay);
 		}
+		
+		mIMusicView.updateViewByConnectStatus(status);
+		initBg();
+		
 		initMusicModel();
 	}
 
