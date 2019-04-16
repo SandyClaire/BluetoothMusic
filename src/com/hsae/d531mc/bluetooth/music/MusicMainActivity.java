@@ -1268,7 +1268,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageBg.setBackgroundDrawable(drawable);
 			// setWallPaperAlbumScreenbg();
 		} else {
-			mImageBg.setBackgroundResource(R.drawable.bg_music_main);
+			mImageBg.setBackgroundResource(R.drawable.bg);
 		}
 	}
 

@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    >
 
-    <ImageView
+     <ImageView
         android:id="@+id/default_screenbg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/bg_music_main" />
-
+       android:background="@drawable/bg"
+        />
+    
     <FrameLayout
-        android:layout_width="151dp"
+        android:layout_marginTop="70dp"
+        android:layout_width="161dp"
         android:layout_height="match_parent" >
 
+         <View
+            android:layout_width="1dp"
+            android:layout_height="370dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="130dp"
+            android:layout_marginLeft="160dp"
+            android:background="@drawable/line" />
+        
         <ImageButton
             android:id="@+id/source_am"
             android:layout_width="wrap_content"
@@ -87,24 +98,26 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_marginLeft="110dp"
+        android:layout_marginTop="360dp" >
 
         <ImageView
             android:id="@+id/device_management"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="230dp"
-            android:layout_marginTop="420dp"
+            android:layout_marginLeft="120dp"
+            android:layout_marginTop="55dp"
             android:src="@drawable/selector_devicesetting" />
 
         <TextView
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="120dp"
-            android:layout_marginTop="470dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="120dp"
             android:textColor="#e0f6ff"
             android:textSize="18sp"
             android:gravity="center_horizontal"
@@ -194,7 +207,7 @@
         android:layout_height="480dp"
         android:layout_centerHorizontal="true"
         android:layout_gravity="bottom"
-        android:layout_marginLeft="0dp"
+        android:layout_marginLeft="160dp"
         android:visibility="visible" >
 
         <FrameLayout
@@ -202,7 +215,7 @@
             android:layout_width="880dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
-            android:layout_marginLeft="251dp"
+            android:layout_marginLeft="121dp"
             android:layout_marginTop="300dp" >
 
             <com.hsae.d531mc.bluetooth.music.util.MySeekBar
@@ -256,7 +269,7 @@
                 android:layout_width="1dp"
                 android:layout_height="105dp"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="170dp"
+                android:layout_marginLeft="70dp"
                 android:layout_marginTop="2dp"
                 android:background="@drawable/icon_vertical_split"
                 android:visibility="gone" />
@@ -266,7 +279,7 @@
                 android:layout_width="123dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="420dp"
+                android:layout_marginLeft="220dp"
                 android:background="@color/transparent"
                 android:paddingLeft="35dp"
                 android:paddingRight="25dp"
@@ -277,7 +290,7 @@
                 android:layout_width="200dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="570dp"
+                android:layout_marginLeft="400dp"
                 android:paddingLeft="35dp"
                 android:paddingRight="35dp"
                 android:src="@drawable/selector_stop" />
@@ -287,7 +300,7 @@
                 android:layout_width="123dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="757dp"
+                android:layout_marginLeft="630dp"
                 android:background="@color/transparent"
                 android:paddingLeft="35dp"
                 android:paddingRight="35dp"
