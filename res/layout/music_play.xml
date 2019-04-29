@@ -12,8 +12,8 @@
         />
     
     <FrameLayout
-        android:layout_marginTop="70dp"
-        android:layout_width="161dp"
+        android:layout_marginTop="100dp"
+        android:layout_width="191dp"
         android:layout_height="match_parent" >
 
          <View
@@ -21,7 +21,7 @@
             android:layout_height="370dp"
             android:layout_alignParentRight="true"
             android:layout_marginTop="130dp"
-            android:layout_marginLeft="160dp"
+            android:layout_marginLeft="150dp"
             android:background="@drawable/line" />
         
         <ImageButton
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="195dp"
-            android:text="收音机"
+            android:text="@string/music_source_radio"
             android:textColor="@color/white"
             android:textSize="18dp" />
 
@@ -61,7 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="43dp"
             android:layout_marginTop="320dp"
-            android:text="usb音乐"
+            android:text="@string/music_source_usb"
             android:textColor="@color/white"
             android:textSize="18dp" />
 
@@ -85,22 +85,23 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="41dp"
             android:layout_marginTop="448dp"
-            android:text="蓝牙音乐"
+            android:text="@string/music_source_bluetooth"
             android:textColor="@color/white"
             android:textSize="18dp" />
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="150dp"
+            android:layout_marginStart="100dp"
             android:layout_marginTop="121dp"
-            android:src="@drawable/line2" />
+            android:src="@drawable/line2"
+            android:visibility="gone" />
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="300dp"
         android:layout_height="200dp"
-        android:layout_marginLeft="110dp"
+        android:layout_marginLeft="130dp"
         android:layout_marginTop="360dp" >
 
         <ImageView
@@ -116,8 +117,8 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_gravity="left"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="120dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="100dp"
             android:textColor="#e0f6ff"
             android:textSize="18sp"
             android:gravity="center_horizontal"
@@ -130,7 +131,7 @@
         android:layout_height="420dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="150dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="85dp"
         android:visibility="visible" >
 
         <TextView
@@ -216,7 +217,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
             android:layout_marginLeft="121dp"
-            android:layout_marginTop="300dp" >
+            android:layout_marginTop="315dp" >
 
             <com.hsae.d531mc.bluetooth.music.util.MySeekBar
                 android:id="@+id/music_seekbar"

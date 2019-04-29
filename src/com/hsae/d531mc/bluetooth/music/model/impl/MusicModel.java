@@ -175,14 +175,14 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_SYNC);
 		LogUtil.i(TAG, "getCurrentMusicPlayPosition -- position = " + position + "-- isPlaying = " + isPlaying);
 	}
-
+	//待定
 	@Override
 	public void setCurrentPlayerRepeatModel(int nAttrValue) {
 		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
 				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
 		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue);
 	}
-
+	//待定
 	@Override
 	public void setCurrentPlayerShuffleModel(int nAttrValue) {
 		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
@@ -194,7 +194,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	public void requestAudioFoucs() {
 		mBluetoothMusicModel.requestAudioFocus(true);
 	}
-
+	//待定
 	@Override
 	public void updateAttributeRepeat(ArrayList<Integer> AllowList) {
 		Message msg = Message.obtain();
@@ -205,7 +205,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_SYNC);
 		LogUtil.i(TAG, "updateAttributeRepeat -- repeatList = " + AllowList);
 	}
-
+	//待定
 	@Override
 	public void updateAttributeShuffle(ArrayList<Integer> AllowList) {
 		Message msg = Message.obtain();
@@ -227,7 +227,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		msg.setData(mBundle);
 		this.notify(msg, FLAG_RUN_SYNC);
 	}
-
+	//待定
 	@Override
 	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray, int nArraySize) {
 		int nWriteSize = 0;
@@ -238,7 +238,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		}
 		return nWriteSize;
 	}
-
+	//待定
 	@Override
 	public int retrieveCurrentPlayerAPSetting(int nAttrID) {
 		int attrID = 0;
@@ -292,7 +292,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	}
 
 	/**
-	 * 获取当连接设备地址
+	 * 获取当前连接设备地址
 	 * 
 	 * @return
 	 */
@@ -395,11 +395,12 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	@Override
 	public void updateBTPowerStatus(int status) {
 		
-		if(status != MangerConstant.BTPOWER_STATUS_ON){
+		if(status == MangerConstant.BTPOWER_STATUS_OFF){
 			status = -2;
-		}else if(status != MangerConstant.BTPOWER_STATUS_OFF){
+		}else if(status == MangerConstant.BTPOWER_STATUS_ON){
 			status = 0;
 		}
+		
 			Message msg = Message.obtain();
 			msg.what = MusicActionDefine.ACTION_BLUETOOTH_ENABLE_STATUS_CHANGE;
 			Bundle mBundle = new Bundle();

@@ -43,6 +43,12 @@
             </intent-filter>
         </service>
         
+        <receiver android:name="com.hsae.d531mc.bluetooth.music.service.ShutdownBroadcastReceiver" >  
+             <intent-filter >  
+                 <action android:name="android.intent.action.ACTION_SHUTDOWN" />  
+             </intent-filter>  
+         </receiver>  
+        
     </application>
 
 </manifest>

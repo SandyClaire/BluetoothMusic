@@ -43,7 +43,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		super();
 		this.mContext = mContext;
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
-		LogUtil.e(TAG, "------------------ INIT");
+		LogUtil.e(TAG, "BTMusicManager INIT");
 	}
 
 	public static BTMusicManager getInstance(Context context) {

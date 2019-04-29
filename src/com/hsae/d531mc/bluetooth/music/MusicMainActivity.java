@@ -55,7 +55,7 @@ import com.hsae.d531mc.bluetooth.music.view.IMusicView;
 /**
  * 
  * @author wangda
- * 
+ *  
  */
 @SuppressLint("NewApi")
 public class MusicMainActivity extends Activity implements ISubject,
@@ -76,6 +76,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final String SETTINGS_PACKAGE = "com.hsae.d531mc.systemsetting";
 	private static final String SETTINGS_Bluetooth_ACTIVITY = "com.hsae.d531mc.systemsetting.connect.activity.BlueActivity";
 	
+	private static final int ADD_LEFT_MARGIN = 100;
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
 	private static final int MSG_ANIM = 1120;
 	private static final int MSG_SWITCH = 1123;
@@ -98,8 +99,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private TextView mTextTotalTime;
 	private TextView btPowerUnuseText;
 	private MySeekBar mSeekBar;
-	private DrawerLayout mDrawerLayout;
-	private FrameLayout mFrameLayout;
+//	private DrawerLayout mDrawerLayout;
+//	private FrameLayout mFrameLayout;
 	private FrameLayout unConnectLayout;
 	private FrameLayout btPowerUnuse;
 	private ImageView DeviceManagement;
@@ -194,7 +195,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		getWindow().addFlags(
 				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
-		setContentView(R.layout.music_main);
+		setContentView(R.layout.music_play);
 
 		initView();
 		initMvp();
@@ -246,10 +247,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
-		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
-		mDrawerLayout.setScrimColor(this.getResources().getColor(
-				R.color.transparent));
-		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
+//		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
+//		mDrawerLayout.setScrimColor(this.getResources().getColor(
+//				R.color.transparent));
+//		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
 		mBtnHome = (ImageView) findViewById(R.id.btn_home);
 		mImageShuffle = (ImageView) findViewById(R.id.btn_shuffle);
 		mImageRepeat = (ImageView) findViewById(R.id.btn_repeat);
@@ -280,8 +281,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		ivUSB.setOnClickListener(this);
 		ivBT.setOnClickListener(this);
 
-		mDrawerLayout.setOnTouchListener(touchListener);
-		mDrawerLayout.setDrawerListener(mDrawerListener);
+//		mDrawerLayout.setOnTouchListener(touchListener);
+//		mDrawerLayout.setDrawerListener(mDrawerListener);
 
 		rDrawable = (RotateDrawable) ivAlbumCut.getBackground();
 		rDrawable.setLevel(0);
@@ -308,7 +309,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 		};
 	};
-
+	//删除
 	private void resetAnim() {
 		level = 0;
 	}
@@ -324,7 +325,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			handler.removeMessages(MSG_ANIM);
 		}
 	}
-
+	//删除
 	DrawerListener mDrawerListener = new DrawerListener() {
 
 		@Override
@@ -418,7 +419,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_icon_usb
 				: R.drawable.selector_source_ipod);
 	}
-
+	//删除
 	/**
 	 * 显示侧边栏
 	 * 
@@ -442,15 +443,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 				 */
 		}
 		isFramShow = true;
-		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
+//		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
 	}
-
+	//删除
 	/**
 	 * 关闭侧边栏
 	 */
 	public void closeMusicSwitch() {
 		isFramShow = false;
-		mDrawerLayout.closeDrawer(mFrameLayout);
+//		mDrawerLayout.closeDrawer(mFrameLayout);
 	}
 
 	@Override
@@ -723,6 +724,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateViewByConnectStatus(int status) {
 		LogUtil.i(TAG, "updateViewByConnectStatus " + status);
+		
 		if (status == 0) {
 			updateViewShow(false, false, true,true);
 			mSeekTail.setVisibility(View.GONE);
@@ -1001,7 +1003,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextCurTime.setText(getCurrentTime(currentTime));
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
 	}
-
+	//待定
 	private ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
 	private ArrayList<Integer> mShuffleAllowedlist = new ArrayList<Integer>();
 
@@ -1016,7 +1018,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageRepeat.setEnabled(true);
 		}
 	}
-
+	//待定
 	@Override
 	public void updateShuffleAllowList(ArrayList<Integer> allowList) {
 		mShuffleAllowedlist.clear();
@@ -1029,7 +1031,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageShuffle.setEnabled(true);
 		}
 	}
-
+	//待定
 	int mShuffleMode = AudioControl.PLAYER_SHUFFLE_OFF;
 	int mRepeatMode = AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK;
 
@@ -1082,7 +1084,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			break;
 		}
 	}
-
+	//待定
 	@Override
 	public void updateShuffleAllowArray(int[] AllowArray, int num) {
 		mShuffleAllowedlist.clear();
@@ -1095,7 +1097,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageShuffle.setEnabled(true);
 		}
 	}
-
+	//待定
 	@Override
 	public void updateRepeatAllowArray(int[] AllowArray, int num) {
 		mRepeatAllowedlist.clear();
@@ -1163,6 +1165,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			lp.width = 185;
 			lp.leftMargin = deltaX - 165;
 		}
+		lp.leftMargin = lp.leftMargin + ADD_LEFT_MARGIN;
 		lp.height = 30;
 		lp.topMargin = 22;
 		mSeekTail.setLayoutParams(lp);

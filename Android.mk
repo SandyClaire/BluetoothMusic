@@ -4,14 +4,14 @@ include $(CLEAR_VARS)
 #mk include jar
 LOCAL_PREBUILT_STATIC_JAVA_LIBRARIES  :=   \
 		libsupportbtmusicv4:libs/android-support-v4.jar \
+		bluetoothmusicsdk:libs/bluetoothsdk.jar
 		
 		
 include $(BUILD_MULTI_PREBUILT)
 
 include $(CLEAR_VARS)
 
-
-LOCAL_STATIC_JAVA_LIBRARIES := libsupportbtmusicv4 autosdk BluetoothSdk
+LOCAL_STATIC_JAVA_LIBRARIES := libsupportbtmusicv4 autosdk bluetoothmusicsdk
 
 LOCAL_AIDL_INCLUDES := $(LOCAL_PATH)/src
 

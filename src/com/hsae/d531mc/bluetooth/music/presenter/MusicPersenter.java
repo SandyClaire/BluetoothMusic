@@ -120,10 +120,12 @@ public class MusicPersenter implements IObserver {
 			LogUtil.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
+		//待定
 		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
 			ArrayList<Integer> allowRepeatList = inMessage.getData().getIntegerArrayList("repeatList");
 			mIMusicView.updateRepeatAllowList(allowRepeatList);
 			break;
+		//待定
 		case MusicActionDefine.ACTION_A2DP_SHUFFLE_ATTRIBUTE:
 			ArrayList<Integer> allowShuffleList = inMessage.getData().getIntegerArrayList("shuffleList");
 			mIMusicView.updateShuffleAllowList(allowShuffleList);
@@ -133,10 +135,12 @@ public class MusicPersenter implements IObserver {
 			int nAttrValue = inMessage.getData().getInt("nAttrValue");
 			mIMusicView.UpdatePlayerModeSetting(nAttrID, nAttrValue);
 			break;
+		//待定
 		case MusicActionDefine.ACTION_A2DP_REPEAT_MODEL:
 			int nCurrentMode = inMessage.getData().getInt("currentRepeatModel");
 			mIMusicModel.setCurrentPlayerRepeatModel(nCurrentMode);
 			break;
+		//待定
 		case MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL:
 			int sCurrentMode = inMessage.getData().getInt("currentShuffleModel");
 			mIMusicModel.setCurrentPlayerShuffleModel(sCurrentMode);
@@ -203,7 +207,7 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicModel).detach(this);
 		LogUtil.i(TAG, " --- exit +++ ");
 	}
-
+	//待定
 	/**
 	 * 初始化音乐模式
 	 */
@@ -225,7 +229,7 @@ public class MusicPersenter implements IObserver {
 	
 	boolean playStatus = false;
 	/***
-	 * 获取当前事实的播放状态
+	 * 获取当前实时的播放状态
 	 * @return
 	 */
 	public boolean getPlayStatus() {
