@@ -18,5 +18,5 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:layout_marginBottom="@dimen/music_bottombar_higth" />
-	
+	  
 </android.support.v4.widget.DrawerLayout>

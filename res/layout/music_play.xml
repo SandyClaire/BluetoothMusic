@@ -223,10 +223,10 @@
                 android:id="@+id/music_seekbar"
                 style="@style/MusicSeekBar"
                 android:layout_width="720dp"
-                android:layout_height="wrap_content"
+                android:layout_height="10dp"
                 android:layout_gravity="left"
                 android:layout_marginLeft="70dp"
-                android:layout_marginTop="15dp" />
+                android:layout_marginTop="25dp" />
 
             <TextView
                 android:id="@+id/music_currenttime"

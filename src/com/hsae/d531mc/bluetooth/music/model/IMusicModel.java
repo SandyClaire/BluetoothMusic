@@ -77,56 +77,9 @@ public interface IMusicModel {
 	public void getCurrentMusicPlayPosition(String position , Boolean isPlaying);
 	
 	/**
-	 * set current player ap setting
-	 * @param nAttrValue
-	 */
-	public void setCurrentPlayerRepeatModel(int nAttrValue);
-	
-	/**
-	 * set current player ap setting
-	 * @param nAttrValue
-	 */
-	public void setCurrentPlayerShuffleModel(int nAttrValue);
-	
-	/**
 	 * 抢占音源焦点
 	 */
 	public void requestAudioFoucs();
-	
-	/**
-	 * 更新顺序播放模式
-	 * @param AllowList
-	 */
-	public void updateAttributeRepeat(ArrayList<Integer> AllowList);
-	
-	/**
-	 * 更新随机播放模式
-	 * @param AllowList
-	 */
-	public void updateAttributeShuffle(ArrayList<Integer> AllowList);
-	
-	/**
-	 * 跟新播放模式状态
-	 * @param nAttrID
-	 * @param nAttrValue
-	 */
-	public void updataPlayerModel(int nAttrID , int nAttrValue);
-	
-	/**
-	 * 获取播放模式集合
-	 * @param nAttrID
-	 * @param nAllowArray
-	 * @param nArraySize
-	 * @return
-	 */
-	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray,
-			int nArraySize);
-	/**
-	 * 获取当前模式的状态值
-	 * @param nAttrID
-	 * @return
-	 */
-	public int retrieveCurrentPlayerAPSetting(int nAttrID);
 	
 	/**
 	 * 播放界面不在最前端

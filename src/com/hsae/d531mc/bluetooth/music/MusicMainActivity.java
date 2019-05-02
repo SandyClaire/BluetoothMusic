@@ -1,11 +1,9 @@
 package com.hsae.d531mc.bluetooth.music;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.FragmentManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -19,21 +17,17 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.DrawerLayout.DrawerListener;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.anwsdk.service.AudioControl;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.radio.RadioConst;
@@ -41,8 +35,6 @@ import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
-import com.hsae.d531mc.bluetooth.music.fragmet.BluetoothSettingFragment;
-import com.hsae.d531mc.bluetooth.music.fragmet.MusicSwitchFragmet;
 import com.hsae.d531mc.bluetooth.music.model.impl.MusicModel;
 import com.hsae.d531mc.bluetooth.music.observer.IObserver;
 import com.hsae.d531mc.bluetooth.music.observer.ISubject;
@@ -76,45 +68,31 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final String SETTINGS_PACKAGE = "com.hsae.d531mc.systemsetting";
 	private static final String SETTINGS_Bluetooth_ACTIVITY = "com.hsae.d531mc.systemsetting.connect.activity.BlueActivity";
 	
-	private static final int ADD_LEFT_MARGIN = 100;
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
-	private static final int MSG_ANIM = 1120;
 	private static final int MSG_SWITCH = 1123;
 	private boolean canSwitch = true;
 
 	private MusicPersenter mPresenter;
 
 	private ImageView iRadio, ivUSB, ivBT;
-	// private ImageView mBtnSettings;
 
 	private ImageView ivAlbumCut;
-	// private ImageView mCover;
 	private ImageButton mBtnPrev;
 	private ImageView mBtnPlay;
 	private ImageButton mBtnNext;
-	private ImageView mBtnHome;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
 	private TextView mTextCurTime;
 	private TextView mTextTotalTime;
 	private TextView btPowerUnuseText;
 	private MySeekBar mSeekBar;
-//	private DrawerLayout mDrawerLayout;
-//	private FrameLayout mFrameLayout;
 	private FrameLayout unConnectLayout;
 	private FrameLayout btPowerUnuse;
 	private ImageView DeviceManagement;
-	private FragmentManager mFragmentManager;
-	private MusicSwitchFragmet mFragmet;
 	private boolean ismPlaying = false;
-	private ImageView mImageShuffle;
-	private ImageView mImageRepeat;
-	private ImageView btPowerUnuseImage;
-	private BluetoothSettingFragment mSettingFragment;
 	private ImageView mImageBg;
 	private ImageView mSeekTail;
 	private TextView mTextTip;
-	private boolean isFramShow = false;
 	private boolean isSupportPlaybackpos = false;
 	private boolean isSupportMetadata = false;
 	private static final int LONG_CLICK_PREV = 1;
@@ -137,9 +115,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 				@Override
 				public boolean handleMessage(Message msg) {
 					switch (msg.what) {
-					case MSG_DRAWLAYOUT_SHOW:
-						showFram(false);
-						break;
 					case LONG_CLICK_NEXT:
 						isNormalNext = false;
 						Message msgln = Message.obtain();
@@ -196,12 +171,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 				WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
 
 		setContentView(R.layout.music_play);
-
+		
 		initView();
 		initMvp();
-		LogUtil.i(
-				"wangda",
-				"MusicMainActivity -- onCreate endTime = "
+		LogUtil.i("wangda","MusicMainActivity -- onCreate endTime = "
 						+ System.currentTimeMillis());
 	}
 
@@ -215,7 +188,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		LogUtil.i(TAG, "cruze onNewIntent");
-		// setHandPause false
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_ONINTENT;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -247,42 +219,24 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
-//		mDrawerLayout = (DrawerLayout) findViewById(R.id.music_drawerlayout);
-//		mDrawerLayout.setScrimColor(this.getResources().getColor(
-//				R.color.transparent));
-//		mFrameLayout = (FrameLayout) findViewById(R.id.bluetooth_music_frame);
-		mBtnHome = (ImageView) findViewById(R.id.btn_home);
-		mImageShuffle = (ImageView) findViewById(R.id.btn_shuffle);
-		mImageRepeat = (ImageView) findViewById(R.id.btn_repeat);
 		mImageBg = (ImageView) findViewById(R.id.default_screenbg);
 		mSeekTail = (ImageView) findViewById(R.id.seekbar_tail);
 		unConnectLayout = (FrameLayout) findViewById(R.id.main_connectTip);
 		btPowerUnuse = (FrameLayout) findViewById(R.id.bt_power_unuse);
-		btPowerUnuseImage = (ImageView) findViewById(R.id.bt_power_unuse_image);
 		btPowerUnuseText = (TextView) findViewById(R.id.bt_power_unuse_text);
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
 		DeviceManagement = (ImageView)findViewById(R.id.device_management);
 		
-		mFragmet = (MusicSwitchFragmet) MusicSwitchFragmet.getInstance(this);
-		mSettingFragment = (BluetoothSettingFragment) BluetoothSettingFragment
-				.getInstance(this);
-		mFragmentManager = getFragmentManager();
 		mBtnPrev.setOnTouchListener(prevListener);
 		mBtnPlay.setOnClickListener(this);
 		mBtnNext.setOnTouchListener(nextListener);
-		mImageRepeat.setOnClickListener(this);
-		mImageShuffle.setOnClickListener(this);
-		//mBtnHome.setOnClickListener(this);
 		DeviceManagement.setOnClickListener(this);
 		
 		iRadio.setOnClickListener(this);
 		ivUSB.setOnClickListener(this);
 		ivBT.setOnClickListener(this);
-
-//		mDrawerLayout.setOnTouchListener(touchListener);
-//		mDrawerLayout.setDrawerListener(mDrawerListener);
 
 		rDrawable = (RotateDrawable) ivAlbumCut.getBackground();
 		rDrawable.setLevel(0);
@@ -292,14 +246,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	Handler handler = new Handler() {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case MSG_ANIM:
-				if (level >= 10000) {
-					level = 0;
-				}
-				rDrawable.setLevel(level);
-				level += 10;
-				handler.sendEmptyMessageDelayed(MSG_ANIM, 20);
-				break;
+
 			case MSG_SWITCH:
 				canSwitch = true;
 				break;
@@ -307,110 +254,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 				break;
 			}
 
-		};
-	};
-	//删除
-	private void resetAnim() {
-		level = 0;
-	}
-
-	private void startAnim() {
-		if (!handler.hasMessages(MSG_ANIM)) {
-			handler.sendEmptyMessage(MSG_ANIM);
-		}
-	}
-
-	private void pauseAnim() {
-		if (handler.hasMessages(MSG_ANIM)) {
-			handler.removeMessages(MSG_ANIM);
-		}
-	}
-	//删除
-	DrawerListener mDrawerListener = new DrawerListener() {
-
-		@Override
-		public void onDrawerStateChanged(int arg0) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onDrawerSlide(View arg0, float arg1) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onDrawerOpened(View arg0) {
-			isFramShow = true;
-
-		}
-
-		@Override
-		public void onDrawerClosed(View arg0) {
-			isFramShow = false;
 		}
 	};
-
-	private OnTouchListener touchListener = new OnTouchListener() {
-
-		@SuppressLint("ClickableViewAccessibility")
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			// TODO Auto-generated method stub
-			float x = event.getX();
-			float y = event.getY();
-			if (event.getAction() == MotionEvent.ACTION_UP) {
-				// ivAM.setImageResource(R.drawable.ic_item_am);
-				// iRadio.setImageResource(R.drawable.ic_item_fm);
-				// ivUSB.setImageResource(R.drawable.ic_item_usb);
-				if (0 < x && x < 170 && 610 < y && y < 720) {
-					mBtnHome.performClick();
-				}
-
-				// else if (0 < x && x < 85 && 360< y && y < 430) {
-				// LogUtil.i(TAG, "touchListener usb");
-				// switchSource(Media.usb);
-				// }else if (0 < x && x < 85 && 260< y && y < 340) {
-				// LogUtil.i(TAG, "touchListener fM");
-				// switchSource(Media.fm);
-				// }else if (0 < x && x < 85 && 136< y && y < 240) {
-				// LogUtil.i(TAG, "touchListener aM");
-				// switchSource(Media.am);
-				// }
-			}
-
-			// else if (event.getAction() == MotionEvent.ACTION_DOWN ||
-			// event.getAction() == MotionEvent.ACTION_MOVE ) {
-			// LogUtil.i(TAG, "touchListener ACTION_DOWN");
-			// if (0 < x && x < 85 && 360< y && y < 430) {
-			// ivAM.setImageResource(R.drawable.ic_item_am);
-			// iRadio.setImageResource(R.drawable.ic_item_fm);
-			// ivUSB.setImageResource(R.drawable.ic_item_usb_down);
-			// }else if (0 < x && x < 85 && 260< y && y < 340) {
-			// ivAM.setImageResource(R.drawable.ic_item_am);
-			// iRadio.setImageResource(R.drawable.ic_item_fm_down);
-			// ivUSB.setImageResource(R.drawable.ic_item_usb);
-			// }else if (0 < x && x < 85 && 136< y && y < 240) {
-			// ivAM.setImageResource(R.drawable.ic_item_am_down);
-			// iRadio.setImageResource(R.drawable.ic_item_fm);
-			// ivUSB.setImageResource(R.drawable.ic_item_usb);
-			// }else{
-			// ivAM.setImageResource(R.drawable.ic_item_am);
-			// iRadio.setImageResource(R.drawable.ic_item_fm);
-			// ivUSB.setImageResource(R.drawable.ic_item_usb);
-			// }
-			// }
-			return false;
-		}
-	};
-
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
-
+		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -419,50 +271,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_icon_usb
 				: R.drawable.selector_source_ipod);
 	}
-	//删除
-	/**
-	 * 显示侧边栏
-	 * 
-	 * @param flag
-	 *            flag : true 显示音源切换 false 显示蓝牙设置
-	 */
-	private void showFram(boolean flag) {
-		if (!hasWindowFocus()) {
-			LogUtil.w(TAG, "activity is not on focus now ");
-			return;
-		}
-
-		if (flag) {
-			mFragmentManager.beginTransaction()
-					.replace(R.id.bluetooth_music_frame, mFragmet)
-					.commitAllowingStateLoss();
-		} else {/*
-				 * mFragmentManager.beginTransaction().replace(R.id.
-				 * bluetooth_music_frame, mSettingFragment)
-				 * .commitAllowingStateLoss();
-				 */
-		}
-		isFramShow = true;
-//		mDrawerLayout.openDrawer(mFrameLayout); // 显示左侧
-	}
-	//删除
-	/**
-	 * 关闭侧边栏
-	 */
-	public void closeMusicSwitch() {
-		isFramShow = false;
-//		mDrawerLayout.closeDrawer(mFrameLayout);
-	}
-
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
-		pauseAnim();
 		mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-		// if (mSettingFragment.isResumed()) {
-		//
-		// }
-		mSettingFragment.stopDeviceSearching();
 
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
@@ -475,7 +288,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	public void finishActivity() {
-		// stopAnimate();
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_EXIT;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -534,12 +346,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			startActivity(intent);
 			
 			break;
-		// case R.id.btn_source_settings:
-		// showFram(true);
-		// break;
-		// case R.id.btn_bt_settings:
-		// showFram(false);
-		// break;
 		case R.id.btn_play:
 			Message msgl = Message.obtain();
 			if (ismPlaying) {
@@ -549,30 +355,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 			this.notify(msgl, FLAG_RUN_SYNC);
 			break;
-		case R.id.btn_repeat:
-			Message msgr = Message.obtain();
-			msgr.what = MusicActionDefine.ACTION_A2DP_REPEAT_MODEL;
-			Bundle rBundle = new Bundle();
-			rBundle.putInt("currentRepeatModel", mRepeatMode);
-			msgr.setData(rBundle);
-			this.notify(msgr, FLAG_RUN_SYNC);
-			break;
-		case R.id.btn_shuffle:
-			Message msgs = Message.obtain();
-			msgs.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL;
-			Bundle sBundle = new Bundle();
-			sBundle.putInt("currentShuffleModel", mShuffleMode);
-			msgs.setData(sBundle);
-			this.notify(msgs, FLAG_RUN_SYNC);
-			break;
-		case R.id.btn_home:
-			/*Log.i("abcde", "1111");
-			closeMusicSwitch();
-			Intent intent = new Intent(Intent.ACTION_MAIN);
-			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-			intent.addCategory(Intent.CATEGORY_HOME);
-			startActivity(intent);*/
-			break;
+		
 		default:
 			break;
 		}
@@ -598,7 +381,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 				bundle.putInt("band", RadioConst.RadioBandType.AM1);
 				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 						bundle);
-				closeMusicSwitch();
 			} else if (source.equals(Media.fm)) {
 				iRadio.setSelected(true);
 				ivUSB.setSelected(false);
@@ -606,7 +388,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 				bundle.putInt("band", RadioConst.RadioBandType.FM1);
 				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
 						bundle);
-				closeMusicSwitch();
 			} else if (source.equals(Media.usb)) {
 				iRadio.setSelected(false);
 				ivUSB.setSelected(true);
@@ -617,12 +398,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 				String strPackage = isUsb ? USB_PACKAGE : IPOD_PACKAGE;
 				String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
 				startOtherAPP(app, strPackage, strClass, bundle);
-				closeMusicSwitch();
 			} else if (source.equals(Media.bt)) {
 				iRadio.setSelected(false);
 				ivUSB.setSelected(false);
 				ivBT.setSelected(true);
-				closeMusicSwitch();
 			}
 		} else {
 			LogUtil.i(TAG,
@@ -708,15 +487,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (isFramShow) {
-				closeMusicSwitch();
-				return false;
-			} else {
-				Intent intent = new Intent(Intent.ACTION_MAIN);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				intent.addCategory(Intent.CATEGORY_HOME);
-				startActivity(intent);
-			}
+			
+			Intent intent = new Intent(Intent.ACTION_MAIN);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.addCategory(Intent.CATEGORY_HOME);
+			startActivity(intent);
+			
 		}
 		return super.onKeyDown(keyCode, event);
 	}
@@ -736,46 +512,23 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextArtist.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
 			mSeekBar.setMax(0);
-			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
-					AudioControl.PLAYER_REPEAT_MODE_OFF);
-			UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-					AudioControl.PLAYER_SHUFFLE_OFF);
-			mRepeatAllowedlist.clear();
-			mShuffleAllowedlist.clear();
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 			mHandler.sendEmptyMessageDelayed(MSG_DRAWLAYOUT_SHOW, 500);
 		} else if (status == 1) {
 			updateViewShow(true, false, true,true);
-			if (isFramShow) {
-				closeMusicSwitch();
-			}
 			LogUtil.i(TAG, "Bluetooth A2DP connected");
 		} else if (status == -1) {		// carlife is connected
 			
-			// updateViewShow(false, true);
 		} else if (status == -2) {		//blue power off
 			
 			updateViewShow(false, false, false,true);
 		} else if(status == -3){		//no support bluetooth music
 			updateViewShow(false, false, false,false);
 		}
-		// else if (status == -2) {
-		// // carlife is not connected
-		// updateViewShow(true, true);
-		// mSeekTail.setVisibility(View.GONE);
-		// mTextTotalTime.setText("00:00");
-		// mTextCurTime.setText("00:00");
-		// mSeekBar.setMax(0);
-		// UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
-		// AudioControl.PLAYER_REPEAT_MODE_OFF);
-		// UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-		// AudioControl.PLAYER_SHUFFLE_OFF);
-		// mRepeatAllowedlist.clear();
-		// mShuffleAllowedlist.clear();
-		// LogUtil.i(TAG, "Bluetooth A2DP disconnected");
-		// }
+		
 	}
 
+	@SuppressWarnings("deprecation")
 	private void updateViewShow(boolean flag, boolean isFromCarlife,
 			boolean btPowerStatus,boolean isSupportMusicFunction) {
 		LogUtil.i(TAG, "updateViewShow : flag = " + flag + "isFromCarlife = "
@@ -783,8 +536,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnPrev.setEnabled(flag);
 		mBtnPlay.setEnabled(flag);
 		mBtnNext.setEnabled(flag);
-		mImageRepeat.setEnabled(flag);
-		mImageShuffle.setEnabled(flag);
 		mSeekBar.setEnabled(flag);
 
 		if (btPowerStatus) {
@@ -831,6 +582,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	}
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void updatePlayBtnByStatus(boolean flag) {
 		LogUtil.i(TAG, "Activity updatePlayBtnByStatus -- flag = " + flag);
@@ -838,9 +590,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			ismPlaying = true;
 			mBtnPlay.setImageDrawable(getResources().getDrawable(
 					R.drawable.selector_play));
-			startAnim();
 		} else {
-			pauseAnim();
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
 			mBtnPlay.setImageDrawable(getResources().getDrawable(
@@ -865,7 +615,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 			} else {
 				if (!musicName.equals(bean.getTitle())) {
 					musicName = bean.getTitle();
-					resetAnim();
 					mTextTitle.setText(bean.getTitle());
 				}
 			}
@@ -946,7 +695,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				try {
 					int pos = Integer.valueOf(nTime) / 1000;
 					mSeekBar.setProgress(pos);
-					freshSeekBarTail(pos);
+//					freshSeekBarTail(pos);
 					return toTime(Integer.valueOf(nTime));
 				} catch (NumberFormatException e) {
 
@@ -999,116 +748,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
-		// if (isSupportMetadata) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
-	}
-	//待定
-	private ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
-	private ArrayList<Integer> mShuffleAllowedlist = new ArrayList<Integer>();
-
-	@Override
-	public void updateRepeatAllowList(ArrayList<Integer> allowList) {
-		mRepeatAllowedlist.clear();
-		mRepeatAllowedlist.addAll(allowList);
-		LogUtil.i(TAG, "mRepeatAllowedlist size = " + mRepeatAllowedlist.size());
-		if (mRepeatAllowedlist.size() <= 0) {
-			mImageRepeat.setEnabled(false);
-		} else {
-			mImageRepeat.setEnabled(true);
-		}
-	}
-	//待定
-	@Override
-	public void updateShuffleAllowList(ArrayList<Integer> allowList) {
-		mShuffleAllowedlist.clear();
-		mShuffleAllowedlist.addAll(allowList);
-		LogUtil.i(TAG,
-				"mShuffleAllowedlist size = " + mShuffleAllowedlist.size());
-		if (mShuffleAllowedlist.size() <= 0) {
-			mImageShuffle.setEnabled(false);
-		} else {
-			mImageShuffle.setEnabled(true);
-		}
-	}
-	//待定
-	int mShuffleMode = AudioControl.PLAYER_SHUFFLE_OFF;
-	int mRepeatMode = AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK;
-
-	@Override
-	public void UpdatePlayerModeSetting(int nAttrID, int nAttrValue) {
-		switch (nAttrID) {
-
-		case AudioControl.PLAYER_ATTRIBUTE_REPEAT:// 2
-			if (mRepeatMode != nAttrValue) {
-				mRepeatMode = nAttrValue;
-				switch (nAttrValue) {
-				case AudioControl.PLAYER_REPEAT_MODE_OFF:
-					mImageRepeat.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_repeat_order));
-					break;
-				case AudioControl.PLAYER_REPEAT_MODE_SINGLE_TRACK:
-					mImageRepeat.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_repeat_singel));
-					break;
-				case AudioControl.PLAYER_REPEAT_MODE_ALL_TRACK:
-					mImageRepeat.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_repeat_all));
-					break;
-				case AudioControl.PLAYER_REPEAT_MODE_GROUP:
-					mImageRepeat.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_repeat_all));
-					break;
-				}
-			}
-			break;
-		case AudioControl.PLAYER_ATTRIBUTE_SHUFFLE:// 3
-
-			if (mShuffleMode != nAttrValue) {
-				mShuffleMode = nAttrValue;
-				switch (nAttrValue) {
-				case AudioControl.PLAYER_SHUFFLE_OFF:
-					mImageShuffle.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_shuffle_close));
-					break;
-				case AudioControl.PLAYER_SHUFFLE_ALL_TRACK:
-					mImageShuffle.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_shuffle_open));
-					break;
-				case AudioControl.PLAYER_SHUFFLE_GROUP:
-					mImageShuffle.setImageDrawable(getResources().getDrawable(
-							R.drawable.btn_music_shuffle_open));
-					break;
-				}
-			}
-			break;
-		}
-	}
-	//待定
-	@Override
-	public void updateShuffleAllowArray(int[] AllowArray, int num) {
-		mShuffleAllowedlist.clear();
-		for (int i = 0; i < num; i++) {
-			mShuffleAllowedlist.add(AllowArray[i]);
-		}
-		if (mShuffleAllowedlist.size() <= 0) {
-			mImageShuffle.setEnabled(false);
-		} else {
-			mImageShuffle.setEnabled(true);
-		}
-	}
-	//待定
-	@Override
-	public void updateRepeatAllowArray(int[] AllowArray, int num) {
-		mRepeatAllowedlist.clear();
-		for (int i = 0; i < num; i++) {
-			mRepeatAllowedlist.add(AllowArray[i]);
-		}
-		if (mRepeatAllowedlist.size() <= 0) {
-			mImageRepeat.setEnabled(false);
-		} else {
-			mImageRepeat.setEnabled(true);
-		}
 	}
 
 	@Override
@@ -1116,62 +757,62 @@ public class MusicMainActivity extends Activity implements ISubject,
 		finishActivity();
 	}
 
-	public void freshSeekBarTail(int progress) {
-		int mMax = mSeekBar.getMax();
-		int deltaX = 0;
-		if (mMax == 0 || progress == 0) {
-			mSeekTail.setVisibility(View.GONE);
-			return;
-		} else {
-			deltaX = (int) (458 * (progress / (float) mMax));
-			if (deltaX == 0) {
-				mSeekTail.setVisibility(View.GONE);
-				return;
-			} else {
-				mSeekTail.setVisibility(View.VISIBLE);
-			}
-		}
-		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mSeekTail
-				.getLayoutParams();
-
-		if (deltaX <= 30) {
-			lp.width = (int) (deltaX * (480f / 458f)) + 8;
-			lp.leftMargin = 3;
-		} else if (deltaX <= 50) {
-
-			lp.width = (int) (deltaX * (480f / 458f)) + 15;
-			lp.leftMargin = 3;
-		} else if (deltaX <= 165) {
-			lp.width = (int) (deltaX * (480f / 458f)) + 15;
-			lp.leftMargin = 0;
-
-		} else if ((int) (deltaX * (480f / 458f)) <= 170) {
-			lp.width = deltaX + 15;
-			lp.leftMargin = 0;
-
-		} else if (deltaX <= 175) {
-			lp.width = 185;
-			lp.leftMargin = deltaX - 171 + 11;
-
-		} else if (deltaX <= 200) {
-			lp.width = 185;
-			lp.leftMargin = deltaX - 171 + 9;
-
-		} else if (deltaX <= 265) {
-			lp.width = 185;
-			lp.leftMargin = deltaX - 171 + 7;
-
-		} else {
-			lp.width = 185;
-			lp.leftMargin = deltaX - 165;
-		}
-		lp.leftMargin = lp.leftMargin + ADD_LEFT_MARGIN;
-		lp.height = 30;
-		lp.topMargin = 22;
-		mSeekTail.setLayoutParams(lp);
-		mSeekTail.bringToFront();
-		mSeekTail.postInvalidate();
-	}
+//	public void freshSeekBarTail(int progress) {
+//		int mMax = mSeekBar.getMax();
+//		int deltaX = 0;
+//		if (mMax == 0 || progress == 0) {
+//			mSeekTail.setVisibility(View.GONE);
+//			return;
+//		} else {
+//			deltaX = (int) (458 * (progress / (float) mMax));
+//			if (deltaX == 0) {
+//				mSeekTail.setVisibility(View.GONE);
+//				return;
+//			} else {
+//				mSeekTail.setVisibility(View.VISIBLE);
+//			}
+//		}
+//		FrameLayout.LayoutParams lp = (FrameLayout.LayoutParams) mSeekTail
+//				.getLayoutParams();
+//
+//		if (deltaX <= 30) {
+//			lp.width = (int) (deltaX * (480f / 458f)) + 8;
+//			lp.leftMargin = 3;
+//		} else if (deltaX <= 50) {
+//
+//			lp.width = (int) (deltaX * (480f / 458f)) + 15;
+//			lp.leftMargin = 3;
+//		} else if (deltaX <= 165) {
+//			lp.width = (int) (deltaX * (480f / 458f)) + 15;
+//			lp.leftMargin = 0;
+//
+//		} else if ((int) (deltaX * (480f / 458f)) <= 170) {
+//			lp.width = deltaX + 15;
+//			lp.leftMargin = 0;
+//
+//		} else if (deltaX <= 175) {
+//			lp.width = 185;
+//			lp.leftMargin = deltaX - 171 + 11;
+//
+//		} else if (deltaX <= 200) {
+//			lp.width = 185;
+//			lp.leftMargin = deltaX - 171 + 9;
+//
+//		} else if (deltaX <= 265) {
+//			lp.width = 185;
+//			lp.leftMargin = deltaX - 171 + 7;
+//
+//		} else {
+//			lp.width = 185;
+//			lp.leftMargin = deltaX - 165;
+//		}
+//		lp.leftMargin = lp.leftMargin + ADD_LEFT_MARGIN;
+//		lp.height = 30;
+//		lp.topMargin = 22;
+//		mSeekTail.setLayoutParams(lp);
+//		mSeekTail.bringToFront();
+//		mSeekTail.postInvalidate();
+//	}
 
 	private View.OnTouchListener prevListener = new View.OnTouchListener() {
 
@@ -1283,7 +924,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_bluetooth_carlife_connect_tip));
 		} else {
 			unConnectLayout.setVisibility(View.VISIBLE);
-			// mTextTip.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
 		}
 	}
 

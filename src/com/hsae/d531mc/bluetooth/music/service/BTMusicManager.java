@@ -243,16 +243,10 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void setRepeatMode(int nAttrValue) throws RemoteException {
-		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
-				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue);
 	}
 
 	@Override
 	public void setShuffleMode(int nAttrValue) throws RemoteException {
-		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-				mBluetoothMusicModel.mShuffleAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue);
 	}
 
 	@Override

@@ -175,82 +175,12 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		this.notify(msg, FLAG_RUN_SYNC);
 		LogUtil.i(TAG, "getCurrentMusicPlayPosition -- position = " + position + "-- isPlaying = " + isPlaying);
 	}
-	//待定
-	@Override
-	public void setCurrentPlayerRepeatModel(int nAttrValue) {
-		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
-				mBluetoothMusicModel.mRepeatAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerRepeatModel -- currentType = " + nAttrValue);
-	}
-	//待定
-	@Override
-	public void setCurrentPlayerShuffleModel(int nAttrValue) {
-		mBluetoothMusicModel.setPlayModel(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-				mBluetoothMusicModel.mShuffleAllowedlist, nAttrValue);
-		LogUtil.i(TAG, "setCurrentPlayerShuffleModel -- currentType = " + nAttrValue);
-	}
 
 	@Override
 	public void requestAudioFoucs() {
 		mBluetoothMusicModel.requestAudioFocus(true);
 	}
-	//待定
-	@Override
-	public void updateAttributeRepeat(ArrayList<Integer> AllowList) {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE;
-		Bundle mBundle = new Bundle();
-		mBundle.putIntegerArrayList("repeatList", AllowList);
-		msg.setData(mBundle);
-		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "updateAttributeRepeat -- repeatList = " + AllowList);
-	}
-	//待定
-	@Override
-	public void updateAttributeShuffle(ArrayList<Integer> AllowList) {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_SHUFFLE_ATTRIBUTE;
-		Bundle mBundle = new Bundle();
-		mBundle.putIntegerArrayList("shuffleList", AllowList);
-		msg.setData(mBundle);
-		this.notify(msg, FLAG_RUN_SYNC);
-		LogUtil.i(TAG, "updateAttributeShuffle -- shuffleList = " + AllowList);
-	}
-
-	@Override
-	public void updataPlayerModel(int nAttrID, int nAttrValue) {
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT;
-		Bundle mBundle = new Bundle();
-		mBundle.putInt("nAttrID", nAttrID);
-		mBundle.putInt("nAttrValue", nAttrValue);
-		msg.setData(mBundle);
-		this.notify(msg, FLAG_RUN_SYNC);
-	}
-	//待定
-	@Override
-	public int retrieveCurrentPlayerAPSupported(int nAttrID, int[] nAllowArray, int nArraySize) {
-		int nWriteSize = 0;
-		try {
-			nWriteSize = mBluetoothMusicModel.retrieveCurrentPlayerAPSupported(nAttrID, nAllowArray, nArraySize);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		return nWriteSize;
-	}
-	//待定
-	@Override
-	public int retrieveCurrentPlayerAPSetting(int nAttrID) {
-		int attrID = 0;
-		try {
-			attrID = mBluetoothMusicModel.retrieveCurrentPlayerAPSetting(nAttrID);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
-		return attrID;
-	}
-
+	
 	@Override
 	public void sendActivityPauseMsg() {
 		//TODO ... 加判断
@@ -291,18 +221,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		
 	}
 
-	/**
-	 * 获取当前连接设备地址
-	 * 
-	 * @return
-	 */
-	private String getConnectedDevice() {
-		String[] strAddress = new String[1];
-		String[] strName = new String[1];
-		
-		return strAddress[0];
-	}
-	
 	@Override
 	public Bitmap getBg() {
 		LogUtil.i(TAG, "getBg");
@@ -409,4 +327,5 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			this.notify(msg, FLAG_RUN_SYNC);
 	
 	}
+
 }

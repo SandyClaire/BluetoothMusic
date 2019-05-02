@@ -47,7 +47,6 @@ public class BluetoothMusicServcie extends Service implements
 
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Context mContext;
-	// private BTBroadcastReceiver mReceiver = null;
 	private String mTitle = "", mTotalTIme = "", mAlbum = "", mAtrist = "";
 	private String mLastTitle = "", mLastAlbum = "", mLastAtrist = "";
 	private int mLastPlayStatus = -1;
@@ -64,7 +63,6 @@ public class BluetoothMusicServcie extends Service implements
 	/**
 	 * 背景监听
 	 */
-	// private WallContentObserver mObserver;
 
 	private Handler mHandler = new Handler(Looper.getMainLooper(),
 			new Handler.Callback() {
@@ -133,7 +131,6 @@ public class BluetoothMusicServcie extends Service implements
 	public void onCreate() {
 		mContext = getApplicationContext();
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
-		// mBluetoothMusicModel.bindService();
 		mSoc = new Soc();
 		mAutoSettings = AutoSettings.getInstance();
 		try {
@@ -142,7 +139,6 @@ public class BluetoothMusicServcie extends Service implements
 			e.printStackTrace();
 		}
 		mBluetoothMusicModel.setBluetoothAllCallback(this);
-		// registBroadcast();
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mSoc.registerListener(mSocListener);
@@ -157,10 +153,6 @@ public class BluetoothMusicServcie extends Service implements
 		} catch (RemoteException e) {
 		}
 
-		// mContext.unregisterReceiver(mReceiver);
-		// unRegisterContentObserver();
-
-		mBluetoothMusicModel.releaseModel();
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
 	}
@@ -194,32 +186,6 @@ public class BluetoothMusicServcie extends Service implements
 	}
 
 	/**
-	 * 如果A2DP单独断开情况下，自动连接蓝牙音乐；
-	 */
-	private void autoConnA2dp() {
-		// Soc soc = new Soc();
-		// UsbDevices usbDevices = soc.getCurrentDevice();
-		// LogUtil.i("BluetoothMusicModel", " autoConnA2dp usbDevices = " +
-		// usbDevices.toString());
-		// if (usbDevices.equals(UsbDevices.IPOD) ||
-		// usbDevices.equals(UsbDevices.CARLIFE)) {
-
-		// }
-	}
-
-	/**
-	 * 获取当连接设备地址
-	 * 
-	 * @return
-	 */
-	private String getConnectedDevice() {
-		String[] strAddress = new String[1];
-		String[] strName = new String[1];
-
-		return strAddress[0];
-	}
-
-	/**
 	 * 通知中间件蓝牙连接装填
 	 * 
 	 * @param connectStatus
@@ -249,9 +215,6 @@ public class BluetoothMusicServcie extends Service implements
 
 		}
 	}
-	
-	
-	
 
 	/**
 	 * 初始化或更新背景
@@ -302,11 +265,10 @@ public class BluetoothMusicServcie extends Service implements
 		switch (type) {
 		case USB_CONNECTED_CARLIFE:
 			mBluetoothMusicModel.updateCLConnectStatus();
-			autoConnA2dp();
 			LogUtil.i(TAG, "USB_DISCONNECTED_CARLIFE");
 			break;
 		case USB_CONNECTED_CARPLAY:
-			mBluetoothMusicModel.updateCPConnectStatus();
+			// mBluetoothMusicModel.updateCPConnectStatus();
 			LogUtil.i(TAG, "USB_DISCONNECTED_CARPLAY");
 			break;
 		case USB_CONNECTED_IPOD:
@@ -346,7 +308,7 @@ public class BluetoothMusicServcie extends Service implements
 				usbType = USB_CONNECTED_CARPLAY;
 				mBluetoothMusicModel.isCarPlayConnected = true;
 				mBluetoothMusicModel.isCarLifeConnected = false;
-				mBluetoothMusicModel.updateCPConnectStatus();
+				// mBluetoothMusicModel.updateCPConnectStatus();
 				break;
 			case USB_CONNECTED_IPOD:
 
@@ -422,19 +384,16 @@ public class BluetoothMusicServcie extends Service implements
 
 		@Override
 		public void onBrightnessResponse(int arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onContrastResponse(int arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onDayNightAutoStateResponse(DayNight arg0) {
-			// TODO Auto-generated method stub
 
 		}
 
@@ -461,12 +420,6 @@ public class BluetoothMusicServcie extends Service implements
 				}
 			}
 		}
-	}
-
-	@Override
-	public void onA2dpStatusChanged(int status) {
-		Log.i(TAG, "A2dpStatusChanged,status = " + status);
-
 	}
 
 	@Override
@@ -569,21 +522,8 @@ public class BluetoothMusicServcie extends Service implements
 				+ mBluetoothMusicModel.mTitel);
 		mBluetoothMusicModel.updateCurrentMusicInfo(bean);
 		mBluetoothMusicModel.notifyAutroMusicInfo(bean);
-		// }
 		mBluetoothMusicModel.mTitel = mTitle;
 
-	}
-
-	@Override
-	public void onPlayModelChanged(int modelStatus) {
-		Log.i(TAG, "onPlayModelChanged,modelStatus = " + modelStatus);
-
-		/*
-		 * int nAttrID = mBundle.getInt("AttributeID"); int nAttrValue =
-		 * mBundle.getInt("Value");
-		 * 
-		 * mBluetoothMusicModel.updatePlayerModelSetting(nAttrID, nAttrValue);
-		 */
 	}
 
 	@Override
@@ -594,23 +534,12 @@ public class BluetoothMusicServcie extends Service implements
 		int nProfile = profile;
 		if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
 			mBluetoothMusicModel.hfpStatus = state;
-			// if (mBluetoothMusicModel.hfpStatus == 0) {
-			// HfpStatus = false;
-			// } else {
-			// HfpStatus = true;
-			// }
-			// mBluetoothMusicModel
-			// .updateHFPConnectStatus(mBluetoothMusicModel.hfpStatus);
-			// LogUtil.i(TAG, "PROFILE_HF_CHANNEL hfpStatus =　"
-			// + mBluetoothMusicModel.hfpStatus);
-			// mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
 			mBluetoothMusicModel.a2dpStatus = state;
 
 			if (mBluetoothMusicModel.a2dpStatus == 0) {
-				// TODO
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
 				mBluetoothMusicModel.notifyAutoCoreWarning();
 			}
@@ -632,11 +561,6 @@ public class BluetoothMusicServcie extends Service implements
 	}
 
 	@Override
-	public void onPairStateChanged(String address, int status) {
-
-	}
-
-	@Override
 	public void onPowerStateChanged(int state) {
 		Log.i(TAG, "onPowerStateChanged,status = " + state);
 
@@ -644,7 +568,7 @@ public class BluetoothMusicServcie extends Service implements
 
 			mBluetoothMusicModel
 					.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_ON);
-		} else if(state == 0){
+		} else if (state == 0) {
 
 			mBluetoothMusicModel
 					.updateBTEnalbStatus(MangerConstant.BTPOWER_STATUS_OFF);

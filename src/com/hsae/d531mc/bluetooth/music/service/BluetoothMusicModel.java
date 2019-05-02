@@ -1,31 +1,21 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.AudioManager.OnAudioFocusChangeListener;
-import android.os.AsyncTask;
-import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
-import com.anwsdk.service.BT_ADV_DATA;
-import com.anwsdk.service.IAnwInquiryCallBackEx;
-import com.anwsdk.service.IAnwPhoneLink;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.phone.BtPhoneProxy;
@@ -34,16 +24,13 @@ import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
-import com.hsae.autosdk.source.SourceConst;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
 import com.hsae.bluetoothsdk.music.MusicCallback;
 import com.hsae.bluetoothsdk.music.MusicProxy;
 import com.hsae.bluetoothsdk.setting.BluetoothCallback;
 import com.hsae.bluetoothsdk.setting.BluetoothProxy;
-import com.hsae.d531mc.bluetooth.music.entry.BluetoothDevice;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
-import com.hsae.d531mc.bluetooth.music.model.IBluetoothSettingModel;
 import com.hsae.d531mc.bluetooth.music.model.IMusicModel;
 import com.hsae.d531mc.bluetooth.music.util.Util;
 
@@ -59,10 +46,8 @@ public class BluetoothMusicModel {
 	private final Object lockOfBTMmanager = new Object();
 	private static BluetoothMusicModel mInstance;
 	private static Context mContext;
-	// private IAnwPhoneLink mIAnwPhoneLink;
 	private IMusicModel mIMusicModel;
 	private BTMusicManager mBTMmanager;
-	private IBluetoothSettingModel mIBluetoothSettingModel;
 	private static final int errorCode = -1;
 	public String mTitel = "";
 	public int hfpStatus = 0;
@@ -80,7 +65,6 @@ public class BluetoothMusicModel {
 	/***
 	 * 判断是电话起来时音乐自动暂停、该暂停由手机端发起、DA不发起暂停
 	 */
-	// boolean isPauseByCall;
 	BtPhoneProxy phoneProxy = BtPhoneProxy.getInstance();
 
 	// 壁纸缓存
@@ -88,9 +72,6 @@ public class BluetoothMusicModel {
 
 	// 获取应用程序最大可用内存
 	int cacheSize = (int) Runtime.getRuntime().maxMemory() / 8;
-
-	// 缓存可用设备列表
-	public List<BluetoothDevice> mListDevices = new ArrayList<BluetoothDevice>();
 
 	// 手动暂停标识
 	public boolean isHandPuse = false;
@@ -106,22 +87,12 @@ public class BluetoothMusicModel {
 
 	public final Source mSource = new Source();
 
-	/**
-	 * 循环集合
-	 */
-	public ArrayList<Integer> mRepeatAllowedlist = new ArrayList<Integer>();
-
 	private AudioManager audioManager;
 
 	private MusicProxy mMusicProxy;
 	private BluetoothProxy mBluetoothProxy;
-	
-	private BluetoothAllCallback mBluetoothAllCallback;
 
-	/**
-	 * 随机集合
-	 */
-	public ArrayList<Integer> mShuffleAllowedlist = new ArrayList<Integer>();
+	private BluetoothAllCallback mBluetoothAllCallback;
 
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -131,7 +102,7 @@ public class BluetoothMusicModel {
 		}
 		return mInstance;
 	}
-	
+
 	public BluetoothMusicModel() {
 		audioManager = (AudioManager) mContext
 				.getSystemService(Context.AUDIO_SERVICE); // STREAM_MUSIC
@@ -148,60 +119,30 @@ public class BluetoothMusicModel {
 		 * mMusicProxy.getPlayMode(); //当前播放模式 mMusicProxy.getPlayStatus(); //
 		 * mMusicProxy.getPosition(); // mMusicProxy.mute(); //静音
 		 * mMusicProxy.next(); mMusicProxy.pause(); mMusicProxy.play();
-		 * mMusicProxy.previous(); //向前 
-		 * mMusicProxy.setPlayMode(mode); //参数
-		 * mMusicProxy.supportPlayMode(); // 
-		 * mMusicProxy.unmute(); //解除静音
+		 * mMusicProxy.previous(); //向前 mMusicProxy.setPlayMode(mode); //参数
+		 * mMusicProxy.supportPlayMode(); // mMusicProxy.unmute(); //解除静音
 		 */
 		mBluetoothProxy = BluetoothProxy.getInstance(mContext);
 		mBluetoothProxy.registCallback(mBluetoothProxyCallback);
-
-		/*
-		 * mBluetoothProxy.acceptConnect(profile);
-		 * mBluetoothProxy.acceptPair(address, ssp); //
-		 * 
-		 * mBluetoothProxy.getConnectStatus(profile);
-		 * 
-		 * mBluetoothProxy.getPowerStatus(); 
-		 * mBluetoothProxy.isA2dpConnect();
-		 * mBluetoothProxy.isAvrcpConnect();
-		 *  mBluetoothProxy.isHfpConnect();
-		 */
-
-	}
-
-	public void releaseModel() {
-		mRepeatAllowedlist.clear();
-		mShuffleAllowedlist.clear();
-		mListDevices.clear();
-
 	}
 
 	public MusicCallback mMusicProxyCallback = new MusicCallback() {
 
 		@Override
-		public void onA2dpStatusChanged(int status) {
-			
-			if(mBluetoothAllCallback != null){
-				mBluetoothAllCallback.onA2dpStatusChanged(status);
-			}
-		}
-
-		@Override
 		public void onPlayStatusChanged(int state) throws RemoteException {
 			super.onPlayStatusChanged(state);
 
-			if(mBluetoothAllCallback != null){
+			if (mBluetoothAllCallback != null) {
 				mBluetoothAllCallback.onPlayStatusChanged(state);
 			}
-		
+
 		}
 
 		@Override
 		public void onPositionChanged(String position) throws RemoteException {
 			super.onPositionChanged(position);
-			
-			if(mBluetoothAllCallback != null){
+
+			if (mBluetoothAllCallback != null) {
 				mBluetoothAllCallback.onPositionChanged(position);
 			}
 		}
@@ -210,20 +151,12 @@ public class BluetoothMusicModel {
 		public void onID3Changed(String title, String album, String artist,
 				String totalTime) throws RemoteException {
 			super.onID3Changed(title, album, artist, totalTime);
-			
-			if(mBluetoothAllCallback != null){
-				mBluetoothAllCallback.onID3Changed(title, album, artist, totalTime);
+
+			if (mBluetoothAllCallback != null) {
+				mBluetoothAllCallback.onID3Changed(title, album, artist,
+						totalTime);
 			}
 		}
-
-		@Override
-		public void onPlayModelChanged(int modelStatus) throws RemoteException {
-			super.onPlayModelChanged(modelStatus);
-			
-			if(mBluetoothAllCallback != null){
-				mBluetoothAllCallback.onPlayModelChanged(modelStatus);
-			}
-		};
 
 	};
 
@@ -232,26 +165,18 @@ public class BluetoothMusicModel {
 		@Override
 		public void onConnectStateChanged(int profile, int state, int reason) {
 			super.onConnectStateChanged(profile, state, reason);
-			
-			if(mBluetoothAllCallback != null){
-				mBluetoothAllCallback.onConnectStateChanged(profile, state, reason);
-			}
-		}
 
-		@Override
-		public void onPairStateChanged(String address, int status) {
-			super.onPairStateChanged(address, status);
-			
-			if(mBluetoothAllCallback != null){
-				mBluetoothAllCallback.onPairStateChanged(address, status);
+			if (mBluetoothAllCallback != null) {
+				mBluetoothAllCallback.onConnectStateChanged(profile, state,
+						reason);
 			}
 		}
 
 		@Override
 		public void onPowerStateChanged(int state) {
 			super.onPowerStateChanged(state);
-			
-			if(mBluetoothAllCallback != null){
+
+			if (mBluetoothAllCallback != null) {
 				mBluetoothAllCallback.onPowerStateChanged(state);
 			}
 		}
@@ -259,14 +184,8 @@ public class BluetoothMusicModel {
 	};
 
 	/**
-	 * This function returns the current power status
-	 * 
-	 * @return BTPOWER_STATUS_OFF 0 BT power off BTPOWER_STATUS_ON 1 BT power on
-	 *         BTPOWER_STATUS_ONING 2 In power on process BTPOWER_STATUS_OFFING
-	 *         3 In power off process
-	 * @throws RemoteException
+	 * 得到当前蓝牙连接状态
 	 */
-	// 得到当前蓝牙连接状态
 	public int getBTPowerStatus() throws RemoteException {
 		if (null == mBluetoothProxy) {
 			return errorCode;
@@ -274,18 +193,6 @@ public class BluetoothMusicModel {
 		return mBluetoothProxy.getPowerStatus();
 	}
 
-	/**
-	 * This function retrieves the connect status of remote device.
-	 * 
-	 * @param nProfileType
-	 *            [in] The profile that want to check. Please reference
-	 *            ��Profile type�� section in MangerConstant object for detail.
-	 * @param mIndex
-	 *            [in] The connection��s ID, used in SPP connection only.
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
 	public int getConnectStatus(int nProfileType, int nIndex)
 			throws RemoteException {
 		if (null == mBluetoothProxy) {
@@ -295,57 +202,35 @@ public class BluetoothMusicModel {
 	}
 
 	/**
-	 * This function retrieves A2DP Meta data of current connected A2DP
-	 * Bluetooth device.
-	 * 
-	 * @param attributesID
-	 *            [in] The attribute id desired to retrieve. Please reference
-	 *            Media Attributes ID for detail.
-	 * @return Meta data string.
-	 * @throws RemoteException
-	 *             Remarks This function is valid after AVRCP is connected.
+	 * 得到歌曲信息
 	 */
-	//得到歌曲信息
-	  public String A2DPGetCurrentAttributes(int attributesID) throws
-	  RemoteException { 
-		  if (null == mMusicProxy) { 
-			  return "";
-		  }
-		  if (mMusicProxy.getId3() !=null) {
-			
-			  switch (attributesID) {
-			  case AudioControl.MEDIA_ATTR_MEDIA_TITLE:
-				  return mMusicProxy.getId3().getTitle();
-			  case AudioControl.MEDIA_ATTR_ARTIST_NAME:	
-				  return mMusicProxy.getId3().getArtist();
-			  case AudioControl.MEDIA_ATTR_ALBUM_NAME:
-				  return mMusicProxy.getId3().getAlbum();
-			  case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
-				  return mMusicProxy.getId3().getTotalTime();
-			  }
+	public String A2DPGetCurrentAttributes(int attributesID)
+			throws RemoteException {
+		if (null == mMusicProxy) {
+			return "";
 		}
-		  
-		return "";
-	   
-	  }
-	 
+		if (mMusicProxy.getId3() != null) {
 
-	/**
-	 * Use this function to get the current play status, the current play
-	 * position and the total playing time. This function returns immediately.
-	 * You must use registerReceiver to register a BroadcastReceiver with action
-	 * MSG_ACTION_A2DP_METADATA ,MSG_ACTION_A2DP_PLAYSTATUS ,
-	 * MSG_ACTION_A2DP_STREAMSTATUSand MSG_ACTION_A2DP_PLAYBACKPOS to get those
-	 * information .
-	 * 
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
+			switch (attributesID) {
+			case AudioControl.MEDIA_ATTR_MEDIA_TITLE:
+				return mMusicProxy.getId3().getTitle();
+			case AudioControl.MEDIA_ATTR_ARTIST_NAME:
+				return mMusicProxy.getId3().getArtist();
+			case AudioControl.MEDIA_ATTR_ALBUM_NAME:
+				return mMusicProxy.getId3().getAlbum();
+			case AudioControl.MEDIA_ATTR_PLAYING_TIME_IN_MS:
+				return mMusicProxy.getId3().getTotalTime();
+			}
+		}
+
+		return "";
+
+	}
+
 	public void getPlayStatus() throws RemoteException {
 		if (null == mMusicProxy) {
 		}
-		 mMusicProxy.getMusicInfo();
+		mMusicProxy.getMusicInfo();
 	}
 
 	/**
@@ -357,87 +242,15 @@ public class BluetoothMusicModel {
 	 * @throws RemoteException
 	 *             Remarks This function is valid after A2DP is connected.
 	 */
-	// 是否支持A2DP
+	// 是否支持播放模式切换
 	public boolean isA2DPSupportMetadata() throws RemoteException {
 
 		return mMusicProxy.supportPlayMode();
 	}
 
-	/**
-	 * Use this function to retrieve the current player application setting
-	 * supported attributes and allowed attribute values that store in
-	 * AnwSdkService.
-	 * 
-	 * @param nAttrID
-	 *            [in] Attribute ID.
-	 * @param nAllowArray
-	 *            [in] The allowed attribute values arrary.
-	 * @param nArraySize
-	 *            [in] The size of nAllowArray.
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
-	// 获取nAttrID对应的播放模式集合，返回值为数组大小
-	public int retrieveCurrentPlayerAPSupported(int nAttrID,
-			int[] nAllowArray, int nArraySize) throws RemoteException {
-		if (null == mMusicProxy) {
-			return errorCode;
-		}
-		 return 1;
-	}
-
-	/**
-	 * Use this function to retrieve the current player application setting that
-	 * store in AnwSdkService.
-	 * 
-	 * @param nAttrID
-	 *            [in] Attribute ID.
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
-	// 获取当前模式的状态值、nAttrId用于区别 随机\顺序
-	public int retrieveCurrentPlayerAPSetting(int nAttrID)
-			throws RemoteException {
-		if (null == mMusicProxy) {
-			return errorCode;
-		}
-		return mMusicProxy.getPlayMode();
-	}
-
-	/**
-	 * Use this function to set the current player application setting.
-	 * 
-	 * @param nAttrID
-	 *            [in] Player Application Setting Attribute
-	 * @param nAttrValue
-	 *            [in] Attribute value.
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 * 
-	 *             Remarks When AVRCP channel connect, SDK will call the A2DP
-	 *             event callback function with event type set as
-	 *             TYPE_EVENT_NOTIFICATION and event id set as
-	 *             EVENT_PLAYER_APPLICATION_SETTING_SUPPORTED to notify
-	 *             application the target supported player application setting
-	 *             attributes and value. Application can use API
-	 *             ANWBT_AudioSetCurrentPlayerAPSetting to set the player
-	 *             attribute value if it has supported.
-	 */
-	// 设置当前播放模式，nAttrId用于区别 随机\顺序
-	public int setCurrentPlayerAPSetting(int nAttrID, int mode)
-			throws RemoteException {
-		if (null == mMusicProxy) {
-			return errorCode;
-		}
-		mMusicProxy.setPlayMode(mode);
-		return 1;
-	}
-
 	public boolean isFastForward = false;
 	public boolean isRewind = false;
+
 	/**
 	 * This function sends the AVRCP command to mobile phone for controlling the
 	 * music playing.
@@ -461,21 +274,21 @@ public class BluetoothMusicModel {
 		}
 		Log.i(TAG, "op_code = " + op_code + " ,nActFlag = " + nActFlag);
 		isOnFW = nActFlag == 0;
-		
-		if (op_code == AudioControl.CONTROL_FASTFORWARD ){
-			
+
+		if (op_code == AudioControl.CONTROL_FASTFORWARD) {
+
 			if (nActFlag == 0) {
-				mMusicProxy.fastForward(false); 
+				mMusicProxy.fastForward(false);
 				isFastForward = true;
-			}else{
+			} else {
 				mMusicProxy.fastForward(true);
 				isFastForward = false;
 			}
-		}else if (op_code == AudioControl.CONTROL_REWIND ){
+		} else if (op_code == AudioControl.CONTROL_REWIND) {
 			if (nActFlag == 0) {
-				mMusicProxy.fastbackward(false); 
+				mMusicProxy.fastbackward(false);
 				isRewind = true;
-			}else{
+			} else {
 				mMusicProxy.fastbackward(true);
 				isRewind = false;
 			}
@@ -483,13 +296,7 @@ public class BluetoothMusicModel {
 		return 1;
 	}
 
-	/**
-	 * Use this function to get stream volume is mute or un-mute.
-	 * 
-	 * @return Returns 1 means mute now, 0 means un-mute.
-	 * @throws RemoteException
-	 */
-	//得到静音模式
+	// 得到静音模式
 	public int getStreamMode() throws RemoteException {
 		if (null == mMusicProxy) {
 			return errorCode;
@@ -497,24 +304,13 @@ public class BluetoothMusicModel {
 		return mMusicProxy.getMuteStatus();
 	}
 
-	/**
-	 * This function sends the AVRCP command to mobile phone for controlling the
-	 * music playing.
-	 * 
-	 * @param op_code
-	 *            [in] Please reference AVRCP_Operation_ID for detail command
-	 *            information.
-	 * @return Returns Anw_SUCCESS on success or returns an error code on
-	 *         failure.
-	 * @throws RemoteException
-	 */
 	// 播放，暂停，上一曲，下一曲
 	public int AVRCPControl(int op_code) throws RemoteException {
 		if (null == mMusicProxy) {
-		
+
 			return errorCode;
 		}
-		
+
 		LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code + " , isPausing = "
 				+ isPausing);
 		if (op_code == AudioControl.CONTROL_PLAY) {
@@ -547,16 +343,16 @@ public class BluetoothMusicModel {
 			removeAutoPlay();
 			mMusicProxy.pause();
 		}
-		
+
 		if (op_code == AudioControl.CONTROL_FORWARD) {
-			
+
 			mMusicProxy.next();
 		}
-		
-		if(op_code == AudioControl.CONTROL_BACKWARD){
+
+		if (op_code == AudioControl.CONTROL_BACKWARD) {
 			mMusicProxy.previous();
 		}
-		
+
 		return 1;
 	}
 
@@ -592,73 +388,6 @@ public class BluetoothMusicModel {
 		return 1;
 	}
 
-	/**
-	 * 注册 Blutooth Setting 监听
-	 * 
-	 * @param bluetoothSettingModel
-	 */
-	public void registBluetoothSettingListener(
-			IBluetoothSettingModel bluetoothSettingModel) {
-		mIBluetoothSettingModel = bluetoothSettingModel;
-	}
-
-	/**
-	 * 更新配对状态
-	 * 
-	 * @param address
-	 * @param status
-	 */
-	public void updatePairRequest(String address, int status) {
-		if (null != mIBluetoothSettingModel) {
-			mIBluetoothSettingModel.updateDevicePair(address, status);
-		}
-		updateUnpairListByStatus(status, address);
-	}
-
-	/**
-	 * 更新carplay连接状态
-	 */
-	public void updateCPConnectStatus() {
-		if (null != mIBluetoothSettingModel) {
-			mIBluetoothSettingModel.updateCarplayConnectStatus();
-		}
-	}
-
-	/**
-	 * 取消Blutooth Setting 监听
-	 */
-	public void unregistBluetoothSettingListener() {
-		mIBluetoothSettingModel = null;
-	}
-
-	/**
-	 * 搜索蓝牙设备主调
-	 */
-	public void getBluetoothVisibleDevices() {
-		new InitStatusTask().execute();
-		LogUtil.i(TAG, "--- inquiryThread.star");
-	}
-
-	class InitStatusTask extends AsyncTask<Void, Void, Integer> {
-
-		@Override
-		protected Integer doInBackground(Void... params) {
-
-			return 0;
-		}
-
-		@SuppressLint("NewApi")
-		@Override
-		protected void onPostExecute(Integer result) {
-			LogUtil.i(TAG, "getBluetoothVisibleDevices : code = " + result);
-			// 根据供应商反馈搜索结果为647时、执行一次stop的动作、且1S内不能执行搜索
-			if (result == 647) {
-				mIBluetoothSettingModel.stopInquiry();
-			}
-			mIBluetoothSettingModel.onInquiryCallBack(result);
-		}
-	}
-
 	private static final int MSG_AUTOPLAY = 3;
 
 	Handler handler = new Handler() {
@@ -684,32 +413,7 @@ public class BluetoothMusicModel {
 	};
 
 	/**
-	 * 更新缓存列表状态
-	 * 
-	 * @param status
-	 * @param address
-	 */
-	public void updateUnpairListByStatus(int status, String address) {
-		LogUtil.i(TAG, "updateUnpairListByStatus -- status = " + status
-				+ "-- address = " + address);
-		if (status == MangerConstant.Anw_SUCCESS) {
-			for (int i = 0; i < mListDevices.size(); i++) {
-				if (mListDevices.get(i).getAddress().equals(address)) {
-					mListDevices.remove(i);
-				}
-			}
-		} else {
-			for (int i = 0; i < mListDevices.size(); i++) {
-				if (mListDevices.get(i).getAddress().equals(address)) {
-					mListDevices.get(i)
-							.setStatus(BluetoothDevice.DEVICE_UNPAIR);
-				}
-			}
-		}
-	}
-
-	/**
-	 * 监听蓝牙开关状态
+	 * 更新蓝牙开关状态
 	 * 
 	 * @param status
 	 */
@@ -737,9 +441,6 @@ public class BluetoothMusicModel {
 		if (null != mIMusicModel) {
 			mIMusicModel.updateCarlifeConnectStatus();
 		}
-		if (null != mIBluetoothSettingModel) {
-			mIBluetoothSettingModel.updateCarlifeConnectStatus();
-		}
 	}
 
 	/**
@@ -753,17 +454,6 @@ public class BluetoothMusicModel {
 		}
 		if (status != 1) {
 			notifyAutroMusicInfo(null);
-		}
-	}
-
-	/**
-	 * 更新HFP链接状态
-	 * 
-	 * @param status
-	 */
-	public void updateHFPConnectStatus(int status) {
-		if (null != mIBluetoothSettingModel) {
-			mIBluetoothSettingModel.updateConnectStatus(status);
 		}
 	}
 
@@ -810,81 +500,6 @@ public class BluetoothMusicModel {
 	public void updateCurrentPlayTime(String position, boolean isPlaying) {
 		if (null != mIMusicModel) {
 			mIMusicModel.getCurrentMusicPlayPosition(position, isPlaying);
-		}
-	}
-
-	/**
-	 * 更新循环模式
-	 * 
-	 * @param AllowList
-	 */
-	public void updateRepeatModel(ArrayList<Integer> AllowList) {
-		if (null != mIMusicModel) {
-			mIMusicModel.updateAttributeRepeat(AllowList);
-		}
-		mRepeatAllowedlist.clear();
-		mRepeatAllowedlist.addAll(AllowList);
-	}
-
-	/**
-	 * 更新随机模式
-	 * 
-	 * @param AllowList
-	 */
-	public void updateShuffleModel(ArrayList<Integer> AllowList) {
-		if (null != mIMusicModel) {
-			mIMusicModel.updateAttributeShuffle(AllowList);
-		}
-		mShuffleAllowedlist.clear();
-		mShuffleAllowedlist.addAll(AllowList);
-	}
-
-	/**
-	 * 切换模式后更新当前模式
-	 * 
-	 * @param nAttrID
-	 * @param nAttrValue
-	 */
-	public void updatePlayerModelSetting(int nAttrID, int nAttrValue) {
-		if (null != mIMusicModel) {
-			mIMusicModel.updataPlayerModel(nAttrID, nAttrValue);
-		}
-	}
-
-	/**
-	 * 切换音乐模式
-	 * 
-	 * @param nAttriID
-	 * @param AllowedList
-	 * @param nCurrentMode
-	 */
-	public void setPlayModel(int nAttriID, ArrayList<Integer> AllowedList,
-			int nCurrentMode) {
-		int nSupportSize = 0;
-		if (AllowedList != null) {
-			nSupportSize = AllowedList.size();
-			if (nSupportSize > 0) {
-				int i = 0;
-				int nValue = 0;
-				int nNextMode = -1;
-				for (i = 0; i < nSupportSize; i++) {
-					nValue = AllowedList.get(i);
-					if (nValue == nCurrentMode) {
-						int j = i + 1;
-						if (j >= nSupportSize)
-							j = 0;
-						nNextMode = AllowedList.get(j);
-						break;
-					}
-				}
-				if (nNextMode >= 0) {
-					try {
-						setCurrentPlayerAPSetting(nAttriID, nNextMode);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-				}
-			}
 		}
 	}
 
@@ -1041,8 +656,6 @@ public class BluetoothMusicModel {
 		}
 		return false;
 	}
-
-	private Handler mHandler = new Handler();
 
 	private boolean pauseByMobile = false;
 	/**
@@ -1305,12 +918,12 @@ public class BluetoothMusicModel {
 			syncMusicInfo(info);
 		}
 	}
-	
-	public boolean getHfpConnectState(){
-		
+
+	public boolean getHfpConnectState() {
+
 		boolean isHfpConnect = mBluetoothProxy.isHfpConnect();
 		Log.i(TAG, "isHfpConnect = " + isHfpConnect);
-		
+
 		return isHfpConnect;
 	}
 
@@ -1494,8 +1107,9 @@ public class BluetoothMusicModel {
 		} catch (RemoteException e) {
 		}
 	}
-	
-	public void setBluetoothAllCallback (BluetoothAllCallback mBluetoothAllCallback){
+
+	public void setBluetoothAllCallback(
+			BluetoothAllCallback mBluetoothAllCallback) {
 		this.mBluetoothAllCallback = mBluetoothAllCallback;
 	}
 }

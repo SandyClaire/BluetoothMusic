@@ -21,7 +21,7 @@ public class ShutdownBroadcastReceiver extends BroadcastReceiver{
 			
 			Log.i("BluetoothMusicModel", "reciver SHUTDOWN broadcast");
 			try {
-				new BluetoothMusicModel().AVRCPControl(AudioControl.CONTROL_PAUSE);
+				BluetoothMusicModel.getInstance(context).AVRCPControl(AudioControl.CONTROL_PAUSE);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}

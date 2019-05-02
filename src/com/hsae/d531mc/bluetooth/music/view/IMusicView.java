@@ -40,37 +40,6 @@ public interface IMusicView {
 	public void updateMusicPlayCurrentTime(String currentTime , boolean isPlaying);
 	
 	/**
-	 * 更新顺序播放模式
-	 * @param allowList
-	 */
-	public void updateRepeatAllowList(ArrayList<Integer> allowList);
-	
-	/**
-	 * 更新随机播放模式
-	 * @param allowList
-	 */
-	public void updateShuffleAllowList(ArrayList<Integer> allowList);
-	
-	/**
-	 * 更新播放模式状态
-	 * @param nAttrID
-	 * @param nAttrValue
-	 */
-	public void UpdatePlayerModeSetting(int nAttrID,int nAttrValue); 
-	
-	/**
-	 * 主动获取随机播放模式
-	 * @param allowList
-	 */
-	public void updateShuffleAllowArray(int[] AllowArray , int num);
-	
-	/**
-	 * 主动获取顺序播放模式
-	 * @param allowList
-	 */
-	public void updateRepeatAllowArray(int[] AllowArray , int num);
-	
-	/**
 	 * finish Music Activity
 	 */
 	public void finishMusicActivity();

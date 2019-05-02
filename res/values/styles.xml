@@ -74,7 +74,7 @@
 
     <style name="MusicSeekBar">
         <item name="android:indeterminateOnly">false</item>
-        <item name="android:progressDrawable">@drawable/music_progress</item>
+        <item name="android:progressDrawable">@drawable/video_progess_bar</item>
         <item name="android:indeterminateDrawable">@null</item>
         <item name="android:minHeight">44dip</item>
         <item name="android:maxHeight">44dip</item>

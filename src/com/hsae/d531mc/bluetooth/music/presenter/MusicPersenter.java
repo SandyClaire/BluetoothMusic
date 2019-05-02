@@ -63,9 +63,6 @@ public class MusicPersenter implements IObserver {
 			int conStatus = inMessage.getData().getInt("connectStatus");
 			mIMusicView.updateViewByConnectStatus(conStatus);
 			LogUtil.i(TAG, "updateViewByConnectStatus -- conStatus = " + conStatus);
-			if (conStatus == MangerConstant.Anw_SUCCESS) {
-				initMusicModel();
-			}
 			break;
 		case MusicActionDefine.ACTION_A2DP_PLAY_PAUSE_STATUS_CHANGE:
 			boolean playStatus = inMessage.getData().getBoolean("playStatus");
@@ -120,31 +117,7 @@ public class MusicPersenter implements IObserver {
 			LogUtil.i(TAG, " currentTime  = " + currentTime + " -- isPlaying = " + isPlaying);
 			mIMusicView.updateMusicPlayCurrentTime(currentTime, isPlaying);
 			break;
-		//待定
-		case MusicActionDefine.ACTION_A2DP_REPEAT_ATTRIBUTE:
-			ArrayList<Integer> allowRepeatList = inMessage.getData().getIntegerArrayList("repeatList");
-			mIMusicView.updateRepeatAllowList(allowRepeatList);
-			break;
-		//待定
-		case MusicActionDefine.ACTION_A2DP_SHUFFLE_ATTRIBUTE:
-			ArrayList<Integer> allowShuffleList = inMessage.getData().getIntegerArrayList("shuffleList");
-			mIMusicView.updateShuffleAllowList(allowShuffleList);
-			break;
-		case MusicActionDefine.ACTION_A2DP_PLAYERSETTING_CHANGED_EVENT:
-			int nAttrID = inMessage.getData().getInt("nAttrID");
-			int nAttrValue = inMessage.getData().getInt("nAttrValue");
-			mIMusicView.UpdatePlayerModeSetting(nAttrID, nAttrValue);
-			break;
-		//待定
-		case MusicActionDefine.ACTION_A2DP_REPEAT_MODEL:
-			int nCurrentMode = inMessage.getData().getInt("currentRepeatModel");
-			mIMusicModel.setCurrentPlayerRepeatModel(nCurrentMode);
-			break;
-		//待定
-		case MusicActionDefine.ACTION_A2DP_SHUFFLE_MODEL:
-			int sCurrentMode = inMessage.getData().getInt("currentShuffleModel");
-			mIMusicModel.setCurrentPlayerShuffleModel(sCurrentMode);
-			break;
+
 		case MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE:
 			mIMusicModel.sendActivityPauseMsg();
 			break;
@@ -191,7 +164,6 @@ public class MusicPersenter implements IObserver {
 		mIMusicView.updateViewByConnectStatus(status);
 		initBg();
 		
-		initMusicModel();
 	}
 
 	private void initBg() {
@@ -207,25 +179,6 @@ public class MusicPersenter implements IObserver {
 		((ISubject) mIMusicModel).detach(this);
 		LogUtil.i(TAG, " --- exit +++ ");
 	}
-	//待定
-	/**
-	 * 初始化音乐模式
-	 */
-	private void initMusicModel() {
-		int[] AllowArray = new int[10];
-		int repeatNum = mIMusicModel.retrieveCurrentPlayerAPSupported(AudioControl.PLAYER_ATTRIBUTE_REPEAT, AllowArray,
-				10);
-		mIMusicView.updateRepeatAllowArray(AllowArray, repeatNum);
-		int shuffleNum = mIMusicModel.retrieveCurrentPlayerAPSupported(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-				AllowArray, 10);
-		mIMusicView.updateShuffleAllowArray(AllowArray, shuffleNum);
-
-		mIMusicView.UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT,
-				mIMusicModel.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_REPEAT));
-		mIMusicView.UpdatePlayerModeSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE,
-				mIMusicModel.retrieveCurrentPlayerAPSetting(AudioControl.PLAYER_ATTRIBUTE_SHUFFLE));
-	}
-
 	
 	boolean playStatus = false;
 	/***
