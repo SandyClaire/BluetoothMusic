@@ -3,12 +3,13 @@
 
     <string name="app_name">Bluetooth Music</string>
     <string name="hello_world">Hello world!</string>
-    <string name="play_text_min">00:00</string>
-    <string name="play_text_max">59:59</string>
+    <string name="play_text_min">00:00:00</string>
+    <string name="play_text_max">23:59:59</string>
     <string name="music_source_title">Audio source selection</string>
     <string name="music_source_am">AM</string>
     <string name="music_source_fm">FM</string>
     <string name="music_source_radio">Radio</string>
+    <string name="music_source_online_music">Online Music</string>
     <string name="music_source_ipod">iPod</string>
     <string name="music_source_usb">USB Music</string>
     <string name="music_source_bluetooth">Bluetooth</string>

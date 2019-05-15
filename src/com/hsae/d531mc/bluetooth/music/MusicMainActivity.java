@@ -59,8 +59,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private static final String TAG = "MusicMainActivity";
 
-	private static final String RADIO_PACKAGE = "com.hsae.d531mc.radio";
-	private static final String RADIO_ACTIVITY_AM_FM = "com.hsae.d531mc.radio.RadioActivity";
+	private static final String KUWO_PACKAGE = "cn.kuwo.kwmusiccar";
+	private static final String KUWO_ACTIVITY = "cn.kuwo.kwmusiccar.WelcomeActivity";
 	private static final String IPOD_PACKAGE = "com.hsae.d531mc.ipod";
 	private static final String IPOD_ACTIVITY = "com.hsae.d531mc.ipod.view.MainActivity";
 	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
@@ -74,7 +74,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private MusicPersenter mPresenter;
 
-	private ImageView iRadio, ivUSB, ivBT;
+	private ImageView iOnlineMusic, ivUSB, ivBT;
 
 	private ImageView ivAlbumCut;
 	private ImageButton mBtnPrev;
@@ -205,7 +205,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private void initView() {
 
-		iRadio = (ImageView) findViewById(R.id.source_am);
+		iOnlineMusic = (ImageView) findViewById(R.id.source_online_music);
 		
 		ivUSB = (ImageView) findViewById(R.id.source_usb);
 		ivBT = (ImageView) findViewById(R.id.source_bt);
@@ -234,7 +234,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mBtnNext.setOnTouchListener(nextListener);
 		DeviceManagement.setOnClickListener(this);
 		
-		iRadio.setOnClickListener(this);
+		iOnlineMusic.setOnClickListener(this);
 		ivUSB.setOnClickListener(this);
 		ivBT.setOnClickListener(this);
 
@@ -320,7 +320,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	public void onClick(View v) {
 
 		switch (v.getId()) {
-		case R.id.source_am:
+		case R.id.source_online_music:
 			switchSource(Media.fm);
 			break;
 			
@@ -375,21 +375,21 @@ public class MusicMainActivity extends Activity implements ISubject,
 			Bundle bundle = new Bundle();
 			LogUtil.i(TAG, "switchSource :source is " + source);
 			if (source.equals(Media.am)) {
-				iRadio.setSelected(false);
-				ivUSB.setSelected(false);
-				ivBT.setSelected(false);
-				bundle.putInt("band", RadioConst.RadioBandType.AM1);
-				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
-						bundle);
+//				iOnlineMusic.setSelected(false);
+//				ivUSB.setSelected(false);
+//				ivBT.setSelected(false);
+//				bundle.putInt("band", RadioConst.RadioBandType.AM1);
+//				startOtherAPP(App.RADIO, KUWO_PACKAGE, KUWO_ACTIVITY,
+//						bundle);
 			} else if (source.equals(Media.fm)) {
-				iRadio.setSelected(true);
+				iOnlineMusic.setSelected(true);
 				ivUSB.setSelected(false);
 				ivBT.setSelected(false);
 				bundle.putInt("band", RadioConst.RadioBandType.FM1);
-				startOtherAPP(App.RADIO, RADIO_PACKAGE, RADIO_ACTIVITY_AM_FM,
+				startOtherAPP(App.RADIO, KUWO_PACKAGE, KUWO_ACTIVITY,
 						bundle);
 			} else if (source.equals(Media.usb)) {
-				iRadio.setSelected(false);
+				iOnlineMusic.setSelected(false);
 				ivUSB.setSelected(true);
 				ivBT.setSelected(false);
 
@@ -399,7 +399,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				String strClass = isUsb ? USB_ACTIVITY : IPOD_ACTIVITY;
 				startOtherAPP(app, strPackage, strClass, bundle);
 			} else if (source.equals(Media.bt)) {
-				iRadio.setSelected(false);
+				iOnlineMusic.setSelected(false);
 				ivUSB.setSelected(false);
 				ivBT.setSelected(true);
 			}
@@ -504,8 +504,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (status == 0) {
 			updateViewShow(false, false, true,true);
 			mSeekTail.setVisibility(View.GONE);
-			mTextTotalTime.setText("00:00");
-			mTextCurTime.setText("00:00");
+			mTextTotalTime.setText("00:00:00");
+			mTextCurTime.setText("00:00:00");
 			musicName = "";
 			mTextTitle.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
@@ -625,7 +625,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				mTextArtist.setText(bean.getAtrist());
 			}
 			if ("".equals(bean.getTotalTime())) {
-				mTextTotalTime.setText("00:00");
+				mTextTotalTime.setText("00:00:00");
 			} else {
 				mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 			}
@@ -635,15 +635,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_matedate_unsupport));
 			mTextArtist.setText(getResources().getString(
 					R.string.music_matedate_unsupport));
-			mTextTotalTime.setText("00:00");
-			mTextCurTime.setText("00:00");
+			mTextTotalTime.setText("00:00:00");
+			mTextCurTime.setText("00:00:00");
 			mSeekBar.setMax(0);
 			mSeekTail.setVisibility(View.GONE);
 		}
 	}
 
 	private String getTotalTime(String nTime) {
-		String timeStr = "00:00";
+		String timeStr = "00:00:00";
 
 		if (nTime.equals("-1")) {
 			return timeStr;
@@ -664,21 +664,33 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	private String toTime(long time) {
-		long minute = time / 1000 / 60;
-		long s = time / 1000 % 60;
+//		long minute = time / 1000 / 60;
+//		long s = time / 1000 % 60;
+		String hh = null;
 		String mm = null;
 		String ss = null;
-		if (minute < 10)
+		
+		Long hour = time / ((1000 * 60) * 60);
+        Long minute = (time - hour * (1000 * 3600)) / (1000 * 60);
+        Long second = (time - hour * (1000 * 3600) - minute * (1000 * 60)) / 1000;
+        
+        if(hour < 10){
+        	hh = "0" + hour;
+        }else{
+        	hh = hour + "";
+        }
+        
+        if (minute < 10)
 			mm = "0" + minute;
 		else
 			mm = minute + "";
 
-		if (s < 10)
-			ss = "0" + s;
+		if (second < 10)
+			ss = "0" + second;
 		else
-			ss = "" + s;
+			ss = "" + second;
 
-		return mm + ":" + ss;
+		return hh + ":" + mm + ":" + ss;
 	}
 
 	public static boolean isNumeric(String str) {
@@ -688,7 +700,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private String getCurrentTime(String nTime) {
 		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
-			return "00:00";
+			return "00:00:00";
 		} else {
 			if (isNumeric(nTime) == true) {
 				isSupportPlaybackpos = true;
@@ -699,10 +711,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 					return toTime(Integer.valueOf(nTime));
 				} catch (NumberFormatException e) {
 
-					return "00:00";
+					return "00:00:00";
 				}
 			} else {
-				return "00:00";
+				return "00:00:00";
 			}
 		}
 	}
@@ -722,7 +734,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (isSupportMetadata == true) {
 			if (isSupportPlaybackpos == false) {
 				mSeekBar.setProgress(0);
-				mTextCurTime.setText("00:00");
+				mTextCurTime.setText("00:00:00");
 			} else {
 				if (mSeekBar.getMax() > 0 && isSupportPlaybackpos) {
 					int iPlayTime = mSeekBar.getProgress();
@@ -733,7 +745,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 		} else {
 			mSeekBar.setProgress(0);
-			mTextCurTime.setText("00:00");
+			mTextCurTime.setText("00:00:00");
 		}
 	}
 

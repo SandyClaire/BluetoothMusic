@@ -25,7 +25,7 @@
             android:background="@drawable/line" />
         
         <ImageButton
-            android:id="@+id/source_am"
+            android:id="@+id/source_online_music"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="29dp"
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:layout_marginTop="195dp"
-            android:text="@string/music_source_radio"
+            android:text="@string/music_source_online_music"
             android:textColor="@color/white"
             android:textSize="18dp" />
 
@@ -101,7 +101,7 @@
     <FrameLayout
         android:layout_width="300dp"
         android:layout_height="200dp"
-        android:layout_marginLeft="130dp"
+        android:layout_marginLeft="100dp"
         android:layout_marginTop="360dp" >
 
         <ImageView
@@ -138,7 +138,7 @@
             android:id="@+id/music_title"
             style="@style/timeText"
             android:layout_width="500dp"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_gravity="top|center_vertical"
             android:layout_marginLeft="150dp"
             android:layout_marginTop="30dp"
@@ -148,23 +148,23 @@
             android:marqueeRepeatLimit="-1"
             android:singleLine="true"
             android:text="@string/music_matedate_unsupport"
-            android:textSize="60sp" />
+            android:textSize="30sp" />
 
         <TextView
             android:id="@+id/music_artist"
             style="@style/timeText"
             android:layout_width="470dp"
-            android:layout_height="40dp"
+            android:layout_height="30dp"
             android:layout_gravity="top|center_vertical"
             android:layout_marginLeft="160dp"
-            android:layout_marginTop="110dp"
+            android:layout_marginTop="63dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:marqueeRepeatLimit="-1"
             android:singleLine="true"
             android:text="@string/music_matedate_unsupport"
-            android:textSize="32sp" />
+            android:textSize="20sp" />
 
         <TextView
             android:id="@+id/music_album_name"
@@ -185,8 +185,8 @@
 
         <ImageView
             android:id="@+id/music_defaultcover"
-            android:layout_width="406dp"
-            android:layout_height="406dp"
+            android:layout_width="606dp"
+            android:layout_height="606dp"
             android:layout_gravity="top|right"
             android:layout_marginRight="60dp"
             android:layout_marginTop="10dp"
@@ -194,11 +194,11 @@
             android:visibility="gone" />
 
         <ImageView
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="450dp"
+            android:layout_height="350dp"
             android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="270dp"
-            android:layout_marginTop="190dp"
+            android:layout_marginLeft="170dp"
+            android:layout_marginTop="100dp"
             android:src="@drawable/album" />
     </FrameLayout>
 
@@ -213,19 +213,19 @@
 
         <FrameLayout
             android:id="@+id/frame_seekbar"
-            android:layout_width="880dp"
+            android:layout_width="1050dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
-            android:layout_marginLeft="121dp"
-            android:layout_marginTop="315dp" >
+            android:layout_marginLeft="70dp"
+            android:layout_marginTop="270dp" >
 
             <com.hsae.d531mc.bluetooth.music.util.MySeekBar
                 android:id="@+id/music_seekbar"
                 style="@style/MusicSeekBar"
-                android:layout_width="720dp"
+                android:layout_width="825dp"
                 android:layout_height="10dp"
                 android:layout_gravity="left"
-                android:layout_marginLeft="70dp"
+                android:layout_marginLeft="95dp"
                 android:layout_marginTop="25dp" />
 
             <TextView
@@ -243,7 +243,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|top"
-                android:layout_marginRight="15dp"
+                android:layout_marginRight="30dp"
                 android:layout_marginTop="15dp"
                 android:text="@string/play_text_max"
                 android:textColor="@color/white_trans"
@@ -262,7 +262,8 @@
             android:id="@+id/layout_playbtn"
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            android:layout_gravity="bottom" >
+            android:layout_marginTop="330dp"
+             >
 
             <!-- android:background="@drawable/bg_bottom_bar" -->
 
@@ -280,9 +281,9 @@
                 android:layout_width="123dp"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="220dp"
+                android:layout_marginLeft="280dp"
                 android:background="@color/transparent"
-                android:paddingLeft="35dp"
+                android:paddingLeft="45dp"
                 android:paddingRight="25dp"
                 android:src="@drawable/selector_previous" />
 
@@ -292,8 +293,8 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
                 android:layout_marginLeft="400dp"
-                android:paddingLeft="35dp"
-                android:paddingRight="35dp"
+                android:paddingLeft="80dp"
+               
                 android:src="@drawable/selector_stop" />
 
             <ImageButton
