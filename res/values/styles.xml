@@ -79,6 +79,7 @@
 	    <item name="android:minHeight">2dip</item>
         <item name="android:maxHeight">22dip</item>
         <item name="android:thumb">@drawable/video_progress_thum</item>
+        <item name="android:thumbOffset=">0dip</item>
         <item name="android:focusable">true</item>
         <item name="android:secondaryProgress">100</item>
         <item name="android:paddingLeft">10dp</item>
