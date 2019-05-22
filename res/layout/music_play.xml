@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_vertical"
             android:layout_marginLeft="150dp"
-            android:layout_marginTop="35dp"
+            android:layout_marginTop="40dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -158,14 +158,14 @@
             android:layout_height="30dp"
             android:layout_gravity="top|center_vertical"
             android:layout_marginLeft="160dp"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="75dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:marqueeRepeatLimit="-1"
             android:singleLine="true"
             android:text="@string/music_matedate_unsupport"
-            android:textSize="20sp" />
+            android:textSize="17sp" />
 
         <TextView
             android:id="@+id/music_album_name"

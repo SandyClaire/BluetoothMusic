@@ -77,7 +77,8 @@
         <item name="android:progressDrawable">@drawable/video_progess_bar</item>
         <item name="android:indeterminateDrawable">@null</item>
 	    <item name="android:minHeight">2dip</item>
-        <item name="android:maxHeight">22dip</item>
+        <item name="android:maxHeight">2dip</item>
+        <item name="android:thumbOffset">0dip</item>
         <item name="android:thumb">@drawable/video_progress_thum</item>
         <item name="android:focusable">true</item>
         <item name="android:secondaryProgress">100</item>

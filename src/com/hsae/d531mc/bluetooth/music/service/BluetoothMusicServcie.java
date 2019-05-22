@@ -57,7 +57,9 @@ public class BluetoothMusicServcie extends Service implements
 	private PowerListener mPowerListener = new PowerListener();
 	private AutoSettings mAutoSettings;
 	private boolean HfpStatus = false;
-
+	private boolean autoPlay = true;
+	private AccBroadcastReceiver mReceiver = null;
+			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
 	private static final int BLUETOOTH_MUSIC_CONNECT_PLAY = 2;
 	/**
@@ -87,12 +89,13 @@ public class BluetoothMusicServcie extends Service implements
 						break;
 					case BLUETOOTH_MUSIC_CONNECT_PLAY:
 						try {
-							mBluetoothMusicModel
-									.AVRCPControl(AudioControl.CONTROL_PLAY);
-							mBluetoothMusicModel.getPlayStatus();
-							mBluetoothMusicModel.isPlay = true;
-							mBluetoothMusicModel
-									.updatePlayStatus(mBluetoothMusicModel.isPlay);
+							if(autoPlay){
+								mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+								mBluetoothMusicModel.getPlayStatus();
+								mBluetoothMusicModel.isPlay = true;
+								mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
+							}
+						
 						} catch (RemoteException e) {
 						}
 						break;
@@ -138,11 +141,38 @@ public class BluetoothMusicServcie extends Service implements
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
+		registAccBroadcast();
 		mBluetoothMusicModel.setBluetoothAllCallback(this);
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mSoc.registerListener(mSocListener);
 		super.onCreate();
+	}
+	
+	private void registAccBroadcast(){
+		IntentFilter filter = new IntentFilter();
+		mReceiver = new AccBroadcastReceiver();
+		mContext.registerReceiver(mReceiver, filter);
+	}
+	
+	private class AccBroadcastReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+		
+			Log.i(TAG, "action = " + intent.getAction());
+			if(intent.getAction().equals(ACTION_ACC_STATE)){
+				//TODO .. 记忆播放状态
+				boolean accStatus = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
+				Log.i(TAG, "accStatus = " + accStatus);
+				if (!accStatus) {
+					if (mBluetoothMusicModel !=null) {
+						autoPlay = mBluetoothMusicModel.isAccPlay;
+					}
+				}
+			}
+		}
+		
 	}
 
 	@Override
@@ -152,6 +182,8 @@ public class BluetoothMusicServcie extends Service implements
 			mSoc.unregisterListener(mSocListener);
 		} catch (RemoteException e) {
 		}
+		
+		mContext.unregisterReceiver(mReceiver);
 
 		LogUtil.i(TAG, "---------- service onDestroy ------------");
 		super.onDestroy();
@@ -172,8 +204,7 @@ public class BluetoothMusicServcie extends Service implements
 				if (mHandler.hasMessages(BLUETOOTH_MUSIC_CONNECT_PLAY)) {
 					mHandler.removeMessages(BLUETOOTH_MUSIC_CONNECT_PLAY);
 				}
-				LogUtil.i(TAG,
-						"audioSetStreamMode: btmusic is connected playMusic fail");
+				LogUtil.i(TAG,"audioSetStreamMode: btmusic is connected playMusic fail");
 				mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel
@@ -446,12 +477,15 @@ public class BluetoothMusicServcie extends Service implements
 		case AudioControl.STREAM_STATUS_SUSPEND:
 			mBluetoothMusicModel.isPausing = false;
 			mBluetoothMusicModel.isPlay = false;
+			mBluetoothMusicModel.isAccPlay = false;
 			mBluetoothMusicModel.setTimingEnd();
 			break;
 		case AudioControl.STREAM_STATUS_STREAMING:
 			mBluetoothMusicModel.setTimingBegins();
 			mBluetoothMusicModel.isPlaying = false;
 			mBluetoothMusicModel.isPlay = true;
+			mBluetoothMusicModel.isAccPlay = true;
+			autoPlay = true;
 			mBluetoothMusicModel.setStreamMute();
 			break;
 		}

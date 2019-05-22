@@ -88,6 +88,8 @@ public class BluetoothMusicModel {
 	public final Source mSource = new Source();
 
 	private AudioManager audioManager;
+	
+	public boolean isAccPlay = false;
 
 	private MusicProxy mMusicProxy;
 	private BluetoothProxy mBluetoothProxy;
