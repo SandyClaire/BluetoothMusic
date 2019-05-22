@@ -8,7 +8,7 @@
         android:id="@+id/default_screenbg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       android:background="@drawable/bg"
+       android:background="@drawable/all_bg"
         />
     
     <FrameLayout
@@ -131,7 +131,7 @@
         android:layout_width="1020dp"
         android:layout_height="420dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="150dp"
+        android:layout_marginLeft="160dp"
         android:layout_marginTop="85dp"
         android:visibility="visible" >
 
@@ -142,7 +142,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_vertical"
             android:layout_marginLeft="150dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="45dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
@@ -153,19 +153,19 @@
 
         <TextView
             android:id="@+id/music_artist"
-            style="@style/timeText"
             android:layout_width="470dp"
             android:layout_height="30dp"
             android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="160dp"
-            android:layout_marginTop="75dp"
+            android:layout_marginLeft="170dp"
+            android:layout_marginTop="80dp"
             android:ellipsize="marquee"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:marqueeRepeatLimit="-1"
             android:singleLine="true"
             android:text="@string/music_matedate_unsupport"
-            android:textSize="17sp" />
+            android:gravity="center"
+            android:textSize="20sp" /> 
 
         <TextView
             android:id="@+id/music_album_name"
