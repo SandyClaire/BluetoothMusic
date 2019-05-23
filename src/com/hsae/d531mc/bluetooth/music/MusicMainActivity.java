@@ -66,7 +66,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final String USB_PACKAGE = "com.hsae.d531mc.usbmedia";
 	private static final String USB_ACTIVITY = "com.hsae.d531mc.usbmedia.musicui.lifecycle.MusicActivity";
 	private static final String SETTINGS_PACKAGE = "com.hsae.d531mc.systemsetting";
-	private static final String SETTINGS_Bluetooth_ACTIVITY = "com.hsae.d531mc.systemsetting.connect.activity.BlueActivity";
+	private static final String SETTINGS_Bluetooth_ACTIVITY = "com.hsae.d531mc.systemsetting.SystemSettingsActivity";
+	private static final String SETTINGS_Bluetooth_FRAGMENT = "android.hase.settings.BT_SETTINGS";
+
 	
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
 	private static final int MSG_SWITCH = 1123;
@@ -341,7 +343,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 			int launchFlags = Intent.FLAG_ACTIVITY_NEW_TASK;
 			intent.setFlags(launchFlags);
-			intent.setAction(Intent.ACTION_MAIN);
+			intent.setAction(SETTINGS_Bluetooth_FRAGMENT);
 		
 			startActivity(intent);
 			

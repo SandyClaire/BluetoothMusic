@@ -165,7 +165,9 @@ public class BluetoothMusicServcie extends Service implements
 				//TODO .. 记忆播放状态
 				boolean accStatus = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
 				Log.i(TAG, "accStatus = " + accStatus);
-				if (!accStatus) {
+				if (accStatus) {
+					
+				}else {
 					if (mBluetoothMusicModel !=null) {
 						autoPlay = mBluetoothMusicModel.isAccPlay;
 					}
