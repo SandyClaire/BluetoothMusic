@@ -405,6 +405,11 @@ public class BluetoothMusicServcie extends Service implements
 		public void onMainAudioChanged(int arg0) {
 
 		}
+
+		@Override
+		public void onShutDownNotify() {
+			
+		}
 	};
 
 	/**
