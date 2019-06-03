@@ -333,6 +333,12 @@ public class BluetoothMusicModel {
 				handler.sendEmptyMessageDelayed(MSG_AUTOPLAY, 1500);
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
+			
+			if(!AutoSettings.getInstance().getPowerState()){
+				Log.i(TAG, "setPowerState value = true");
+				AutoSettings.getInstance().setPowerState(true);
+		     }
+			
 			mMusicProxy.play();
 		} else if (op_code == AudioControl.CONTROL_PAUSE) {
 			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
