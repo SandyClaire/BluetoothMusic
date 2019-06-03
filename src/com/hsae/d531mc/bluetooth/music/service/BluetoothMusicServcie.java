@@ -151,6 +151,8 @@ public class BluetoothMusicServcie extends Service implements
 	
 	private void registAccBroadcast(){
 		IntentFilter filter = new IntentFilter();
+		filter.addAction(ACTION_ACC_STATE);
+		
 		mReceiver = new AccBroadcastReceiver();
 		mContext.registerReceiver(mReceiver, filter);
 	}
@@ -437,6 +439,7 @@ public class BluetoothMusicServcie extends Service implements
 
 		@Override
 		public void onScreenStateResponse(boolean power) {
+
 			if (mBluetoothMusicModel == null) {
 				LogUtil.i(TAG,
 						"onScreenStateResponse mBluetoothMusicModel is null");

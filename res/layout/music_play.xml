@@ -224,7 +224,7 @@
                 android:id="@+id/music_seekbar"
                 style="@style/MusicSeekBar"
                 android:layout_width="825dp"
-                android:layout_height="10dp"
+                android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="95dp"
                 android:layout_marginTop="25dp" />
@@ -456,12 +456,13 @@
 
             <TextView
                 android:id="@+id/bt_power_unuse_text"
-                android:layout_width="470dp"
+                android:layout_width="770dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="40dp"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30dp" />
+                android:textSize="30dp" 
+                />
         </LinearLayout>
     </FrameLayout>
 

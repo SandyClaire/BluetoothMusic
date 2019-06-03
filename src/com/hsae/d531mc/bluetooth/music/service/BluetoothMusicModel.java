@@ -380,12 +380,11 @@ public class BluetoothMusicModel {
 			return -1;
 		}
 
-		if (mode == MangerConstant.AUDIO_STREAM_MODE_UNMUTE) {
-			mMusicProxy.unmute();
-
-		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_MUTE) {
+		if (mode == MangerConstant.AUDIO_STREAM_MODE_DISABLE) {
 			mMusicProxy.mute();
 
+		} else if (mode == MangerConstant.AUDIO_STREAM_MODE_ENABLE) {
+			mMusicProxy.unmute();
 		}
 		return 1;
 	}
