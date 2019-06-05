@@ -131,7 +131,7 @@ public class BluetoothMusicModel {
 	public MusicCallback mMusicProxyCallback = new MusicCallback() {
 
 		@Override
-		public void onPlayStatusChanged(int state) throws RemoteException {
+		public void onPlayStatusChanged(int state) {
 			super.onPlayStatusChanged(state);
 
 			if (mBluetoothAllCallback != null) {
@@ -141,7 +141,7 @@ public class BluetoothMusicModel {
 		}
 
 		@Override
-		public void onPositionChanged(String position) throws RemoteException {
+		public void onPositionChanged(String position) {
 			super.onPositionChanged(position);
 
 			if (mBluetoothAllCallback != null) {
@@ -151,7 +151,7 @@ public class BluetoothMusicModel {
 
 		@Override
 		public void onID3Changed(String title, String album, String artist,
-				String totalTime) throws RemoteException {
+				String totalTime) {
 			super.onID3Changed(title, album, artist, totalTime);
 
 			if (mBluetoothAllCallback != null) {
@@ -164,7 +164,7 @@ public class BluetoothMusicModel {
 
 	public BluetoothCallback mBluetoothProxyCallback = new BluetoothCallback() {
 
-		@Override
+		@Override	
 		public void onConnectStateChanged(int profile, int state, int reason) {
 			super.onConnectStateChanged(profile, state, reason);
 

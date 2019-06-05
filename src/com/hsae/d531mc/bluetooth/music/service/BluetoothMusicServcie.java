@@ -424,22 +424,19 @@ public class BluetoothMusicServcie extends Service implements
 
 		@Override
 		public void onBrightnessResponse(int arg0) {
-
 		}
 
 		@Override
 		public void onContrastResponse(int arg0) {
-
 		}
 
 		@Override
 		public void onDayNightAutoStateResponse(DayNight arg0) {
-
 		}
 
 		@Override
 		public void onScreenStateResponse(boolean power) {
-
+			
 			if (mBluetoothMusicModel == null) {
 				LogUtil.i(TAG,
 						"onScreenStateResponse mBluetoothMusicModel is null");
@@ -459,6 +456,11 @@ public class BluetoothMusicServcie extends Service implements
 						mBluetoothMusicModel.notifyAutoCoreWarning();
 					}
 				}
+			}else {
+				Intent intent = new Intent(Intent.ACTION_MAIN);
+				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+				intent.addCategory(Intent.CATEGORY_HOME);
+				startActivity(intent);
 			}
 		}
 	}

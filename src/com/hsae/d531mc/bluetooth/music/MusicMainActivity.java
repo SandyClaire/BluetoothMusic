@@ -272,7 +272,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 		boolean isUsb = !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_icon_usb
 				: R.drawable.selector_source_ipod);
-		Log.i("abcde", "1");
 	}
 	
 	@Override
