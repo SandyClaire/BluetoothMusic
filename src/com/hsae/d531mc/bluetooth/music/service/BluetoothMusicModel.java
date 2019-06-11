@@ -90,6 +90,8 @@ public class BluetoothMusicModel {
 	private AudioManager audioManager;
 	
 	public boolean isAccPlay = false;
+	
+	public boolean isActivityShow = false;
 
 	private MusicProxy mMusicProxy;
 	private BluetoothProxy mBluetoothProxy;
@@ -378,7 +380,7 @@ public class BluetoothMusicModel {
 		if (null == mMusicProxy) {
 			return errorCode;
 		}
-
+		
 		int currentAudioMode = getStreamMode();
 		LogUtil.i(TAG, "audioSetStreamMode  ---  mode = " + mode
 				+ " , currentAudioMode = " + currentAudioMode);

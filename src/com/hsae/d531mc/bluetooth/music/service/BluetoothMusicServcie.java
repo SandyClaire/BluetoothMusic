@@ -57,7 +57,6 @@ public class BluetoothMusicServcie extends Service implements
 	private PowerListener mPowerListener = new PowerListener();
 	private AutoSettings mAutoSettings;
 	private boolean HfpStatus = false;
-	private boolean autoPlay = true;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
@@ -89,12 +88,10 @@ public class BluetoothMusicServcie extends Service implements
 						break;
 					case BLUETOOTH_MUSIC_CONNECT_PLAY:
 						try {
-							if(autoPlay){
-								mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
-								mBluetoothMusicModel.getPlayStatus();
-								mBluetoothMusicModel.isPlay = true;
-								mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
-							}
+							mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+							mBluetoothMusicModel.getPlayStatus();
+							mBluetoothMusicModel.isPlay = true;
+							mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 						
 						} catch (RemoteException e) {
 						}
@@ -164,14 +161,20 @@ public class BluetoothMusicServcie extends Service implements
 		
 			Log.i(TAG, "action = " + intent.getAction());
 			if(intent.getAction().equals(ACTION_ACC_STATE)){
-				//TODO .. 记忆播放状态
 				boolean accStatus = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
 				Log.i(TAG, "accStatus = " + accStatus);
 				if (accStatus) {
-					
+					mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
+
+					mBluetoothMusicModel
+							.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+
+					mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 				}else {
-					if (mBluetoothMusicModel !=null) {
-						autoPlay = mBluetoothMusicModel.isAccPlay;
+					try {
+						mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+					} catch (RemoteException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -412,6 +415,18 @@ public class BluetoothMusicServcie extends Service implements
 		public void onShutDownNotify() {
 			
 		}
+
+		@Override
+		public void onUpMeterHalVersionNumber(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onUpMeterSoftVersionNumber(String arg0) {
+			// TODO Auto-generated method stub
+			
+		}
 	};
 
 	/**
@@ -436,6 +451,7 @@ public class BluetoothMusicServcie extends Service implements
 
 		@Override
 		public void onScreenStateResponse(boolean power) {
+			Log.i(TAG, "onScreenStateResponse = " + power);
 			
 			if (mBluetoothMusicModel == null) {
 				LogUtil.i(TAG,
@@ -457,10 +473,18 @@ public class BluetoothMusicServcie extends Service implements
 					}
 				}
 			}else {
-				Intent intent = new Intent(Intent.ACTION_MAIN);
-				intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-				intent.addCategory(Intent.CATEGORY_HOME);
-				startActivity(intent);
+				if (mBluetoothMusicModel.isActivityShow) {
+					try {
+						mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				
+					Intent intent = new Intent(Intent.ACTION_MAIN);
+					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+					intent.addCategory(Intent.CATEGORY_HOME);
+					startActivity(intent);
+				}
 			}
 		}
 	}
@@ -497,7 +521,6 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlaying = false;
 			mBluetoothMusicModel.isPlay = true;
 			mBluetoothMusicModel.isAccPlay = true;
-			autoPlay = true;
 			mBluetoothMusicModel.setStreamMute();
 			break;
 		}

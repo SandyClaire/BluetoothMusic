@@ -16,7 +16,7 @@ public class ShutdownBroadcastReceiver extends BroadcastReceiver{
 	
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		
+
 		if(intent.getAction().equals(Intent.ACTION_SHUTDOWN)){
 			
 			Log.i("BluetoothMusicModel", "reciver SHUTDOWN broadcast");
