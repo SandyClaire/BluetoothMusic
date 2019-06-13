@@ -97,6 +97,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private TextView mTextTip;
 	private boolean isSupportPlaybackpos = false;
 	private boolean isSupportMetadata = false;
+	private boolean isRequestAudio = true;
 	private static final int LONG_CLICK_PREV = 1;
 	private static final int LONG_CLICK_NEXT = 2;
 	private static final int LONG_FAST_FORWORD_CANCLE = 5;
@@ -190,6 +191,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 	protected void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 		LogUtil.i(TAG, "cruze onNewIntent");
+		
+		boolean intentBool = intent.getBooleanExtra("systemUI", false);
+		LogUtil.i(TAG, "intentBool = " + intentBool);
+		if(intentBool){
+			isRequestAudio = false;
+		}
+		
 		Message msg = Message.obtain();
 		msg.what = MusicActionDefine.ACTION_APP_ONINTENT;
 		this.notify(msg, FLAG_RUN_SYNC);
@@ -264,14 +272,19 @@ public class MusicMainActivity extends Activity implements ISubject,
 		super.onResume();
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
-
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
-		this.notify(msg, FLAG_RUN_SYNC);
-
+		
+		if(isRequestAudio){ 
+			LogUtil.i(TAG, "onResume , isRequestAudio = true");
+			Message msg = Message.obtain();
+			msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
+			this.notify(msg, FLAG_RUN_SYNC);
+		}
+	
 		boolean isUsb = !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_icon_usb
 				: R.drawable.selector_source_ipod);
+		
+		isRequestAudio = true;
 	}
 	
 	@Override
@@ -550,8 +563,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 			} else {
 				mFraInfo.setVisibility(View.GONE);
 				mFraControl.setVisibility(View.GONE);
-				unConnectLayout.setVisibility(View.VISIBLE);
-				btPowerUnuse.setVisibility(View.GONE);
+				unConnectLayout.setVisibility(View.GONE);
+				btPowerUnuse.setVisibility(View.VISIBLE);
+				btPowerUnuseText.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
 				/*
 				 * if (!isFromCarlife) {
 				 * mTextTip.setText(getResources().getString
@@ -701,6 +715,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	}
 
 	private String getCurrentTime(String nTime) {
+		Log.i(TAG, "getCurrentTime = " + nTime);
+		
 		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
 			return "00:00:00";
 		} else {
