@@ -599,11 +599,18 @@ public class BluetoothMusicServcie extends Service implements
 	public void onConnectStateChanged(int profile, int state, int reason) {
 		Log.i(TAG, "onConnectStateChanged,profile = " + profile + ",state = "
 				+ state + ",reason = " + reason);
-
+		
+		int A2dpStatus = mBluetoothMusicModel.getA2dpStatus();
+		Log.i(TAG, "A2dpStatus = " + A2dpStatus);
+		
 		int nProfile = profile;
 		if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
 			mBluetoothMusicModel.hfpStatus = state;
-
+			
+			if((mBluetoothMusicModel.hfpStatus == 1) &&(A2dpStatus == 0)){
+				mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
+			}
+			
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
 			mBluetoothMusicModel.a2dpStatus = state;

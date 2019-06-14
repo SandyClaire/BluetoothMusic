@@ -115,17 +115,7 @@ public class BluetoothMusicModel {
 
 		mMusicProxy = MusicProxy.getInstance(mContext);
 		mMusicProxy.registCallback(mMusicProxyCallback);
-
-		/*
-		 * mMusicProxy.fastbackward(touchup); //快退
-		 * mMusicProxy.fastForward(touchup); //快进 mMusicProxy.getId3(); //ID3
-		 * mMusicProxy.getMusicInfo(); mMusicProxy.getMuteStatus(); //当前静音状态
-		 * mMusicProxy.getPlayMode(); //当前播放模式 mMusicProxy.getPlayStatus(); //
-		 * mMusicProxy.getPosition(); // mMusicProxy.mute(); //静音
-		 * mMusicProxy.next(); mMusicProxy.pause(); mMusicProxy.play();
-		 * mMusicProxy.previous(); //向前 mMusicProxy.setPlayMode(mode); //参数
-		 * mMusicProxy.supportPlayMode(); // mMusicProxy.unmute(); //解除静音
-		 */
+		
 		mBluetoothProxy = BluetoothProxy.getInstance(mContext);
 		mBluetoothProxy.registCallback(mBluetoothProxyCallback);
 	}
@@ -396,9 +386,19 @@ public class BluetoothMusicModel {
 		}
 		return 1;
 	}
-
+	
+	public int getA2dpStatus(){
+		
+		return mBluetoothProxy.getConnectStatus(2);
+	}
+	
+	public boolean isSupportMusic(){
+	
+		return mBluetoothProxy.supportPhoneOnly();
+	}
+	
 	private static final int MSG_AUTOPLAY = 3;
-
+	
 	Handler handler = new Handler() {
 		public void handleMessage(final android.os.Message msg) {
 
