@@ -122,7 +122,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			@Override
 			public void run() {
 				try {
-					mBluetoothMusicModel.getPlayStatus();
+					mBluetoothMusicModel.getMusicInfo();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

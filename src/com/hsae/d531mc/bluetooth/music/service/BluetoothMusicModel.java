@@ -221,9 +221,11 @@ public class BluetoothMusicModel {
 
 	}
 
-	public void getPlayStatus() throws RemoteException {
+	public void getMusicInfo() throws RemoteException {
 		if (null == mMusicProxy) {
+			return;
 		}
+		
 		mMusicProxy.getMusicInfo();
 	}
 
@@ -1052,7 +1054,7 @@ public class BluetoothMusicModel {
 			if (msg.what == MSG_TICKER) {
 				try {
 					stepTimeHandler.sendEmptyMessageDelayed(MSG_TICKER, 1000);
-					getPlayStatus();
+					getMusicInfo();
 				} catch (RemoteException e) {
 				}
 			}
@@ -1093,7 +1095,7 @@ public class BluetoothMusicModel {
 		public void run() {
 			try {
 				if (a2dpStatus == 1 && avrcpStatus == 1) {
-					getPlayStatus();
+					getMusicInfo();
 					stepTimeHandler.postDelayed(this, 1000);
 				}
 			} catch (RemoteException e) {

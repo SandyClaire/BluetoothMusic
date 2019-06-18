@@ -57,10 +57,12 @@ public class BluetoothMusicServcie extends Service implements
 	private PowerListener mPowerListener = new PowerListener();
 	private AutoSettings mAutoSettings;
 	private boolean HfpStatus = false;
+	private boolean isPowerOn = true;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
 	private static final int BLUETOOTH_MUSIC_CONNECT_PLAY = 2;
+	private static final int NO_SUPPORT_BLUETOOTHMUSIC = 3;
 	/**
 	 * 背景监听
 	 */
@@ -89,12 +91,16 @@ public class BluetoothMusicServcie extends Service implements
 					case BLUETOOTH_MUSIC_CONNECT_PLAY:
 						try {
 							mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
-							mBluetoothMusicModel.getPlayStatus();
+							mBluetoothMusicModel.getMusicInfo();
 							mBluetoothMusicModel.isPlay = true;
 							mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 						
 						} catch (RemoteException e) {
 						}
+						break;
+						
+					case NO_SUPPORT_BLUETOOTHMUSIC:
+						mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
 						break;
 					}
 					return false;
@@ -164,12 +170,12 @@ public class BluetoothMusicServcie extends Service implements
 				boolean accStatus = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
 				Log.i(TAG, "accStatus = " + accStatus);
 				if (accStatus) {
-					mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
-
-					mBluetoothMusicModel
-							.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-
-					mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+//					mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
+//
+//					mBluetoothMusicModel
+//							.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+//
+//					mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 				}else {
 					try {
 						mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
@@ -216,7 +222,7 @@ public class BluetoothMusicServcie extends Service implements
 				mBluetoothMusicModel.isPlay = false;
 				mBluetoothMusicModel
 						.updatePlayStatus(mBluetoothMusicModel.isPlay);
-				mBluetoothMusicModel.getPlayStatus();
+				mBluetoothMusicModel.getMusicInfo();
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -418,13 +424,11 @@ public class BluetoothMusicServcie extends Service implements
 
 		@Override
 		public void onUpMeterHalVersionNumber(String arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 
 		@Override
 		public void onUpMeterSoftVersionNumber(String arg0) {
-			// TODO Auto-generated method stub
 			
 		}
 	};
@@ -460,6 +464,8 @@ public class BluetoothMusicServcie extends Service implements
 			}
 			mBluetoothMusicModel.powerStatus = power;
 			if (power) {
+				isPowerOn = true;
+				
 				Source source = new Source();
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					LogUtil.i(TAG,
@@ -473,6 +479,8 @@ public class BluetoothMusicServcie extends Service implements
 					}
 				}
 			}else {
+				isPowerOn = false;
+				
 				if (mBluetoothMusicModel.isActivityShow) {
 					try {
 						mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
@@ -522,6 +530,13 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlay = true;
 			mBluetoothMusicModel.isAccPlay = true;
 			mBluetoothMusicModel.setStreamMute();
+			if(!isPowerOn){
+				try {
+					AutoSettings.getInstance().setPowerState(true);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
+			}
 			break;
 		}
 
@@ -608,7 +623,7 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.hfpStatus = state;
 			
 			if((mBluetoothMusicModel.hfpStatus == 1) &&(A2dpStatus == 0)){
-				mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
+				mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
 			}
 			
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
@@ -618,6 +633,10 @@ public class BluetoothMusicServcie extends Service implements
 			if (mBluetoothMusicModel.a2dpStatus == 0) {
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
 				mBluetoothMusicModel.notifyAutoCoreWarning();
+			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
+				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
+					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
+				}
 			}
 
 			mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
