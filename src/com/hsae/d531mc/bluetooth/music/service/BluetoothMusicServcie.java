@@ -431,6 +431,11 @@ public class BluetoothMusicServcie extends Service implements
 		public void onUpMeterSoftVersionNumber(String arg0) {
 			
 		}
+
+		@Override
+		public void mcanPhoneMenuSelection(byte arg0) {
+			
+		}
 	};
 
 	/**
