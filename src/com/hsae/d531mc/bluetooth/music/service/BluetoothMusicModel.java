@@ -394,6 +394,10 @@ public class BluetoothMusicModel {
 		return mBluetoothProxy.getConnectStatus(2);
 	}
 	
+	public int getHfpStatus(){
+		return mBluetoothProxy.getConnectStatus(0);
+	}
+	
 	public boolean isSupportMusic(){
 	
 		return mBluetoothProxy.supportPhoneOnly();

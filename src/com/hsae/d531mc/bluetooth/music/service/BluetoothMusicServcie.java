@@ -100,6 +100,7 @@ public class BluetoothMusicServcie extends Service implements
 						break;
 						
 					case NO_SUPPORT_BLUETOOTHMUSIC:
+						Log.i("zhaoxing", "NO_SUPPORT_BLUETOOTHMUSIC");
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
 						break;
 					}
@@ -620,15 +621,22 @@ public class BluetoothMusicServcie extends Service implements
 		Log.i(TAG, "onConnectStateChanged,profile = " + profile + ",state = "
 				+ state + ",reason = " + reason);
 		
-		int A2dpStatus = mBluetoothMusicModel.getA2dpStatus();
-		Log.i(TAG, "A2dpStatus = " + A2dpStatus);
-		
 		int nProfile = profile;
 		if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
 			mBluetoothMusicModel.hfpStatus = state;
 			
-			if((mBluetoothMusicModel.hfpStatus == 1) &&(A2dpStatus == 0)){
-				mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
+			int a2dpStatus = mBluetoothMusicModel.getA2dpStatus();
+			Log.i(TAG, "A2dpStatus = " + a2dpStatus);
+			
+			if(mBluetoothMusicModel.hfpStatus == 1){
+				if(a2dpStatus == 0){
+					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
+				}
+				
+			}else if (mBluetoothMusicModel.hfpStatus == 0) {
+				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
+					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
+				}
 			}
 			
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
@@ -638,6 +646,14 @@ public class BluetoothMusicServcie extends Service implements
 			if (mBluetoothMusicModel.a2dpStatus == 0) {
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
 				mBluetoothMusicModel.notifyAutoCoreWarning();
+				
+				int hfpStatus = mBluetoothMusicModel.getHfpStatus();
+				Log.i(TAG, "hfpStatus = " + hfpStatus);
+				
+				if(hfpStatus == 1){
+					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
+				}
+				
 			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
 				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
 					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
