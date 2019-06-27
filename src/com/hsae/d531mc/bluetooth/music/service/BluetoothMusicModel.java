@@ -398,10 +398,10 @@ public class BluetoothMusicModel {
 		return mBluetoothProxy.getConnectStatus(0);
 	}
 	
-	public boolean isSupportMusic(){
-	
-		return mBluetoothProxy.supportPhoneOnly();
-	}
+//	public boolean isSupportMusic(){
+//	
+//		return mBluetoothProxy.supportPhoneOnly();
+//	}
 	
 	private static final int MSG_AUTOPLAY = 3;
 	
