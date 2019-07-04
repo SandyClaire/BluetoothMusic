@@ -225,6 +225,7 @@ public class BluetoothMusicModel {
 		if (null == mMusicProxy) {
 			return;
 		}
+		Log.i(TAG, "getMusicInfo");
 		
 		mMusicProxy.getMusicInfo();
 	}
@@ -1056,6 +1057,7 @@ public class BluetoothMusicModel {
 	private final Handler stepTimeHandler = new Handler() {
 		public void handleMessage(Message msg) {
 			if (msg.what == MSG_TICKER) {
+				
 				try {
 					stepTimeHandler.sendEmptyMessageDelayed(MSG_TICKER, 1000);
 					getMusicInfo();
@@ -1084,6 +1086,9 @@ public class BluetoothMusicModel {
 	 */
 	public void setTimingEnd() {
 		stepTimeHandler.removeCallbacks(mTicker);
+		if (stepTimeHandler.hasMessages(MSG_TICKER)) {
+			stepTimeHandler.removeMessages(MSG_TICKER);
+		}
 		LogUtil.i(TAG, "setTimingEnd");
 	}
 
