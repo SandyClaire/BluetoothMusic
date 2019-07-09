@@ -58,11 +58,13 @@ public class BluetoothMusicServcie extends Service implements
 	private AutoSettings mAutoSettings;
 	private boolean HfpStatus = false;
 	private boolean isPowerOn = true;
+	private boolean pressPowerDelay = false;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
 	private static final int BLUETOOTH_MUSIC_CONNECT_PLAY = 2;
 	private static final int NO_SUPPORT_BLUETOOTHMUSIC = 3;
+	private static final int PRESS_POWER_DELAY_TIME = 4;
 	/**
 	 * 背景监听
 	 */
@@ -100,8 +102,12 @@ public class BluetoothMusicServcie extends Service implements
 						break;
 						
 					case NO_SUPPORT_BLUETOOTHMUSIC:
-						Log.i("zhaoxing", "NO_SUPPORT_BLUETOOTHMUSIC");
+						Log.i(TAG, "NO_SUPPORT_BLUETOOTHMUSIC");
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
+						break;
+						
+					case PRESS_POWER_DELAY_TIME:
+						pressPowerDelay = false;
 						break;
 					}
 					return false;
@@ -485,14 +491,19 @@ public class BluetoothMusicServcie extends Service implements
 					}
 				}
 			}else {
-				isPowerOn = false;
+				
+				try {
+					pressPowerDelay = true;
+					isPowerOn = false;
+					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
+						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 1000);
+					}
+					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+				} catch (RemoteException e) {
+					e.printStackTrace();
+				}
 				
 				if (mBluetoothMusicModel.isActivityShow) {
-					try {
-						mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
 				
 					Intent intent = new Intent(Intent.ACTION_MAIN);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -536,8 +547,9 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlay = true;
 			mBluetoothMusicModel.isAccPlay = true;
 			mBluetoothMusicModel.setStreamMute();
-			if(!isPowerOn){
+			if(!isPowerOn && !pressPowerDelay){
 				try {
+					Log.i(TAG, "setPowerState,value = true");
 					AutoSettings.getInstance().setPowerState(true);
 				} catch (RemoteException e) {
 					e.printStackTrace();
