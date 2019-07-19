@@ -74,7 +74,6 @@ public class BluetoothMusicServcie extends Service implements
 
 				@Override
 				public boolean handleMessage(Message msg) {
-
 					switch (msg.what) {
 					case BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE:
 						if (mBluetoothMusicModel.a2dpStatus == 1
@@ -130,6 +129,11 @@ public class BluetoothMusicServcie extends Service implements
 
 		mBluetoothMusicModel.isPlay = false;
 		mBluetoothMusicModel.removeAutoPlay();
+		
+		if(mBluetoothMusicModel.isActivityShow){
+			Log.i(TAG,"sendMCANPromptMessage");
+			mSoc.sendMCANPromptMessage(0X14, 0X2A, 0, "歌曲未知");
+		}
 	}
 
 	@Override
@@ -243,6 +247,7 @@ public class BluetoothMusicServcie extends Service implements
 	 */
 	private void notifyAutoCoreConnectStatus(boolean conn) {
 		Source mSource = new Source();
+		Log.i(TAG, "notifyBtState value = " + conn);
 		if (conn) {
 			mSource.notifyBtState(true);
 		} else {
@@ -482,13 +487,13 @@ public class BluetoothMusicServcie extends Service implements
 				if (source.getCurrentSource() == App.BT_MUSIC) {
 					LogUtil.i(TAG,
 							"notifyAutroMusicInfo --- onScreenStateResponse");
-					if (mBluetoothMusicModel.a2dpStatus == 1) {
-						mBluetoothMusicModel.notifyAutroMusicInfo(
-								getMusicBean(), false, true);
-					} else {
-						LogUtil.i(TAG, "notifyAutoCoreWarning cccccccccc");
-						mBluetoothMusicModel.notifyAutoCoreWarning();
-					}
+//					if (mBluetoothMusicModel.a2dpStatus == 1) {
+//						mBluetoothMusicModel.notifyAutroMusicInfo(
+//								getMusicBean(), false, true);
+//					} else {
+//						LogUtil.i(TAG, "notifyAutoCoreWarning cccccccccc");
+//						mBluetoothMusicModel.notifyAutoCoreWarning();
+//					}
 				}
 			}else {
 				
@@ -577,8 +582,11 @@ public class BluetoothMusicServcie extends Service implements
 		if (mBluetoothMusicModel.streamStatus != nPlayStatus) {
 			mBluetoothMusicModel.streamStatus = nPlayStatus;
 			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA");
-			mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
-					false);
+			if(isPowerOn && (mBluetoothMusicModel.hfpStatus == 1)){
+				mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
+						false);
+			}
+
 		}
 
 		mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
@@ -614,6 +622,7 @@ public class BluetoothMusicServcie extends Service implements
 		mAtrist = artist;
 		mAlbum = album;
 		mTotalTIme = totalTime;
+		
 
 		mLastAlbum = mAlbum;
 		mLastAtrist = mAtrist;
@@ -639,7 +648,7 @@ public class BluetoothMusicServcie extends Service implements
 			
 			int a2dpStatus = mBluetoothMusicModel.getA2dpStatus();
 			Log.i(TAG, "A2dpStatus = " + a2dpStatus);
-			
+
 			if(mBluetoothMusicModel.hfpStatus == 1){
 				if(a2dpStatus == 0){
 					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);

@@ -268,8 +268,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		System.gc();
 	}
 	public BTMusicInfo getBtMusicInfo() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		return mBluetoothMusicModel.getCurrentMusicInfo();
 	}
 
 	@Override

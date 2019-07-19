@@ -92,7 +92,7 @@ public class BluetoothMusicModel {
 	public boolean isAccPlay = false;
 	
 	public boolean isActivityShow = false;
-
+	
 	private MusicProxy mMusicProxy;
 	private BluetoothProxy mBluetoothProxy;
 
@@ -333,7 +333,7 @@ public class BluetoothMusicModel {
 				Log.i(TAG, "setPowerState value = true");
 				AutoSettings.getInstance().setPowerState(true);
 		     }
-			
+
 			mMusicProxy.play();
 		} else if (op_code == AudioControl.CONTROL_PAUSE) {
 			LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code);
@@ -424,6 +424,7 @@ public class BluetoothMusicModel {
 					handler.removeMessages(MSG_AUTOPLAY);
 				}
 				break;
+				
 			}
 		};
 	};
@@ -567,7 +568,7 @@ public class BluetoothMusicModel {
 	}
 
 	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
-		LogUtil.i(TAG, " BT getCurrentSource = " + mSource.getCurrentSource()
+		LogUtil.i(TAG, "cruze  BT getCurrentSource = " + mSource.getCurrentSource()
 				+ ",isHandPuse = " + isHandPuse + "fromPlay =" + fromPlay);
 		try {
 			if (fromPlay) {
@@ -596,20 +597,20 @@ public class BluetoothMusicModel {
 	private void doPlay(boolean showOrBack) {
 		try {
 			if (!mSource.getFocusedApp().equals(App.BT_MUSIC)) {
-				LogUtil.i("cruze", "doPlay 准备抢占焦点");
+				LogUtil.i(TAG, "cruze,doPlay 准备抢占焦点");
 				boolean canSwich = tryToSwitchSource();
 				if (canSwich) {
 					int result = audioManager.requestAudioFocus(mAFCListener,
 							AudioManager.STREAM_MUSIC,
 							AudioManager.AUDIOFOCUS_GAIN);
 					if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+						LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点成功");
 						isAudioFocused = true;
 						mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 						mainAudioChanged(showOrBack);
 						AVRCPControl(AudioControl.CONTROL_PLAY);
 					} else {
-						LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+						LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点失败");
 						isAudioFocused = false;
 					}
 					notifyLauncherInfo();
@@ -623,7 +624,7 @@ public class BluetoothMusicModel {
 
 	private void doRequest(boolean showOrBack) {
 		try {
-			LogUtil.i("cruze", "doRequest 准备抢占焦点");
+			LogUtil.i(TAG, "cruze,doRequest 准备抢占焦点");
 			boolean canSwich = tryToSwitchSource();
 			if (canSwich) {
 				int result = audioManager
@@ -631,7 +632,7 @@ public class BluetoothMusicModel {
 								AudioManager.STREAM_MUSIC,
 								AudioManager.AUDIOFOCUS_GAIN);
 				if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点成功");
+					LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点成功");
 					isAudioFocused = true;
 					mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 					mainAudioChanged(showOrBack);
@@ -647,7 +648,7 @@ public class BluetoothMusicModel {
 						notifyAutoCoreWarning();
 					}
 				} else {
-					LogUtil.i("cruze", "requestAudioFocus == 获取音频焦点失败");
+					LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点失败");
 					isAudioFocused = false;
 				}
 				notifyLauncherInfo();
@@ -867,7 +868,7 @@ public class BluetoothMusicModel {
 	private boolean hasSet = false;
 	private boolean isOnFW = false; // 是否处于快进快退之中
 	public int streamStatus = 0;
-
+	
 	public synchronized void notifyAutroMusicInfo(MusicBean bean,
 			boolean fromStream, boolean fromPoweroff) {
 		if (null == mBTMmanager) {
@@ -895,6 +896,7 @@ public class BluetoothMusicModel {
 		}
 
 		if (fromStream) {
+			
 			if (!hasSet) {
 				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 						lastAlbum, null);
@@ -925,10 +927,12 @@ public class BluetoothMusicModel {
 				|| !lastAlbum.equalsIgnoreCase(album)
 				|| audioFocus != isAudioFocused) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
+			
 			lastTitle = title;
 			lastAtrist = atrist;
 			lastAlbum = album;
 			// lastPlayStatus = streamStatus;
+
 			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 					lastAlbum, null);
 			syncMusicInfo(info);
@@ -953,7 +957,9 @@ public class BluetoothMusicModel {
 	}
 
 	private void syncMusicInfo(BTMusicInfo info) {
+		
 		synchronized (lockOfBTMmanager) {
+			
 			if (info == null) {
 				LogUtil.i(TAG,
 						"notifyAutroMusicInfo syncMusicInfo info is null");
@@ -1032,7 +1038,7 @@ public class BluetoothMusicModel {
 			mBean.setAudioFocus(true);
 		} else {
 			LogUtil.i(TAG, "notifyAutroMusicInfo FFFFFFFFFFFFFF");
-			notifyAutroMusicInfo(null);
+			//notifyAutroMusicInfo(null);
 		}
 	}
 
@@ -1131,5 +1137,10 @@ public class BluetoothMusicModel {
 	public void setBluetoothAllCallback(
 			BluetoothAllCallback mBluetoothAllCallback) {
 		this.mBluetoothAllCallback = mBluetoothAllCallback;
+	}
+	
+	public BTMusicInfo getCurrentMusicInfo(){
+		return new BTMusicInfo(lastTitle, lastAtrist,
+				lastAlbum, null);
 	}
 }
