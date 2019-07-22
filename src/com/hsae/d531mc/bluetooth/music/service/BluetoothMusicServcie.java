@@ -48,7 +48,7 @@ public class BluetoothMusicServcie extends Service implements
 	private BluetoothMusicModel mBluetoothMusicModel;
 	private Context mContext;
 	private String mTitle = "", mTotalTIme = "", mAlbum = "", mAtrist = "";
-	private String mLastTitle = "", mLastAlbum = "", mLastAtrist = "";
+	private String mLastTitle = "", mLastAlbum = "", mLastAtrist = "",mLastTotalTime = "";
 	private int mLastPlayStatus = -1;
 	private BTMusicManager mBTMmanager;
 	private String mTimePosition = "-1";
@@ -482,19 +482,6 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.powerStatus = power;
 			if (power) {
 				isPowerOn = true;
-				
-				Source source = new Source();
-				if (source.getCurrentSource() == App.BT_MUSIC) {
-					LogUtil.i(TAG,
-							"notifyAutroMusicInfo --- onScreenStateResponse");
-//					if (mBluetoothMusicModel.a2dpStatus == 1) {
-//						mBluetoothMusicModel.notifyAutroMusicInfo(
-//								getMusicBean(), false, true);
-//					} else {
-//						LogUtil.i(TAG, "notifyAutoCoreWarning cccccccccc");
-//						mBluetoothMusicModel.notifyAutoCoreWarning();
-//					}
-				}
 			}else {
 				
 				try {
@@ -582,6 +569,7 @@ public class BluetoothMusicServcie extends Service implements
 		if (mBluetoothMusicModel.streamStatus != nPlayStatus) {
 			mBluetoothMusicModel.streamStatus = nPlayStatus;
 			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA");
+			Log.i(TAG, "onPlayStatusChanged,PowerState  = " + isPowerOn);
 			if(isPowerOn && (mBluetoothMusicModel.hfpStatus == 1)){
 				mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
 						false);
@@ -623,8 +611,7 @@ public class BluetoothMusicServcie extends Service implements
 		mAlbum = album;
 		mTotalTIme = totalTime;
 		
-
-		mLastAlbum = mAlbum;
+		
 		mLastAtrist = mAtrist;
 		mLastTitle = mTitle;
 
@@ -632,9 +619,13 @@ public class BluetoothMusicServcie extends Service implements
 		LogUtil.i(TAG, "notifyAut : updateCurrentMusicInfo"
 				+ mBluetoothMusicModel.mTitel);
 		mBluetoothMusicModel.updateCurrentMusicInfo(bean);
-		mBluetoothMusicModel.notifyAutroMusicInfo(bean);
+		if(!mLastTotalTime.equalsIgnoreCase(mTotalTIme) || (!mLastAlbum.equalsIgnoreCase(mAlbum))){
+			mLastAlbum = mAlbum;
+			mLastTotalTime = mTotalTIme;
+			mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean());
+			
+		}
 		mBluetoothMusicModel.mTitel = mTitle;
-
 	}
 
 	@Override

@@ -927,7 +927,6 @@ public class BluetoothMusicModel {
 				|| !lastAlbum.equalsIgnoreCase(album)
 				|| audioFocus != isAudioFocused) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
-			
 			lastTitle = title;
 			lastAtrist = atrist;
 			lastAlbum = album;
