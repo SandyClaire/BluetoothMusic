@@ -4,11 +4,11 @@
     android:layout_height="match_parent" 
     >
 
-     <ImageView
+    <ImageView
         android:id="@+id/default_screenbg"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-       android:background="@drawable/new_bg"
+       	android:background="@drawable/right_bg"
         />
     
     <FrameLayout
@@ -100,26 +100,27 @@
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="300dp"
-        android:layout_height="200dp"
-        android:layout_marginLeft="100dp"
-        android:layout_marginTop="360dp" >
+        android:id="@+id/device_management_layout"
+        android:layout_width="170dp"
+        android:layout_height="80dp"
+        android:layout_marginLeft="190dp"
+        android:layout_marginTop="360dp"
+         >
 
         <ImageView
             android:id="@+id/device_management"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="120dp"
-            android:layout_marginTop="55dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="5dp"
             android:src="@drawable/selector_devicesetting" />
 
         <TextView
             android:layout_width="250dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="100dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="0dp"
+            android:layout_marginTop="50dp"
             android:textColor="#e0f6ff"
             android:textSize="18sp"
             android:gravity="center_horizontal"

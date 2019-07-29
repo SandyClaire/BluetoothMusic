@@ -90,7 +90,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private MySeekBar mSeekBar;
 	private FrameLayout unConnectLayout;
 	private FrameLayout btPowerUnuse;
-	private ImageView DeviceManagement;
+	private FrameLayout deviceManagementLayout;
 	private boolean ismPlaying = false;
 	private ImageView mImageBg;
 	private ImageView mSeekTail;
@@ -237,12 +237,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
-		DeviceManagement = (ImageView)findViewById(R.id.device_management);
+		
+		deviceManagementLayout = (FrameLayout)findViewById(R.id.device_management_layout);
 		
 		mBtnPrev.setOnTouchListener(prevListener);
 		mBtnPlay.setOnClickListener(this);
 		mBtnNext.setOnTouchListener(nextListener);
-		DeviceManagement.setOnClickListener(this);
+		deviceManagementLayout.setOnClickListener(this);
 		
 		iOnlineMusic.setOnClickListener(this);
 		ivUSB.setOnClickListener(this);
@@ -347,7 +348,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			switchSource(Media.bt);
 			break;
 		
-		case R.id.device_management:
+		case R.id.device_management_layout:
 			Log.i(TAG, "start setting bluetooth management");
 
 			Intent intent = new Intent();
@@ -942,7 +943,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageBg.setBackgroundDrawable(drawable);
 			// setWallPaperAlbumScreenbg();
 		} else {
-			mImageBg.setBackgroundResource(R.drawable.bg);
+			mImageBg.setBackgroundResource(R.drawable.all_bg);
 		}
 	}
 
