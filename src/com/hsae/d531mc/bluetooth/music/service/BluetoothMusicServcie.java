@@ -488,7 +488,7 @@ public class BluetoothMusicServcie extends Service implements
 					pressPowerDelay = true;
 					isPowerOn = false;
 					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
-						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 1000);
+						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 2300);
 					}
 					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 				} catch (RemoteException e) {
@@ -496,7 +496,7 @@ public class BluetoothMusicServcie extends Service implements
 				}
 				
 				if (mBluetoothMusicModel.isActivityShow) {
-				
+					Log.i(TAG, "BluetoothMusic,power off to launcher");
 					Intent intent = new Intent(Intent.ACTION_MAIN);
 					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					intent.addCategory(Intent.CATEGORY_HOME);
