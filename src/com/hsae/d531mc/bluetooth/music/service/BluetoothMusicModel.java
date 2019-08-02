@@ -14,6 +14,7 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.support.v4.util.LruCache;
 import android.util.Log;
+import android.view.VelocityTracker.Estimator;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
@@ -97,6 +98,8 @@ public class BluetoothMusicModel {
 	private BluetoothProxy mBluetoothProxy;
 
 	private BluetoothAllCallback mBluetoothAllCallback;
+	
+	public boolean isCanSync = true;
 
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -329,10 +332,10 @@ public class BluetoothMusicModel {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 			
-			if(!AutoSettings.getInstance().getPowerState()){
-				Log.i(TAG, "setPowerState value = true");
-				AutoSettings.getInstance().setPowerState(true);
-		     }
+//			if(!AutoSettings.getInstance().getPowerState()){
+//				Log.i(TAG, "setPowerState value = true");
+//				AutoSettings.getInstance().setPowerState(true);
+//		     }
 
 			mMusicProxy.play();
 		} else if (op_code == AudioControl.CONTROL_PAUSE) {
@@ -405,6 +408,7 @@ public class BluetoothMusicModel {
 //	}
 	
 	private static final int MSG_AUTOPLAY = 3;
+	private static final int SYNC_ID3 = 4;
 	
 	Handler handler = new Handler() {
 		public void handleMessage(final android.os.Message msg) {
@@ -425,6 +429,9 @@ public class BluetoothMusicModel {
 				}
 				break;
 				
+			case SYNC_ID3:
+				isCanSync = true;
+				break;
 			}
 		};
 	};
@@ -876,7 +883,7 @@ public class BluetoothMusicModel {
 		}
 		if (bean == null) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo : bean == null");
-			syncMusicInfo(null);
+			syncMusicInfo(null,false);
 			return;
 		}
 		String title = bean.getTitle();
@@ -900,7 +907,7 @@ public class BluetoothMusicModel {
 			if (!hasSet) {
 				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 						lastAlbum, null);
-				syncMusicInfo(info);
+				syncMusicInfo(info,false);
 			} else {
 				hasSet = false;
 			}
@@ -910,7 +917,7 @@ public class BluetoothMusicModel {
 		if (fromPoweroff) {
 			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 					lastAlbum, null);
-			syncMusicInfo(info);
+			syncMusicInfo(info,false);
 			return;
 		}
 
@@ -921,11 +928,12 @@ public class BluetoothMusicModel {
 			// lastPlayStatus = streamStatus;
 			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 					lastAlbum, null);
-			syncMusicInfo(info);
+			syncMusicInfo(info,false);
 		} else if (!lastTitle.equalsIgnoreCase(title)
 				|| !lastAtrist.equalsIgnoreCase(atrist)
 				|| !lastAlbum.equalsIgnoreCase(album)
 				|| audioFocus != isAudioFocused) {
+			
 			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
 			lastTitle = title;
 			lastAtrist = atrist;
@@ -934,7 +942,7 @@ public class BluetoothMusicModel {
 
 			BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
 					lastAlbum, null);
-			syncMusicInfo(info);
+			syncMusicInfo(info,true);
 		}
 	}
 
@@ -955,7 +963,21 @@ public class BluetoothMusicModel {
 		return status;
 	}
 
-	private void syncMusicInfo(BTMusicInfo info) {
+	private void syncMusicInfo(BTMusicInfo info,boolean isId3) {
+		
+		Log.i(TAG, "isCanSync = " + isCanSync + ", isID3 = " + isId3);
+		
+		if (!isCanSync) {
+			return;
+		}
+		
+		if(isId3){
+			isCanSync = false;
+			
+			if(!handler.hasMessages(SYNC_ID3)){
+				handler.sendEmptyMessageDelayed(SYNC_ID3, 400);
+			}
+		}
 		
 		synchronized (lockOfBTMmanager) {
 			
@@ -1078,7 +1100,6 @@ public class BluetoothMusicModel {
 	 * set timer start
 	 */
 	public void setTimingBegins() {
-		LogUtil.i(TAG, "setTimingBegins");
 		if (a2dpStatus == 1 && avrcpStatus == 1) {
 			if (!stepTimeHandler.hasMessages(MSG_TICKER)) {
 				stepTimeHandler.sendEmptyMessage(MSG_TICKER);
