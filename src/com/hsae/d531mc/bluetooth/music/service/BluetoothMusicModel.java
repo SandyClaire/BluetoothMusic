@@ -747,18 +747,21 @@ public class BluetoothMusicModel {
 				} catch (RemoteException e1) {
 				}
 				isAudioFocused = false;
+				hasSet = false;
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
 				LogUtil.i(TAG,
 						"cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT");
 				isAudioFocused = false;
+				hasSet = false;
 				notifyAutroMusicInfo(null);
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
 				LogUtil.i(TAG,
 						"cruze  mAFCListener---audio focus change AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK");
 				isAudioFocused = false;
+				hasSet = false;
 				notifyAutroMusicInfo(null);
 				break;
 			}
@@ -884,6 +887,11 @@ public class BluetoothMusicModel {
 		if (bean == null) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo : bean == null");
 			syncMusicInfo(null,false);
+			isCanSync = false;
+			
+			if(!handler.hasMessages(SYNC_ID3)){
+				handler.sendEmptyMessageDelayed(SYNC_ID3, 1200);
+			}
 			return;
 		}
 		String title = bean.getTitle();
@@ -904,14 +912,18 @@ public class BluetoothMusicModel {
 
 		if (fromStream) {
 			
-			if (!hasSet) {
-				BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
-						lastAlbum, null);
-				syncMusicInfo(info,false);
-			} else {
-				hasSet = false;
+			if(mSource.getCurrentSource() == App.BT_MUSIC){
+				
+				if(!hasSet){
+					LogUtil.i(TAG, "notifyAutroMusicInfo on position change");
+					BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
+							lastAlbum, null);
+					syncMusicInfo(info,false);
+				}else {
+					hasSet = false;
+				}
+				
 			}
-			return;
 		}
 
 		if (fromPoweroff) {
@@ -932,7 +944,7 @@ public class BluetoothMusicModel {
 		} else if (!lastTitle.equalsIgnoreCase(title)
 				|| !lastAtrist.equalsIgnoreCase(atrist)
 				|| !lastAlbum.equalsIgnoreCase(album)
-				|| audioFocus != isAudioFocused) {
+				) {
 			
 			LogUtil.i(TAG, "notifyAutroMusicInfo 6666666666666");
 			lastTitle = title;
@@ -1051,10 +1063,9 @@ public class BluetoothMusicModel {
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		LogUtil.i(TAG, "notifyAutroMusicInfo mBean ==null? " + (mBean == null));
 		if (connStatus == MangerConstant.Anw_SUCCESS && mBean != null) {
-			LogUtil.i(TAG, "notifyAutroMusicInfo EEEEEEEEEE");
-			notifyAutroMusicInfo(mBean);
+			LogUtil.i(TAG, "notifyLauncherInfo");
+			notifyAutroMusicInfo(mBean,true,false);
 			hasSet = true;
 			mBean.setAudioFocus(true);
 		} else {
