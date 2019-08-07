@@ -76,6 +76,7 @@ public class BluetoothMusicServcie extends Service implements
 				public boolean handleMessage(Message msg) {
 					switch (msg.what) {
 					case BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE:
+						Log.i(TAG, "a2dpStatus = " + mBluetoothMusicModel.a2dpStatus + ", avrcpStatus = " + mBluetoothMusicModel.avrcpStatus + ", hfpStatus = "+ mBluetoothMusicModel.hfpStatus);
 						if (mBluetoothMusicModel.a2dpStatus == 1
 								&& mBluetoothMusicModel.avrcpStatus == 1) {
 							playMusic();
@@ -129,11 +130,6 @@ public class BluetoothMusicServcie extends Service implements
 
 		mBluetoothMusicModel.isPlay = false;
 		mBluetoothMusicModel.removeAutoPlay();
-		
-		if(mBluetoothMusicModel.isActivityShow){
-			Log.i(TAG,"sendMCANPromptMessage");
-			mSoc.sendMCANPromptMessage(0X14, 0X2A, 0, "歌曲未知");
-		}
 	}
 
 	@Override
@@ -248,11 +244,7 @@ public class BluetoothMusicServcie extends Service implements
 	private void notifyAutoCoreConnectStatus(boolean conn) {
 		Source mSource = new Source();
 		Log.i(TAG, "notifyBtState value = " + conn);
-		if (conn) {
-			mSource.notifyBtState(true);
-		} else {
-			mSource.notifyBtState(false);
-		}
+		mSource.notifyBtState(conn);
 	}
 
 	class BitmapWorkerTask extends AsyncTask<Bundle, Void, Bitmap> {
@@ -481,6 +473,19 @@ public class BluetoothMusicServcie extends Service implements
 			}
 			mBluetoothMusicModel.powerStatus = power;
 			if (power) {
+				if(!isPowerOn){
+					
+					if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
+						
+						if((mBluetoothMusicModel.getA2dpStatus() == 1)){
+							notifyAutoCoreConnectStatus(true);
+						}else {
+							notifyAutoCoreConnectStatus(false);
+						}
+					}
+					
+				}
+				
 				isPowerOn = true;
 			}else {
 				
@@ -650,6 +655,7 @@ public class BluetoothMusicServcie extends Service implements
 					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
 				}
 			}
+			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 			
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 

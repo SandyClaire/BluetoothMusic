@@ -887,11 +887,11 @@ public class BluetoothMusicModel {
 		if (bean == null) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo : bean == null");
 			syncMusicInfo(null,false);
-			isCanSync = false;
 			
-			if(!handler.hasMessages(SYNC_ID3)){
-				handler.sendEmptyMessageDelayed(SYNC_ID3, 1200);
-			}
+//			isCanSync = false;
+//			if(!handler.hasMessages(SYNC_ID3)){
+//				handler.sendEmptyMessageDelayed(SYNC_ID3, 1200);
+//			}
 			return;
 		}
 		String title = bean.getTitle();
@@ -1173,5 +1173,13 @@ public class BluetoothMusicModel {
 	public BTMusicInfo getCurrentMusicInfo(){
 		return new BTMusicInfo(lastTitle, lastAtrist,
 				lastAlbum, null);
+	}
+	
+	public Source getSource(){
+		if(mSource != null){
+			return mSource;
+		}else {
+			return new Source();
+		}
 	}
 }
