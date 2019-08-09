@@ -524,9 +524,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mTextCurTime.setText("00:00:00");
 			musicName = "";
 			mTextTitle.setText(getResources().getString(
-					R.string.music_matedate_unsupport));
+					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
-					R.string.music_matedate_unsupport));
+					R.string.music_artist_unknow));
 			mSeekBar.setMax(0);
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 			mHandler.sendEmptyMessageDelayed(MSG_DRAWLAYOUT_SHOW, 500);
@@ -628,7 +628,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			if ("".equals(bean.getTitle())) {
 				musicName = "";
 				mTextTitle.setText(getResources().getString(
-						R.string.music_matedate_unsupport));
+						R.string.music_title_unknow));
 			} else {
 				if (!musicName.equals(bean.getTitle())) {
 					musicName = bean.getTitle();
@@ -637,7 +637,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 			if ("".equals(bean.getAtrist())) {
 				mTextArtist.setText(getResources().getString(
-						R.string.music_matedate_unsupport));
+						R.string.music_artist_unknow));
 			} else {
 				mTextArtist.setText(bean.getAtrist());
 			}
@@ -649,9 +649,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 		} else {
 			mTextTitle.setText(getResources().getString(
-					R.string.music_matedate_unsupport));
+					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
-					R.string.music_matedate_unsupport));
+					R.string.music_artist_unknow));
 			mTextTotalTime.setText("00:00:00");
 			mTextCurTime.setText("00:00:00");
 			mSeekBar.setMax(0);

@@ -15,9 +15,11 @@
     <string name="music_source_bluetooth">Bluetooth</string>
     <string name="device_management">Device Management</string>
     <string name="music_matedate_unsupport">Unknown</string>
+    <string name="music_title_unknow">Unknown Title</string>
+    <string name="music_artist_unknow">Unknown Artist</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth.</string>
-    <string name="music_bluetooth_disconnect_tip">Bluetooth Device Disconnected</string>
+    <string name="music_bluetooth_disconnect_tip">Not connected to Bluetooth device</string>
     <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife is connected \n Bluetooth music function cannot be used</string>
     <string name="tip_text_main_no_device_connected">Bluetooth Device Disconnected</string>
     <string name="tip_text_main_no_device_connected2">as the right picture:\nplease ensure your mobile bluetooth is powered on,and can be found.</string>
@@ -30,7 +32,7 @@
     <string name="pair_fail">Pair fail</string>
     <string name="pair_success">Pair success</string>
     <string name="bluetooth_connect">Bluetooth connect</string>
-    <string name="bluetooth_disconnect">断开</string>
+    <string name="bluetooth_disconnect">break</string>
     <string name="bluetooth_status_connected">Connected</string>
     <string name="bluetooth_status_connecting">Connecting...</string>
     <string name="bluetooth_status_disconnecting">Disconnecting...</string>
@@ -38,7 +40,7 @@
     <string name="bluetooth_enable_text">Please turn on bluetooth</string>
     <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
     <string name="music_switch_split">/</string>
-    <string name="bluetooth_power_not_open">Bluetooth not open</string>
-    <string name="no_support_bluetooth_music">The device you are connected to does not support bluetooth music</string>
+    <string name="bluetooth_power_not_open">Bluetooth is OFF</string>
+    <string name="no_support_bluetooth_music">Your connected device does not support Bluetooth Audio.</string>
 
 </resources>
