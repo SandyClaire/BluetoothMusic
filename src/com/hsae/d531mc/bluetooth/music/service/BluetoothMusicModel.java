@@ -100,7 +100,7 @@ public class BluetoothMusicModel {
 	private BluetoothAllCallback mBluetoothAllCallback;
 	
 	public boolean isCanSync = true;
-
+	
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
 		if (null == mInstance) {

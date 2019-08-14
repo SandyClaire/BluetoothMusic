@@ -59,6 +59,7 @@ public class BluetoothMusicServcie extends Service implements
 	private boolean HfpStatus = false;
 	private boolean isPowerOn = true;
 	private boolean pressPowerDelay = false;
+	private boolean isCanPositionNotify = false;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
@@ -576,8 +577,10 @@ public class BluetoothMusicServcie extends Service implements
 			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA");
 			Log.i(TAG, "onPlayStatusChanged,PowerState  = " + isPowerOn);
 			if(isPowerOn && (mBluetoothMusicModel.hfpStatus == 1)){
-				mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
-						false);
+				if(isCanPositionNotify){
+					mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
+							false);
+				}
 			}
 
 		}
@@ -628,7 +631,7 @@ public class BluetoothMusicServcie extends Service implements
 			mLastAlbum = mAlbum;
 			mLastTotalTime = mTotalTIme;
 			mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean());
-			
+			isCanPositionNotify = true;
 		}
 		mBluetoothMusicModel.mTitel = mTitle;
 	}
