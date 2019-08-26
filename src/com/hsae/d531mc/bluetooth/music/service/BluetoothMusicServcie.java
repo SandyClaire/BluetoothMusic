@@ -1,6 +1,8 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Service;
@@ -60,6 +62,7 @@ public class BluetoothMusicServcie extends Service implements
 	private boolean isPowerOn = true;
 	private boolean pressPowerDelay = false;
 	private boolean isCanPositionNotify = false;
+	private boolean isCanRelievePowerState = false;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
@@ -545,7 +548,7 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlay = true;
 			mBluetoothMusicModel.isAccPlay = true;
 			mBluetoothMusicModel.setStreamMute();
-			if(!isPowerOn && !pressPowerDelay){
+			if(!isPowerOn && !pressPowerDelay && isCanRelievePowerState){
 				try {
 					Log.i(TAG, "setPowerState,value = true");
 					AutoSettings.getInstance().setPowerState(true);
@@ -675,10 +678,18 @@ public class BluetoothMusicServcie extends Service implements
 					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
 				}
 				
+				isCanRelievePowerState = false;
 			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
 				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
 					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
 				}
+				new Timer().schedule(new TimerTask() {
+					
+					@Override
+					public void run() {
+						isCanRelievePowerState = true;
+					}
+				}, 2500);
 			}
 
 			mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
