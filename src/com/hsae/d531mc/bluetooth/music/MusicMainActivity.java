@@ -94,6 +94,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private boolean ismPlaying = false;
 	private ImageView mImageBg;
 	private ImageView mSeekTail;
+	private ImageView unConnectImage;
 	private TextView mTextTip;
 	private boolean isSupportPlaybackpos = false;
 	private boolean isSupportMetadata = false;
@@ -237,6 +238,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
+		unConnectImage = (ImageView)findViewById(R.id.bt_power_unuse_image);
 		
 		deviceManagementLayout = (FrameLayout)findViewById(R.id.device_management_layout);
 		
@@ -520,8 +522,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (status == 0) {
 			updateViewShow(false, false, true,true);
 			mSeekTail.setVisibility(View.GONE);
-			mTextTotalTime.setText("00:00:00");
-			mTextCurTime.setText("00:00:00");
+			mTextTotalTime.setText("-- --");
+			mTextCurTime.setText("-- --");
 			musicName = "";
 			mTextTitle.setText(getResources().getString(
 					R.string.music_title_unknow));
@@ -566,6 +568,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				mFraControl.setVisibility(View.GONE);
 				unConnectLayout.setVisibility(View.GONE);
 				btPowerUnuse.setVisibility(View.VISIBLE);
+				unConnectImage.setVisibility(View.VISIBLE);
 				btPowerUnuseText.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
 				/*
 				 * if (!isFromCarlife) {
@@ -585,6 +588,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mFraControl.setVisibility(View.GONE);
 			unConnectLayout.setVisibility(View.GONE);
 			btPowerUnuse.setVisibility(View.VISIBLE);
+			unConnectImage.setVisibility(View.GONE);
 			if(!isSupportMusicFunction){
 				btPowerUnuseText.setText(getResources().getString(R.string.no_support_bluetooth_music));
 			}else{
@@ -642,7 +646,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				mTextArtist.setText(bean.getAtrist());
 			}
 			if ("".equals(bean.getTotalTime())) {
-				mTextTotalTime.setText("00:00:00");
+				mTextTotalTime.setText("-- --");
 			} else {
 				mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 			}
@@ -652,15 +656,15 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
 					R.string.music_artist_unknow));
-			mTextTotalTime.setText("00:00:00");
-			mTextCurTime.setText("00:00:00");
+			mTextTotalTime.setText("-- --");
+			mTextCurTime.setText("-- --");
 			mSeekBar.setMax(0);
 			mSeekTail.setVisibility(View.GONE);
 		}
 	}
 
 	private String getTotalTime(String nTime) {
-		String timeStr = "00:00:00";
+		String timeStr = "-- --";
 
 		if (nTime.equals("-1")) {
 			return timeStr;
@@ -719,7 +723,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		Log.i(TAG, "getCurrentTime = " + nTime);
 		
 		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
-			return "00:00:00";
+			return "-- --";
 		} else {
 			if (isNumeric(nTime) == true) {
 				isSupportPlaybackpos = true;
@@ -730,10 +734,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 					return toTime(Integer.valueOf(nTime));
 				} catch (NumberFormatException e) {
 
-					return "00:00:00";
+					return "-- --";
 				}
 			} else {
-				return "00:00:00";
+				return "-- --";
 			}
 		}
 	}
@@ -753,7 +757,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (isSupportMetadata == true) {
 			if (isSupportPlaybackpos == false) {
 				mSeekBar.setProgress(0);
-				mTextCurTime.setText("00:00:00");
+				mTextCurTime.setText("-- --");
 			} else {
 				if (mSeekBar.getMax() > 0 && isSupportPlaybackpos) {
 					int iPlayTime = mSeekBar.getProgress();
@@ -764,7 +768,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 		} else {
 			mSeekBar.setProgress(0);
-			mTextCurTime.setText("00:00:00");
+			mTextCurTime.setText("-- --");
 		}
 	}
 
