@@ -663,6 +663,8 @@ public class BluetoothMusicServcie extends Service implements
 			}
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 			
+			mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
+			
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
 			mBluetoothMusicModel.a2dpStatus = state;
@@ -693,9 +695,8 @@ public class BluetoothMusicServcie extends Service implements
 			}
 
 			mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
-
-			mBluetoothMusicModel
-					.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+			
+			mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
 
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
