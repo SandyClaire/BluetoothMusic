@@ -550,11 +550,13 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isAccPlay = true;
 			mBluetoothMusicModel.setStreamMute();
 			if(!isPowerOn && !pressPowerDelay && isCanRelievePowerState){
-				try {
-					Log.i(TAG, "setPowerState,value = true");
-					AutoSettings.getInstance().setPowerState(true);
-				} catch (RemoteException e) {
-					e.printStackTrace();
+				if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
+					try {
+						Log.i(TAG, "setPowerState,value = true");
+						AutoSettings.getInstance().setPowerState(true);
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 			break;
@@ -591,7 +593,7 @@ public class BluetoothMusicServcie extends Service implements
 						public void run() {
 							isPositionNotifyDelay = false;
 						}
-					}, 1500);
+					}, 1600);
 				}
 			}
 
