@@ -62,6 +62,7 @@ public class BluetoothMusicServcie extends Service implements
 	private boolean isPowerOn = true;
 	private boolean pressPowerDelay = false;
 	private boolean isCanPositionNotify = false;
+	private boolean isPositionNotifyDelay = false;
 	private boolean isCanRelievePowerState = false;
 	private AccBroadcastReceiver mReceiver = null;
 			
@@ -580,9 +581,17 @@ public class BluetoothMusicServcie extends Service implements
 			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA");
 			Log.i(TAG, "onPlayStatusChanged,PowerState  = " + isPowerOn);
 			if(isPowerOn && (mBluetoothMusicModel.hfpStatus == 1)){
-				if(isCanPositionNotify){
+				if(isCanPositionNotify && !isPositionNotifyDelay){
 					mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
 							false);
+					isPositionNotifyDelay = true;
+					new Timer().schedule(new TimerTask() {
+						
+						@Override
+						public void run() {
+							isPositionNotifyDelay = false;
+						}
+					}, 1500);
 				}
 			}
 
