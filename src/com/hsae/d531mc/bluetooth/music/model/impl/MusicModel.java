@@ -179,7 +179,6 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	@Override
 	public void requestAudioFoucs() {
 		mBluetoothMusicModel.requestAudioFocus(true);
-		mBluetoothMusicModel.isActivityShow = true;
 	}
 	
 	@Override
@@ -329,6 +328,11 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 			msg.setData(mBundle);
 			this.notify(msg, FLAG_RUN_SYNC);
 	
+	}
+
+	@Override
+	public void activityResume() {
+		mBluetoothMusicModel.isActivityShow = true;
 	}
 
 }

@@ -141,5 +141,7 @@ public interface IMusicModel {
 	public void requestAudioFoucs(boolean b, boolean c);
 
 	public void setHandPause(boolean b);
+	
+	public void activityResume();
 
 }

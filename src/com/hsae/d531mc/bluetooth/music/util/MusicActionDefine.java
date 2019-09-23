@@ -67,6 +67,7 @@ public class MusicActionDefine {
     static public final int ACTION_SETTING_GET_CARLIFE_STATUS = 83;
     static public final int ACTION_USB_DISCONNECT = 84;
     
+    static public final int ACTIVITY_RESUME = 85;
     
     static public final String ACTION_A2DP_FINISH_ACTIVITY = "action_finish_music_activity";
     
