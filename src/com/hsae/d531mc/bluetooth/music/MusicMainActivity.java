@@ -882,7 +882,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG, " --- prevDown ");
 		isNormalPrev = true;
 		mHandler.removeMessages(LONG_CLICK_PREV);
-		mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV, 1000);
+	//	mHandler.sendEmptyMessageDelayed(LONG_CLICK_PREV, 1000);
 	}
 
 	/**
@@ -924,7 +924,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		isNormalNext = true;
 		LogUtil.i(TAG, " --- nextDown ");
 		mHandler.removeMessages(LONG_CLICK_NEXT);
-		mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, 1000);
+	//	mHandler.sendEmptyMessageDelayed(LONG_CLICK_NEXT, 1000);
 	}
 
 	/**
