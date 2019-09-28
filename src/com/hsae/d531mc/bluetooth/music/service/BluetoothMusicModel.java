@@ -713,9 +713,10 @@ public class BluetoothMusicModel {
 					if (!isHandPuse) {
 						if (!pauseByMobile) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
-						} else if(!powerStatus){
-							AVRCPControl(AudioControl.CONTROL_PLAY);
-						}
+						} 
+					}
+					if(!powerStatus){
+						AVRCPControl(AudioControl.CONTROL_PLAY);
 					}
 				} catch (RemoteException e) {
 				}
