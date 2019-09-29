@@ -180,7 +180,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void play() throws RemoteException {
-//		mBluetoothMusicModel.isHandPuse = false;
+		mBluetoothMusicModel.isHandPuse = false;
 		if (mBluetoothMusicModel.tryToSwitchSource()) {
 			mBluetoothMusicModel.requestAudioFocus(false);
 		}
