@@ -645,7 +645,7 @@ public class BluetoothMusicModel {
 					mainAudioChanged(showOrBack);
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					if (!autoConnectA2DP()) {
-						if (!isHandPuse) {
+						if (!isHandPuse ) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 						}
 					}

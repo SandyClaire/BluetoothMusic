@@ -7,8 +7,10 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -356,7 +358,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void pauseByVr() throws RemoteException {
-//		mBluetoothMusicModel.isHandPuse = true;
+		mBluetoothMusicModel.isHandPuse = true;
 		if (mBluetoothMusicModel.isPlay) {
 			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 		}
@@ -380,7 +382,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void pauseByLauncher() throws RemoteException {
-//		mBluetoothMusicModel.isHandPuse = true;
+		mBluetoothMusicModel.isHandPuse = true;
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 	}
 
