@@ -74,9 +74,12 @@ public class BT_BLE_CHR_Elem {
 		else
 			des_elem = null;
 
-		for (int i = 0; i < desnum; i++) {
-			des_elem[i] = new BT_BLE_DES_Elem();
-			des_elem[i].readFromParcel(in);
+		// 2019-10-17, according to SonarQube, A 'NullPointerException' could be thrown. to avoid this, add non empty judgment.
+		if (null != des_elem) {
+			for (int i = 0; i < desnum; i++) {
+				des_elem[i] = new BT_BLE_DES_Elem();
+				des_elem[i].readFromParcel(in);
+			}
 		}
 	}
 
