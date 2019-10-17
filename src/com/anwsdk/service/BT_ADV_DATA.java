@@ -84,10 +84,14 @@ public class BT_ADV_DATA implements Parcelable {
 			service = new BT_Service[service_count];
 		else 
 			service = null;
-		for(i = 0;i<service_count;i++) {
-			service[i] = new BT_Service();
-		//	readServiceFromParcel(in,service[i]);
-			service[i].readFromParcel(in);
+		
+		// 2019-10-17, according to SonarQube, A 'NullPointerException' could be thrown. to avoid this, add non empty judgment.
+		if (null != service) {
+			for(i = 0;i<service_count;i++) {
+				service[i] = new BT_Service();
+			//	readServiceFromParcel(in,service[i]);
+				service[i].readFromParcel(in);
+			}
 		}
 		tx_power = in.readInt();
 		appearence = in.readInt();
@@ -100,10 +104,12 @@ public class BT_ADV_DATA implements Parcelable {
 		else
 			other_elem = null;
 		
-		
-		for(i = 0;i<other_elem_count;i++) {
-			other_elem[i] = new BT_ADV_Element();
-			readElementFromParcel(in,i);
+		// 2019-10-17, according to SonarQube, A 'NullPointerException' could be thrown. to avoid this, add non empty judgment.
+		if(null != other_elem) {
+			for(i = 0;i<other_elem_count;i++) {
+				other_elem[i] = new BT_ADV_Element();
+				readElementFromParcel(in,i);
+			}
 		}
 
 	}	

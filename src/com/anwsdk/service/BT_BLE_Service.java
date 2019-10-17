@@ -43,10 +43,12 @@ public class BT_BLE_Service implements Parcelable {
 		else
 			chr_elem = null;
 		
-		
-		for(int i = 0;i<chrnum;i++) {
-			chr_elem[i] = new BT_BLE_CHR_Elem();
-			chr_elem[i].readFromParcel(in);
+		// 2019-10-17, according to SonarQube, A 'NullPointerException' could be thrown. to avoid this, add non empty judgment.
+		if(null != chr_elem) {
+			for(int i = 0;i<chrnum;i++) {
+				chr_elem[i] = new BT_BLE_CHR_Elem();
+				chr_elem[i].readFromParcel(in);
+			}
 		}
 	}
 	public static final Parcelable.Creator<BT_BLE_Service> CREATOR =
