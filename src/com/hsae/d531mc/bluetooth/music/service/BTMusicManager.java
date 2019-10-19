@@ -133,13 +133,13 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			} else {
 				upTime = System.currentTimeMillis();
 				LogUtil.e(TAG, "hmi long seek = " + (upTime - downTime));
-				if ((upTime - downTime) < 1500) {
+//				if ((upTime - downTime) < 1500) {
 					seek(hmiIndex, false);
-				} else {
-					downTime = 0;
-					upTime = 0;
-					return;
-				}
+//				} else {
+//					downTime = 0;
+//					upTime = 0;
+//					return;
+//				}
 			}
 		}
 	}
