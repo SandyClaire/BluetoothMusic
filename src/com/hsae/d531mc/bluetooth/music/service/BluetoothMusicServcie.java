@@ -500,8 +500,8 @@ public class BluetoothMusicServcie extends Service implements
 					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
 						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 2300);
 					}
-					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				} catch (RemoteException e) {
+				//	mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				
