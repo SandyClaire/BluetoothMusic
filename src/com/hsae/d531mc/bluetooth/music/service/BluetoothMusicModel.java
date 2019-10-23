@@ -402,10 +402,10 @@ public class BluetoothMusicModel {
 		return mBluetoothProxy.getConnectStatus(0);
 	}
 	
-//	public boolean isSupportMusic(){
-//	
-//		return mBluetoothProxy.supportPhoneOnly();
-//	}
+	public int getAvrcpStatus(){
+	
+		return mBluetoothProxy.getConnectStatus(3);
+	}
 	
 	private static final int MSG_AUTOPLAY = 3;
 	private static final int SYNC_ID3 = 4;

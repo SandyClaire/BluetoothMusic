@@ -162,6 +162,7 @@ public class BluetoothMusicServcie extends Service implements
 		LogUtil.i(TAG, "---------- service oncreat ------------");
 		mSoc.registerListener(mSocListener);
 		super.onCreate();
+		updateConnectState();
 	}
 	
 	private void registAccBroadcast(){
@@ -735,5 +736,21 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlay = false;
 		}
 
+	}
+	
+	/**
+	 * 服务启动后，通过主调更新连接状态
+	 */
+	private void updateConnectState() {
+		new Timer().schedule(new TimerTask() {
+			
+			@Override
+			public void run() {
+				onConnectStateChanged(MangerConstant.PROFILE_HF_CHANNEL, mBluetoothMusicModel.getHfpStatus(), 0);
+				onConnectStateChanged(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, mBluetoothMusicModel.getA2dpStatus(), 0);
+				onConnectStateChanged(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, mBluetoothMusicModel.getAvrcpStatus(), 0);
+
+			}
+		}, 500);
 	}
 }
