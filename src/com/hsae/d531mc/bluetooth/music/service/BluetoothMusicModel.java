@@ -398,6 +398,11 @@ public class BluetoothMusicModel {
 		return mBluetoothProxy.getConnectStatus(2);
 	}
 	
+	public boolean isSupportMusic(){
+		Log.i(TAG, "mBluetoothProxy.supportMusic() = " + mBluetoothProxy.supportMusic());
+		return mBluetoothProxy.supportMusic();
+	}
+	
 	public int getHfpStatus(){
 		return mBluetoothProxy.getConnectStatus(0);
 	}

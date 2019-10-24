@@ -64,6 +64,7 @@ public class BluetoothMusicServcie extends Service implements
 	private boolean isCanPositionNotify = false;
 	private boolean isPositionNotifyDelay = false;
 	private boolean isCanRelievePowerState = false;
+	private boolean isUpdateView = true;
 	private AccBroadcastReceiver mReceiver = null;
 			
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
@@ -656,6 +657,9 @@ public class BluetoothMusicServcie extends Service implements
 		Log.i(TAG, "onConnectStateChanged,profile = " + profile + ",state = "
 				+ state + ",reason = " + reason);
 		
+		if(state < 0)
+			return;
+			
 		int nProfile = profile;
 		if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
 			mBluetoothMusicModel.hfpStatus = state;
@@ -664,8 +668,9 @@ public class BluetoothMusicServcie extends Service implements
 			Log.i(TAG, "A2dpStatus = " + a2dpStatus);
 
 			if(mBluetoothMusicModel.hfpStatus == 1){
-				if(a2dpStatus == 0){
-					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
+				if(!mBluetoothMusicModel.isSupportMusic()){
+					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC,0);
+					isUpdateView = false;
 				}
 				
 			}else if (mBluetoothMusicModel.hfpStatus == 0) {
@@ -675,8 +680,9 @@ public class BluetoothMusicServcie extends Service implements
 			}
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 			
-			mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
-			
+			if(isUpdateView){
+				mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
+			}
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
 			mBluetoothMusicModel.a2dpStatus = state;
@@ -689,14 +695,15 @@ public class BluetoothMusicServcie extends Service implements
 				Log.i(TAG, "hfpStatus = " + hfpStatus);
 				
 				if(hfpStatus == 1){
-					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC, 2000);
+					mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
+					isUpdateView = false;
 				}
 				
 				isCanRelievePowerState = false;
 			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
-				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
-					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
-				}
+//				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
+//					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
+//				}
 				new Timer().schedule(new TimerTask() {
 					
 					@Override
@@ -707,9 +714,9 @@ public class BluetoothMusicServcie extends Service implements
 			}
 
 			mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
-
-			mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-
+			if(isUpdateView){
+				mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+			}
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
@@ -718,7 +725,7 @@ public class BluetoothMusicServcie extends Service implements
 					+ mBluetoothMusicModel.avrcpStatus);
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 		}
-
+		isUpdateView = true;
 	}
 
 	@Override
