@@ -500,7 +500,7 @@ public class BluetoothMusicServcie extends Service implements
 					pressPowerDelay = true;
 					isPowerOn = false;
 					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
-						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 2300);
+						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 3300);
 					}
 				//	mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 				} catch (Exception e) {
