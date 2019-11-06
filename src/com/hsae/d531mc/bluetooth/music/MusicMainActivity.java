@@ -1,5 +1,7 @@
 package com.hsae.d531mc.bluetooth.music;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
@@ -726,7 +728,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private String getCurrentTime(String nTime) {
 		Log.i(TAG, "getCurrentTime = " + nTime);
 		
-		if (nTime.equals("-1") && isSupportPlaybackpos == false || nTime.equals("0")) {
+		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
 			return "-- : --";
 		} else {
 			if (isNumeric(nTime) == true) {
@@ -788,6 +790,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
 		mTextCurTime.setText(getCurrentTime(currentTime));
+		
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
 	}
 
