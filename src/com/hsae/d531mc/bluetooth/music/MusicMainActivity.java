@@ -526,8 +526,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (status == 0) {
 			updateViewShow(false, false, true,true);
 			mSeekTail.setVisibility(View.GONE);
-			mTextTotalTime.setText("-- --");
-			mTextCurTime.setText("-- --");
+			mTextTotalTime.setText("-- : --");
+			mTextCurTime.setText("-- : --");
 			musicName = "";
 			mTextTitle.setText(getResources().getString(
 					R.string.music_title_unknow));
@@ -650,7 +650,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				mTextArtist.setText(bean.getAtrist());
 			}
 			if ("".equals(bean.getTotalTime())) {
-				mTextTotalTime.setText("-- --");
+				mTextTotalTime.setText("-- : --");
 			} else {
 				mTextTotalTime.setText(getTotalTime(bean.getTotalTime()));
 			}
@@ -660,17 +660,17 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
 					R.string.music_artist_unknow));
-			mTextTotalTime.setText("-- --");
-			mTextCurTime.setText("-- --");
+			mTextTotalTime.setText("-- : --");
+			mTextCurTime.setText("-- : --");
 			mSeekBar.setMax(0);
 			mSeekTail.setVisibility(View.GONE);
 		}
 	}
 
 	private String getTotalTime(String nTime) {
-		String timeStr = "-- --";
+		String timeStr = "-- : --";
 
-		if (nTime.equals("-1")) {
+		if (nTime.equals("-1") || nTime.equals("0")) {
 			return timeStr;
 		} else {
 			if (isNumeric(nTime) == true) {
@@ -726,8 +726,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private String getCurrentTime(String nTime) {
 		Log.i(TAG, "getCurrentTime = " + nTime);
 		
-		if (nTime.equals("-1") && isSupportPlaybackpos == false) {
-			return "-- --";
+		if (nTime.equals("-1") && isSupportPlaybackpos == false || nTime.equals("0")) {
+			return "-- : --";
 		} else {
 			if (isNumeric(nTime) == true) {
 				isSupportPlaybackpos = true;
@@ -738,10 +738,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 					return toTime(Integer.valueOf(nTime));
 				} catch (NumberFormatException e) {
 
-					return "-- --";
+					return "-- : --";
 				}
 			} else {
-				return "-- --";
+				return "-- : --";
 			}
 		}
 	}
@@ -761,7 +761,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		if (isSupportMetadata == true) {
 			if (isSupportPlaybackpos == false) {
 				mSeekBar.setProgress(0);
-				mTextCurTime.setText("-- --");
+				mTextCurTime.setText("-- : --");
 			} else {
 				if (mSeekBar.getMax() > 0 && isSupportPlaybackpos) {
 					int iPlayTime = mSeekBar.getProgress();
@@ -772,7 +772,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}
 		} else {
 			mSeekBar.setProgress(0);
-			mTextCurTime.setText("-- --");
+			mTextCurTime.setText("-- : --");
 		}
 	}
 
