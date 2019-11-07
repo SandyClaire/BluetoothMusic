@@ -101,12 +101,12 @@
 
     <FrameLayout
         android:id="@+id/device_management_layout"
-        android:layout_width="170dp"
+        android:layout_width="240dp"
         android:layout_height="80dp"
         android:layout_marginLeft="190dp"
         android:layout_marginTop="360dp"
         android:focusable="false"
-         >
+        >
 
         <ImageView
             android:id="@+id/device_management"
@@ -123,7 +123,7 @@
             android:layout_marginLeft="0dp"
             android:layout_marginTop="50dp"
             android:textColor="#e0f6ff"
-            android:textSize="18sp"
+            android:textSize="23sp"
             android:gravity="center_horizontal"
             android:text="@string/device_management" />
     </FrameLayout>
