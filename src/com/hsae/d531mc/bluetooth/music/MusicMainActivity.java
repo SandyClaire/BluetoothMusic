@@ -789,8 +789,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
-		mTextCurTime.setText(getCurrentTime(currentTime));
 		
+		mTextCurTime.setText(getCurrentTime(currentTime));
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
 	}
 

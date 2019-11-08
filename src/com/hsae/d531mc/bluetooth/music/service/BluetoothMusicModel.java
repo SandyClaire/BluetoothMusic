@@ -94,6 +94,9 @@ public class BluetoothMusicModel {
 	
 	public boolean isActivityShow = false;
 	
+	//ACC状态
+	public boolean accState = true;
+	
 	private MusicProxy mMusicProxy;
 	private BluetoothProxy mBluetoothProxy;
 
@@ -713,7 +716,13 @@ public class BluetoothMusicModel {
 					notifyAutoCoreWarning();
 				}
 				mainAudioChanged(isActive());
+				
 				try {
+					if (!AutoSettings.getInstance().getPowerState()) {
+						Log.i(TAG, "AUDIOFOCUS_GAIN  inPowerOffStatus ");
+					    return;
+					}
+					
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 					if (!isHandPuse) {
 						if (!pauseByMobile) {
@@ -721,6 +730,7 @@ public class BluetoothMusicModel {
 						}
 					}
 				} catch (RemoteException e) {
+					Log.i(TAG, "AUDIOFOCUS_GAIN  error is "  + e);
 				}
 				break;
 			case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:

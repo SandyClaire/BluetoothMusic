@@ -181,9 +181,9 @@ public class BluetoothMusicServcie extends Service implements
 		
 			Log.i(TAG, "action = " + intent.getAction());
 			if(intent.getAction().equals(ACTION_ACC_STATE)){
-				boolean accStatus = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
-				Log.i(TAG, "accStatus = " + accStatus);
-				if (accStatus) {
+				mBluetoothMusicModel.accState = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
+				Log.i(TAG, "accStatus = " + mBluetoothMusicModel.accState);
+				if (mBluetoothMusicModel.accState) {
 //					mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
 //
 //					mBluetoothMusicModel
