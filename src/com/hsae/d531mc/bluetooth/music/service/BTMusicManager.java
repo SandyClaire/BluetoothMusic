@@ -168,6 +168,19 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 				}
 				LogUtil.i(TAG, "------------- SEEKDOWN_PREV ");
 			}
+			
+			new Handler().postDelayed(new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						mBluetoothMusicModel.getMusicInfo();
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
+				}
+			}, 400);
+		
 		}
 		downTime = 0;
 		upTime = 0;

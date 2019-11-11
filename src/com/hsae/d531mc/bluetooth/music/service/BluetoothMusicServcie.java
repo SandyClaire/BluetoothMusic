@@ -23,6 +23,7 @@ import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
+import com.hsae.autosdk.hmi.HmiConst;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.Soc.SocListener;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
