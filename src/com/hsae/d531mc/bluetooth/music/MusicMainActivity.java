@@ -114,7 +114,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private FrameLayout mFraInfo;
 	private FrameLayout mFraControl;
 	RotateDrawable rDrawable;
-
+	
+	//判断是否支持显示当前时间
+	private boolean isShowCurTime = true;
+	
 	private Handler mHandler = new Handler(Looper.getMainLooper(),
 			new Handler.Callback() {
 
@@ -673,8 +676,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		String timeStr = "-- : --";
 
 		if (nTime.equals("-1") || nTime.equals("0")) {
+			isShowCurTime = false;
+			mTextCurTime.setText(timeStr);
 			return timeStr;
 		} else {
+			isShowCurTime = true;
 			if (isNumeric(nTime) == true) {
 				try {
 					long iMax = Long.valueOf(nTime) / 1000;
@@ -789,8 +795,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	@Override
 	public void updateMusicPlayCurrentTime(String currentTime, boolean isPlaying) {
-		
-		mTextCurTime.setText(getCurrentTime(currentTime));
+		if(isShowCurTime){
+			mTextCurTime.setText(getCurrentTime(currentTime));
+		}
 		LogUtil.i(TAG, "updateMusicPlayCurrentTime - isPlaying = " + isPlaying);
 	}
 
