@@ -723,7 +723,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 		else
 			ss = "" + second;
 
-		return hh + ":" + mm + ":" + ss;
+		if(hh.equalsIgnoreCase("00")){
+			return mm + ":" + ss;
+		}else {
+			return hh + ":" + mm + ":" + ss;
+		}
 	}
 
 	public static boolean isNumeric(String str) {
