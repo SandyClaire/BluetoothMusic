@@ -228,13 +228,13 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 		@Override
 		public void run() {
-			showPopUp(mContext.getResources().getString(R.string.app_name));
+//			showPopUp(mContext.getResources().getString(R.string.app_name));
 		}
 	};
 
 	private void showPop(long delayMillis) {
-		handler.removeCallbacks(runnable);
-		handler.postDelayed(runnable, delayMillis);
+//		handler.removeCallbacks(runnable);
+//		handler.postDelayed(runnable, delayMillis);
 	}
 
 	@Override
