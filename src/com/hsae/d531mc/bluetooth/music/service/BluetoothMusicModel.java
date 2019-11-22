@@ -886,7 +886,7 @@ public class BluetoothMusicModel {
 	private String lastAtrist = "";
 	private String lastAlbum = "";
 	private int lastPlayStatus = 1;
-	public boolean powerStatus = false;
+	public boolean powerStatus = true;
 	public boolean accStatus = true;
 	private boolean hasSet = false;
 	private boolean isOnFW = false; // 是否处于快进快退之中
@@ -913,7 +913,7 @@ public class BluetoothMusicModel {
 
 		boolean audioFocus = bean.isAudioFocus();
 
-		if (isPowerOff()) {
+		if (!powerStatus) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo isPowerOff");
 			return;
 		}
@@ -924,9 +924,7 @@ public class BluetoothMusicModel {
 		}
 
 		if (fromStream) {
-			
 			if(mSource.getCurrentSource() == App.BT_MUSIC){
-				
 				if(!hasSet){
 					LogUtil.i(TAG, "notifyAutroMusicInfo on position change");
 					BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
@@ -1194,5 +1192,9 @@ public class BluetoothMusicModel {
 		}else {
 			return new Source();
 		}
+	}
+	
+	public void setHasSet(boolean hasSet) {
+		this.hasSet = hasSet;
 	}
 }

@@ -19,6 +19,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
+import android.provider.Telephony.Mms;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
@@ -495,6 +496,7 @@ public class BluetoothMusicServcie extends Service implements
 				}
 				
 				isPowerOn = true;
+				pressPowerDelay = false;
 			}else {
 				
 				try {
@@ -557,6 +559,8 @@ public class BluetoothMusicServcie extends Service implements
 					try {
 						Log.i(TAG, "setPowerState,value = true");
 						AutoSettings.getInstance().setPowerState(true);
+						mBluetoothMusicModel.powerStatus = true;
+						mBluetoothMusicModel.setHasSet(false);
 					} catch (RemoteException e) {
 						e.printStackTrace();
 					}
@@ -581,11 +585,16 @@ public class BluetoothMusicServcie extends Service implements
 				}
 			}
 		}
+
+		if(pressPowerDelay){
+			nPlayStatus = 0;
+		}
+		
 		if (mBluetoothMusicModel.streamStatus != nPlayStatus) {
 			mBluetoothMusicModel.streamStatus = nPlayStatus;
 			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA");
-			Log.i(TAG, "onPlayStatusChanged,PowerState  = " + isPowerOn);
-			if(isPowerOn && (mBluetoothMusicModel.hfpStatus == 1)){
+			Log.i(TAG, "onPlayStatusChanged,PowerState  = " + mBluetoothMusicModel.powerStatus);
+			if(mBluetoothMusicModel.powerStatus && (mBluetoothMusicModel.hfpStatus == 1)){
 				if(isCanPositionNotify && !isPositionNotifyDelay){
 					mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
 							false);
