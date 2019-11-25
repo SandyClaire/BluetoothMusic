@@ -134,7 +134,7 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginLeft="175dp"
         android:layout_marginTop="80dp"
-      	android:visibility="gone" >
+      	android:visibility="visible" >
 
         <TextView
             android:id="@+id/music_title"
@@ -142,7 +142,7 @@
             android:layout_width="500dp"
             android:layout_height="wrap_content"
             android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="150dp"
+            android:layout_marginLeft="157dp"
             android:layout_marginTop="43dp"
             android:ellipsize="marquee"
             android:focusable="true"
@@ -157,7 +157,7 @@
             android:layout_width="470dp"
             android:layout_height="30dp"
             android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="170dp"
+            android:layout_marginLeft="172dp"
             android:layout_marginTop="80dp"
             android:ellipsize="marquee"
             android:focusable="true"
@@ -219,16 +219,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
             android:layout_marginLeft="53dp"
-            android:layout_marginTop="270dp" >
+            android:layout_marginTop="278dp" >
 
             <com.hsae.d531mc.bluetooth.music.util.MySeekBar
                 android:id="@+id/music_seekbar"
                 style="@style/MusicSeekBar"
-                android:layout_width="825dp"
+                android:layout_width="815dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_marginLeft="95dp"
-                android:layout_marginTop="25dp" />
+                android:layout_marginTop="20dp" />
 
             <TextView
                 android:id="@+id/music_currenttime"
@@ -236,21 +236,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left|top"
                 android:gravity="center"
-                android:layout_marginTop="15dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/play_text_min"
                 android:textColor="@color/white_trans"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/music_totaltime"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right|top"
-                android:layout_marginRight="7dp"
-                android:layout_marginTop="15dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="16dp"
                 android:text="@string/play_text_max"
                 android:textColor="@color/white_trans"
-                android:textSize="20sp" />
+                android:textSize="18sp" />
 
             <ImageView
                 android:id="@+id/seekbar_tail"
@@ -443,32 +444,33 @@
         android:layout_gravity="center"
         >
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="202dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical" >
+            android:layout_marginLeft="162dp"
+            >
 
             <ImageView
                 android:id="@+id/bt_power_unuse_image"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
                 android:src="@drawable/un_connect_image"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="60dp" 
-                android:layout_marginRight="10dp"/>
+                android:layout_marginRight="27dp"
+                android:layout_marginTop="295dp" 
+                />
 
             <TextView
                 android:id="@+id/bt_power_unuse_text"
                 android:layout_width="770dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="357dp"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="30dp" 
+                android:textSize="28sp" 
                 />
-        </LinearLayout>
+        </FrameLayout>
     </FrameLayout>
 
 </FrameLayout>

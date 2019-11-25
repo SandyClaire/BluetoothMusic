@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -108,12 +109,17 @@ public class MusicMainActivity extends Activity implements ISubject,
 
 	private static final int SHORT_CLICK_PREV = 3;
 	private static final int SHORT_CLICK_NEXT = 4;
+	
+	private static final int UNCONNECT_TOPMARGIN = 385;
+	private static final int UNOPEN_TOPMARGIN = 357;
 
 	private boolean isNormalPrev = true;
 	private boolean isNormalNext = true;
 	private FrameLayout mFraInfo;
 	private FrameLayout mFraControl;
 	RotateDrawable rDrawable;
+	
+	private FrameLayout.LayoutParams mParam;
 	
 	//判断是否支持显示当前时间
 	private boolean isShowCurTime = true;
@@ -240,6 +246,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		unConnectLayout = (FrameLayout) findViewById(R.id.main_connectTip);
 		btPowerUnuse = (FrameLayout) findViewById(R.id.bt_power_unuse);
 		btPowerUnuseText = (TextView) findViewById(R.id.bt_power_unuse_text);
+		mParam = (android.widget.FrameLayout.LayoutParams) btPowerUnuseText.getLayoutParams();
 		mTextTip = (TextView) findViewById(R.id.text_disconnect_tip);
 		mFraInfo = (FrameLayout) findViewById(R.id.layout_musicinfo);
 		mFraControl = (FrameLayout) findViewById(R.id.layout_control);
@@ -579,6 +586,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				btPowerUnuse.setVisibility(View.VISIBLE);
 				unConnectImage.setVisibility(View.VISIBLE);
 				btPowerUnuseText.setText(getResources().getString(R.string.music_bluetooth_disconnect_tip));
+				setParam(UNCONNECT_TOPMARGIN);
 				/*
 				 * if (!isFromCarlife) {
 				 * mTextTip.setText(getResources().getString
@@ -603,6 +611,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			}else{
 				btPowerUnuseText.setText(getResources().getString(R.string.bluetooth_power_not_open));
 			}
+			setParam(UNOPEN_TOPMARGIN);
 			
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
@@ -722,11 +731,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 			ss = "0" + second;
 		else
 			ss = "" + second;
-
+		
 		if(hh.equalsIgnoreCase("00")){
-			return mm + ":" + ss;
+			return mm + " : " + ss;
 		}else {
-			return hh + ":" + mm + ":" + ss;
+			return hh + ":" + mm + " : " + ss;
 		}
 	}
 
@@ -983,5 +992,10 @@ public class MusicMainActivity extends Activity implements ISubject,
 	@Override
 	public void onUsbDesconnet() {
 		ivUSB.setImageResource(R.drawable.selector_icon_usb);
+	}
+	
+	private void setParam(int topMargin){
+		mParam.topMargin = topMargin;
+		btPowerUnuseText.setLayoutParams(mParam);
 	}
 }
