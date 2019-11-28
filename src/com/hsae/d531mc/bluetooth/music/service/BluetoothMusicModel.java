@@ -705,8 +705,11 @@ public class BluetoothMusicModel {
 				isAudioFocused = true;
 				mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 				if (a2dpStatus == 1) {
-					LogUtil.i(TAG, "notifyAutroMusicInfo 33333333333333");
-					notifyAutroMusicInfo(mBean);
+					LogUtil.i(TAG, "notifyAutroMusicInfo OnAudioFocusChangeListener");
+					BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
+							mBean.getAlbum(), null);
+					syncMusicInfo(info,false);
+					//notifyAutroMusicInfo(mBean);
 					if (mBean != null) {
 						mBean.setAudioFocus(true);
 					}
