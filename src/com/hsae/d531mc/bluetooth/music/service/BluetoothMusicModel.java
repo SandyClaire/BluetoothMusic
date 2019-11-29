@@ -930,14 +930,15 @@ public class BluetoothMusicModel {
 			if(mSource.getCurrentSource() == App.BT_MUSIC){
 				if(!hasSet){
 					LogUtil.i(TAG, "notifyAutroMusicInfo on position change");
-					BTMusicInfo info = new BTMusicInfo(lastTitle, lastAtrist,
-							lastAlbum, null);
+					BTMusicInfo info = new BTMusicInfo(title, atrist,
+							album, null);
 					syncMusicInfo(info,false);
 				}else {
 					hasSet = false;
 				}
 				
 			}
+			return;
 		}
 
 		if (fromPoweroff) {
