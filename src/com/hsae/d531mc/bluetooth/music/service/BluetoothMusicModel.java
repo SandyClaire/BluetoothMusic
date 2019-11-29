@@ -1,6 +1,8 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
@@ -103,6 +105,8 @@ public class BluetoothMusicModel {
 	private BluetoothAllCallback mBluetoothAllCallback;
 	
 	public boolean isCanSync = true;
+	
+	private boolean isSyncPostionToMcan = true;
 	
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
@@ -709,6 +713,14 @@ public class BluetoothMusicModel {
 					BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
 							mBean.getAlbum(), null);
 					syncMusicInfo(info,false);
+					isSyncPostionToMcan = false;
+					new Timer().schedule(new TimerTask() {
+						
+						@Override
+						public void run() {
+							isSyncPostionToMcan = true;
+						}
+					}, 1000);
 					//notifyAutroMusicInfo(mBean);
 					if (mBean != null) {
 						mBean.setAudioFocus(true);
@@ -928,7 +940,7 @@ public class BluetoothMusicModel {
 
 		if (fromStream) {
 			if(mSource.getCurrentSource() == App.BT_MUSIC){
-				if(!hasSet){
+				if(!hasSet && isSyncPostionToMcan){
 					LogUtil.i(TAG, "notifyAutroMusicInfo on position change");
 					BTMusicInfo info = new BTMusicInfo(title, atrist,
 							album, null);
