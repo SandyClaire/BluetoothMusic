@@ -1,7 +1,10 @@
 package com.hsae.d531mc.bluetooth.music;
 
+import java.lang.reflect.Executable;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
@@ -284,7 +287,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	
 	@Override
 	protected void onResume() {
-		super.onResume();
+
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
 		
@@ -304,6 +307,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 				: R.drawable.selector_source_ipod);
 		
 		isRequestAudio = true;
+		
+		super.onResume();
 	}
 	
 	@Override
