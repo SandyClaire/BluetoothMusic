@@ -16,6 +16,7 @@
     <string name="music_matedate_unsupport">未知</string>
     <string name="music_title_unknow">未知歌曲</string>
     <string name="music_artist_unknow">未知艺术家</string>
+    <string name="music_album_unknow">未知专辑名</string>
     <string name="music_bluetooth_disconnect">未连接</string>
     <string name="music_bluetooth_disconnect_summery">请连接蓝牙设备</string>
     <string name="music_bluetooth_disconnect_tip">蓝牙设备未连接 </string>

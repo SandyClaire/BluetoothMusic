@@ -108,6 +108,10 @@ public class BluetoothMusicModel {
 	
 	private boolean isSyncPostionToMcan = true;
 	
+	private boolean isNotifyLauncher = true;
+	
+	public boolean isCanPositionNotify = false;
+	
 	public static BluetoothMusicModel getInstance(Context context) {
 		mContext = context;
 		if (null == mInstance) {
@@ -325,7 +329,6 @@ public class BluetoothMusicModel {
 				LogUtil.i(TAG, "now is playing , filter out this op_code");
 				return -998;
 			}
-
 			isHandPuse = false;
 			if (a2dpStatus == 0) {
 				LogUtil.i(TAG, "AVRCPControl : op_code= " + op_code
@@ -421,6 +424,7 @@ public class BluetoothMusicModel {
 	
 	private static final int MSG_AUTOPLAY = 3;
 	private static final int SYNC_ID3 = 4;
+	private static final int IS_SEND_POSITION = 5;
 	
 	Handler handler = new Handler() {
 		public void handleMessage(final android.os.Message msg) {
@@ -444,6 +448,11 @@ public class BluetoothMusicModel {
 			case SYNC_ID3:
 				isCanSync = true;
 				break;
+				
+			case IS_SEND_POSITION:
+				isCanPositionNotify = true;
+				break;
+				
 			}
 		};
 	};
@@ -586,30 +595,36 @@ public class BluetoothMusicModel {
 		this.requestAudioFocus(flag, false);
 	}
 
-	public void requestAudioFocus(boolean showOrBack, boolean fromPlay) {
+	public void requestAudioFocus(final boolean showOrBack, boolean fromPlay) {
 		LogUtil.i(TAG, "cruze  BT getCurrentSource = " + mSource.getCurrentSource()
-				+ ",isHandPuse = " + isHandPuse + "fromPlay =" + fromPlay);
+				+ ",isHandPuse = " + isHandPuse + ", fromPlay =" + fromPlay);
 		try {
 			if (fromPlay) {
 				doPlay(showOrBack);
 			} else {
-				if (mSource.getCurrentSource() == App.BT_MUSIC) {
-					mainAudioChanged(showOrBack);
-					// 如果手动点击停止，不进行播放；
-					if (!autoConnectA2DP()) {
-						if (!isHandPuse) {
-							AVRCPControl(AudioControl.CONTROL_PLAY);
-						}
-					}
-					if (a2dpStatus == 0) {
-						LogUtil.i(TAG, "notifyAutoCoreWarning DDDDDDDDD");
-						notifyAutoCoreWarning();
-					}
-				} else {
-					doRequest(showOrBack);
+//				if (mSource.getCurrentSource() == App.BT_MUSIC) {
+//					mainAudioChanged(showOrBack);
+//					// 如果手动点击停止，不进行播放；
+//					if (!autoConnectA2DP()) {
+//						if (!isHandPuse) {
+//							AVRCPControl(AudioControl.CONTROL_PLAY);
+//						}
+//					}
+//					if (a2dpStatus == 0) {
+//						LogUtil.i(TAG, "notifyAutoCoreWarning DDDDDDDDD");
+//						notifyAutoCoreWarning();
+//					}
+//				} else {
+					
+//				}
+				if (isAudioFocused) {
+					isNotifyLauncher = false;
+				}else {
+					isNotifyLauncher = true;
 				}
+				doRequest(showOrBack);
 			}
-		} catch (RemoteException e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -655,12 +670,15 @@ public class BluetoothMusicModel {
 					isAudioFocused = true;
 					mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 					mainAudioChanged(showOrBack);
+					
 					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					
 					if (!autoConnectA2DP()) {
 						if (!isHandPuse) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 						}
 					}
+				
 					if (a2dpStatus == 0) {
 						LogUtil.i(TAG,
 								"notifyAutoCoreWarning doRequest 1111111");
@@ -670,7 +688,10 @@ public class BluetoothMusicModel {
 					LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点失败");
 					isAudioFocused = false;
 				}
-				notifyLauncherInfo();
+				
+				if(isNotifyLauncher){
+					notifyLauncherInfo();
+				}
 			}
 		} catch (Exception e) {
 		}
@@ -693,7 +714,7 @@ public class BluetoothMusicModel {
 		return false;
 	}
 
-	private boolean pauseByMobile = false;
+	private boolean isPhone = false;
 	/**
 	 * 音源焦点变化监听
 	 */
@@ -701,7 +722,6 @@ public class BluetoothMusicModel {
 
 		@Override
 		public void onAudioFocusChange(int focusChange) {
-			int callstatus = phoneProxy.getPhoneState();
 			switch (focusChange) {
 			case AudioManager.AUDIOFOCUS_GAIN:
 				LogUtil.i(TAG,
@@ -709,18 +729,21 @@ public class BluetoothMusicModel {
 				isAudioFocused = true;
 				mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 				if (a2dpStatus == 1) {
-					LogUtil.i(TAG, "notifyAutroMusicInfo OnAudioFocusChangeListener");
-					BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
-							mBean.getAlbum(), null);
-					syncMusicInfo(info,false);
-					isSyncPostionToMcan = false;
-					new Timer().schedule(new TimerTask() {
-						
-						@Override
-						public void run() {
-							isSyncPostionToMcan = true;
-						}
-					}, 1000);
+					if (powerStatus) {
+						LogUtil.i(TAG, "notifyAutroMusicInfo OnAudioFocusChangeListener");
+						BTMusicInfo info = new BTMusicInfo(mBean.getTitle(), mBean.getAtrist(),
+								mBean.getAlbum(), null);
+						syncMusicInfo(info,false);
+						isSyncPostionToMcan = false;
+						new Timer().schedule(new TimerTask() {
+							
+							@Override
+							public void run() {
+								isSyncPostionToMcan = true;
+							}
+						}, 1500);
+					}
+					
 					//notifyAutroMusicInfo(mBean);
 					if (mBean != null) {
 						mBean.setAudioFocus(true);
@@ -738,9 +761,12 @@ public class BluetoothMusicModel {
 					    return;
 					}
 					
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					if (!isPhone) {
+						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+					}
+					
 					if (!isHandPuse) {
-						if (!pauseByMobile) {
+						if (!isPhone) {
 							AVRCPControl(AudioControl.CONTROL_PLAY);
 						}
 					}
@@ -762,16 +788,17 @@ public class BluetoothMusicModel {
 				break;
 			case AudioManager.AUDIOFOCUS_LOSS:
 				LogUtil.i("cruze", "cruze  AUDIOFOCUS_LOSS");
+			    int callstatus = phoneProxy.getPhoneState();
 				try {
 					if (callstatus == 0 || callstatus == -1) {
-						pauseByMobile = false;
+						isPhone = false;
+						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					} else {
-						pauseByMobile = true;
+						isPhone = true;
 						LogUtil.i(TAG,
 								"audiofocus loss caused by callstatus , pause by mobile self");
 					}
-					audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 				} catch (RemoteException e1) {
 				}
 				isAudioFocused = false;
@@ -939,16 +966,15 @@ public class BluetoothMusicModel {
 		}
 
 		if (fromStream) {
-			if(mSource.getCurrentSource() == App.BT_MUSIC){
+			Log.i(TAG, "notifyAutroMusicInfo hasSet = " + hasSet + ", isAudioFocused = " + isAudioFocused);
+			if(isAudioFocused){
 				if(!hasSet && isSyncPostionToMcan){
-					LogUtil.i(TAG, "notifyAutroMusicInfo on position change");
 					BTMusicInfo info = new BTMusicInfo(title, atrist,
 							album, null);
 					syncMusicInfo(info,false);
 				}else {
 					hasSet = false;
 				}
-				
 			}
 			return;
 		}
@@ -1015,6 +1041,10 @@ public class BluetoothMusicModel {
 			
 			if(!handler.hasMessages(SYNC_ID3)){
 				handler.sendEmptyMessageDelayed(SYNC_ID3, 400);
+			}
+			
+			if(!isCanPositionNotify && (!handler.hasMessages(IS_SEND_POSITION))){
+				handler.sendEmptyMessageDelayed(IS_SEND_POSITION, 1500);
 			}
 		}
 		
@@ -1091,7 +1121,8 @@ public class BluetoothMusicModel {
 			e.printStackTrace();
 		}
 		if (connStatus == MangerConstant.Anw_SUCCESS && mBean != null) {
-			LogUtil.i(TAG, "notifyLauncherInfo");
+			LogUtil.i(TAG, "notifyAutroMusicInfo,notifyLauncherInfo");
+			hasSet = false;
 			notifyAutroMusicInfo(mBean,true,false);
 			hasSet = true;
 			mBean.setAudioFocus(true);
@@ -1181,9 +1212,9 @@ public class BluetoothMusicModel {
 			App currentSource = mSource.getCurrentSource();
 			boolean isDiagnoseMode = AutoSettings.getInstance()
 					.isDiagnoseMode();
-			if (currentSource != App.BT_MUSIC || isDiagnoseMode) {
+			if (!isAudioFocused || isDiagnoseMode) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
-			} else if (currentSource == App.BT_MUSIC && !isDiagnoseMode) {
+			} else if (isAudioFocused && !isDiagnoseMode) {
 				audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 			}
 		} catch (IllegalStateException e) {
@@ -1212,5 +1243,13 @@ public class BluetoothMusicModel {
 	
 	public void setHasSet(boolean hasSet) {
 		this.hasSet = hasSet;
+	}
+	
+	public synchronized void updateConnectState() {
+		if (mBluetoothAllCallback != null) {
+			mBluetoothAllCallback.onConnectStateChanged(MangerConstant.PROFILE_HF_CHANNEL, getHfpStatus(), 0);
+			mBluetoothAllCallback.onConnectStateChanged(MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL, getA2dpStatus(), 0);
+			mBluetoothAllCallback.onConnectStateChanged(MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL, getAvrcpStatus(), 0);
+		}
 	}
 }

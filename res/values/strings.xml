@@ -17,6 +17,7 @@
     <string name="music_matedate_unsupport">Unknown</string>
     <string name="music_title_unknow">Unknown Title</string>
     <string name="music_artist_unknow">Unknown Artist</string>
+    <string name="music_album_unknow">Unknown Album</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth.</string>
     <string name="music_bluetooth_disconnect_tip">Not connected to Bluetooth device</string>

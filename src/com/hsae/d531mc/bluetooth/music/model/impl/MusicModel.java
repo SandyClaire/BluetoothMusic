@@ -43,6 +43,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 		LogUtil.i(TAG, "--- init +++");
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
 		mBluetoothMusicModel.registMusicListener((IMusicModel) this);
+		mBluetoothMusicModel.updateConnectState();
 	}
 
 	@Override
@@ -197,9 +198,9 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 	
 		Source source = new Source();
 		if (source.getCurrentSource() == App.BT_MUSIC) {
-			LogUtil.i(TAG,"mainAudioChanged false begin");
-			mBluetoothMusicModel.mainAudioChanged(false);
-			LogUtil.i(TAG,"mainAudioChanged false end");
+//			LogUtil.i(TAG,"mainAudioChanged false begin");
+//			mBluetoothMusicModel.mainAudioChanged(false);
+//			LogUtil.i(TAG,"mainAudioChanged false end");
 		}
 		
 		mBluetoothMusicModel.isActivityShow = false;

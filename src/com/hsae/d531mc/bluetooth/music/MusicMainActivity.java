@@ -90,6 +90,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private ImageButton mBtnNext;
 	private TextView mTextTitle;
 	private TextView mTextArtist;
+	private TextView mTextAlbum;
 	private TextView mTextCurTime;
 	private TextView mTextTotalTime;
 	private TextView btPowerUnuseText;
@@ -113,7 +114,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final int SHORT_CLICK_PREV = 3;
 	private static final int SHORT_CLICK_NEXT = 4;
 	
-	private static final int UNCONNECT_TOPMARGIN = 385;
+	private static final int UNCONNECT_TOPMARGIN = 375;
 	private static final int UNOPEN_TOPMARGIN = 357;
 
 	private boolean isNormalPrev = true;
@@ -242,6 +243,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 		mSeekBar = (MySeekBar) findViewById(R.id.music_seekbar);
 		mTextTitle = (TextView) findViewById(R.id.music_title);
 		mTextArtist = (TextView) findViewById(R.id.music_artist);
+		mTextAlbum = (TextView) findViewById(R.id.music_album);
 		mTextCurTime = (TextView) findViewById(R.id.music_currenttime);
 		mTextTotalTime = (TextView) findViewById(R.id.music_totaltime);
 		mImageBg = (ImageView) findViewById(R.id.default_screenbg);
@@ -550,6 +552,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
 					R.string.music_artist_unknow));
+			mTextAlbum.setText(getResources().getString(
+					R.string.music_album_unknow));
 			mSeekBar.setMax(0);
 			LogUtil.i(TAG, "Bluetooth A2DP disconnected");
 			mHandler.sendEmptyMessageDelayed(MSG_DRAWLAYOUT_SHOW, 500);
@@ -601,7 +605,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 				 */
 				ismPlaying = false;
 				mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-				mBtnPlay.setImageDrawable(getResources().getDrawable(
+				mBtnPlay.setBackground(getResources().getDrawable(
 						R.drawable.selector_stop));
 			}
 		} else {
@@ -620,7 +624,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setImageDrawable(getResources().getDrawable(
+			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.selector_stop));
 		}
 
@@ -632,12 +636,12 @@ public class MusicMainActivity extends Activity implements ISubject,
 		LogUtil.i(TAG, "Activity updatePlayBtnByStatus -- flag = " + flag);
 		if (flag) {
 			ismPlaying = true;
-			mBtnPlay.setImageDrawable(getResources().getDrawable(
+			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.selector_play));
 		} else {
 			ismPlaying = false;
 			mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-			mBtnPlay.setImageDrawable(getResources().getDrawable(
+			mBtnPlay.setBackground(getResources().getDrawable(
 					R.drawable.selector_stop));
 		}
 	}
@@ -668,6 +672,14 @@ public class MusicMainActivity extends Activity implements ISubject,
 			} else {
 				mTextArtist.setText(bean.getAtrist());
 			}
+			
+			if ("".equals(bean.getAlbum())) {
+				mTextAlbum.setText(getResources().getString(
+						R.string.music_album_unknow));
+			} else {
+				mTextAlbum.setText(bean.getAlbum());
+			}
+			
 			if ("".equals(bean.getTotalTime())) {
 				mTextTotalTime.setText("-- : --");
 			} else {
@@ -679,6 +691,8 @@ public class MusicMainActivity extends Activity implements ISubject,
 					R.string.music_title_unknow));
 			mTextArtist.setText(getResources().getString(
 					R.string.music_artist_unknow));
+			mTextAlbum.setText(getResources().getString(
+					R.string.music_album_unknow));
 			mTextTotalTime.setText("-- : --");
 			mTextCurTime.setText("-- : --");
 			mSeekBar.setMax(0);

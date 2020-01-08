@@ -122,68 +122,73 @@
             android:layout_marginLeft="0dp"
             android:layout_marginTop="50dp"
             android:textColor="#e0f6ff"
-            android:textSize="19sp"
+            android:textSize="22px"
             android:gravity="center_horizontal"
             android:text="@string/device_management" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/layout_musicinfo"
-        android:layout_width="1020dp"
+        android:layout_width="820dp"
         android:layout_height="420dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginLeft="175dp"
+        android:layout_marginLeft="72dp"
         android:layout_marginTop="80dp"
-      	android:visibility="visible" >
+      	android:visibility="gone" >
 
         <TextView
             android:id="@+id/music_title"
             style="@style/timeText"
             android:layout_width="500dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="157dp"
+            android:layout_gravity="top|center"
             android:layout_marginTop="43dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
             android:marqueeRepeatLimit="-1"
             android:singleLine="true"
             android:text="@string/music_title_unknow"
+            android:textColor="@color/white"
             android:textSize="29sp" />
-
-        <TextView
-            android:id="@+id/music_artist"
+		
+        <FrameLayout 
+            android:id="@+id/music_artist_album"
             android:layout_width="470dp"
             android:layout_height="30dp"
-            android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="172dp"
+            android:layout_gravity="top|center"
             android:layout_marginTop="80dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="-1"
-            android:singleLine="true"
-            android:text="@string/music_artist_unknow"
-            android:gravity="center"
-            android:textSize="22sp" /> 
-
-        <TextView
-            android:id="@+id/music_album_name"
-            style="@style/timeText"
-            android:layout_width="470dp"
-            android:layout_height="40dp"
-            android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="150dp"
-            android:layout_marginTop="120dp"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            android:marqueeRepeatLimit="-1"
-            android:singleLine="true"
-            android:text="@string/music_matedate_unsupport"
-            android:textSize="32sp"
-            android:visibility="gone" />
+            >
+            
+            <TextView
+	            android:id="@+id/music_artist"
+	            android:layout_width="200dp"
+	            android:layout_height="match_parent"
+	            android:layout_marginLeft="27dp"
+	            android:singleLine="true"
+	            android:text="@string/music_artist_unknow"
+	            android:gravity="right"
+	            android:textColor="@color/album_text_gray"
+	            android:textSize="22sp" 
+	            /> 
+	            
+            <View 
+                android:layout_width="1dp"
+	            android:layout_height="match_parent"
+                android:background="@color/text_gray"
+                android:layout_gravity="center_horizontal"
+                />
+	            
+              <TextView
+	            android:id="@+id/music_album"
+	            android:layout_width="200dp"
+	            android:layout_height="match_parent"
+	            android:layout_marginLeft="243dp"
+	            android:singleLine="true"
+	            android:text="@string/music_album_unknow"
+	            android:textColor="@color/album_text_gray"
+	            android:textSize="22sp"
+	            android:gravity="left"
+	            />
+            
+        </FrameLayout>
 
         <ImageView
             android:id="@+id/music_defaultcover"
@@ -198,8 +203,7 @@
         <ImageView
             android:layout_width="360dp"
             android:layout_height="270dp"
-            android:layout_gravity="top|center_vertical"
-            android:layout_marginLeft="230dp"
+            android:layout_gravity="top|center"
             android:layout_marginTop="120dp"
             android:src="@drawable/album" />
     </FrameLayout>
@@ -219,7 +223,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|left"
             android:layout_marginLeft="53dp"
-            android:layout_marginTop="278dp" >
+            android:layout_marginTop="278dp" 
+            android:visibility="gone"
+            >
 
             <com.hsae.d531mc.bluetooth.music.util.MySeekBar
                 android:id="@+id/music_seekbar"
@@ -265,9 +271,9 @@
         <FrameLayout
             android:id="@+id/layout_playbtn"
             android:layout_width="800dp"
-            android:layout_height="110dp"
+            android:layout_height="115px"
             android:layout_marginTop="340dp" 
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="32dp"
              >
 
             <!-- android:background="@drawable/bg_bottom_bar" -->
@@ -284,7 +290,7 @@
             <ImageButton
                 android:id="@+id/btn_prev"
                 android:layout_width="123dp"
-                android:layout_height="match_parent"
+                android:layout_height="110dp"
                 android:layout_gravity="top|left"
                 android:layout_marginLeft="280dp"
                 android:background="@color/transparent"
@@ -294,19 +300,19 @@
 
             <ImageView
                 android:id="@+id/btn_play"
-                android:layout_width="200dp"
+                android:layout_width="115px"
                 android:layout_height="match_parent"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="400dp"
+                android:layout_marginLeft="465dp"
                 android:paddingLeft="50dp"
-                android:src="@drawable/selector_stop" />
+                android:background="@drawable/selector_stop" />
 
             <ImageButton
                 android:id="@+id/btn_next"
                 android:layout_width="123dp"
-                android:layout_height="match_parent"
+                android:layout_height="110dp"
                 android:layout_gravity="top|left"
-                android:layout_marginLeft="630dp"
+                android:layout_marginLeft="631dp"
                 android:background="@color/transparent"
                 android:paddingLeft="35dp"
                 android:paddingRight="35dp"
@@ -447,17 +453,17 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="162dp"
+            android:layout_marginLeft="183dp"
             >
 
             <ImageView
                 android:id="@+id/bt_power_unuse_image"
                 android:layout_width="70dp"
-                android:layout_height="70dp"
+                android:layout_height="65dp"
                 android:src="@drawable/un_connect_image"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginRight="27dp"
-                android:layout_marginTop="295dp" 
+                android:layout_marginTop="290px" 
                 />
 
             <TextView
@@ -465,10 +471,11 @@
                 android:layout_width="770dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="357dp"
+                android:layout_marginTop="375px"
                 android:gravity="center"
-                android:textColor="@color/white"
+                android:textColor="#FFFFFFFF"
                 android:textSize="28sp" 
+                android:text="weilianjie"
                 />
         </FrameLayout>
     </FrameLayout>
