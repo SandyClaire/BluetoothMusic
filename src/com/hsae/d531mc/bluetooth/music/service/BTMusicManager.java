@@ -195,6 +195,10 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 
 	@Override
 	public void play() throws RemoteException {
+                if (mBluetoothMusicModel.isHandPuse) {
+                    LogUtil.i(TAG, "isHandPuse = " + mBluetoothMusicModel.isHandPuse + ", return.");
+                    return;
+                }
 		if(!mBluetoothMusicModel.accState){
 			mBluetoothMusicModel.isHandPuse = false;	
 		}
