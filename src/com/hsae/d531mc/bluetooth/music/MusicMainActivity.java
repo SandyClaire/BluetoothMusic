@@ -1,10 +1,5 @@
 package com.hsae.d531mc.bluetooth.music;
 
-import java.lang.reflect.Executable;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 import android.annotation.SuppressLint;
@@ -27,7 +22,6 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -74,7 +68,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private static final String SETTINGS_PACKAGE = "com.hsae.d531mc.systemsetting";
 	private static final String SETTINGS_Bluetooth_ACTIVITY = "com.hsae.d531mc.systemsetting.SystemSettingsActivity";
 	private static final String SETTINGS_Bluetooth_FRAGMENT = "android.hase.settings.BT_SETTINGS";
-
 	
 	private static final int MSG_DRAWLAYOUT_SHOW = 111;
 	private static final int MSG_SWITCH = 1123;
@@ -201,6 +194,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 	protected void onStart() {
 		super.onStart();
 		LogUtil.i(TAG, "cruze onStart");
+		sendMessage(MusicActionDefine.ACTIVITY_START);
 	}
 
 	@Override
@@ -289,7 +283,6 @@ public class MusicMainActivity extends Activity implements ISubject,
 	
 	@Override
 	protected void onResume() {
-
 		LogUtil.i(TAG, "bluetoothmusic onResume");
 		ivBT.setSelected(true);
 		
@@ -299,10 +292,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			msg.what = MusicActionDefine.ACTION_A2DP_REQUEST_AUDIO_FOCUSE;
 			this.notify(msg, FLAG_RUN_SYNC);
 		}
-		
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTIVITY_RESUME;
-		this.notify(msg, FLAG_RUN_SYNC);
+		sendMessage(MusicActionDefine.ACTIVITY_RESUME);
 	
 		boolean isUsb = !isIpodConnected();
 		ivUSB.setImageResource(isUsb ? R.drawable.selector_icon_usb
@@ -317,15 +307,13 @@ public class MusicMainActivity extends Activity implements ISubject,
 	protected void onPause() {
 		super.onPause();
 		mMusicHandler.removeCallbacks(updateMusicPlayTimer);
-
-		Message msg = Message.obtain();
-		msg.what = MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE;
-		this.notify(msg, FLAG_RUN_SYNC);
+		sendMessage(MusicActionDefine.ACTION_A2DP_ACTIVITY_PAUSE);
 	}
 
 	@Override
 	protected void onStop() {
 		super.onStop();
+		sendMessage(MusicActionDefine.ACTIVITY_STOP);
 	}
 
 	public void finishActivity() {
@@ -993,7 +981,7 @@ public class MusicMainActivity extends Activity implements ISubject,
 			mImageBg.setBackgroundDrawable(drawable);
 			// setWallPaperAlbumScreenbg();
 		} else {
-			mImageBg.setBackgroundResource(R.drawable.new_all_bg);
+			mImageBg.setBackgroundResource(R.drawable.new_screen_bg);
 		}
 	}
 
@@ -1016,5 +1004,11 @@ public class MusicMainActivity extends Activity implements ISubject,
 	private void setParam(int topMargin){
 		mParam.topMargin = topMargin;
 		btPowerUnuseText.setLayoutParams(mParam);
+	}
+	
+	private void sendMessage(int what){
+		Message msg = Message.obtain();
+		msg.what = what;
+		this.notify(msg, FLAG_RUN_SYNC);
 	}
 }

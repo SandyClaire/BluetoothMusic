@@ -203,7 +203,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 //			LogUtil.i(TAG,"mainAudioChanged false end");
 		}
 		
-		mBluetoothMusicModel.isActivityShow = false;
+		mBluetoothMusicModel.syncPlayPauseState(mBluetoothMusicModel.isPlay? 1:0);
 	}
 
 	@Override
@@ -333,7 +333,17 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
 
 	@Override
 	public void activityResume() {
+		mBluetoothMusicModel.syncPlayPauseState(mBluetoothMusicModel.isPlay? 1:0);
+	}
+
+	@Override
+	public void activityStart() {
 		mBluetoothMusicModel.isActivityShow = true;
+	}
+
+	@Override
+	public void activityStop() {
+		mBluetoothMusicModel.isActivityShow = false;
 	}
 
 }

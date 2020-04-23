@@ -1,5 +1,6 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
+import java.security.acl.LastOwnerException;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -505,6 +506,11 @@ public class BluetoothMusicServcie extends Service implements
 						}else {
 							notifyAutoCoreConnectStatus(false);
 						}
+						
+						if(("".equals(mLastTitle)) && ("".equals(mLastAlbum)) && ("".equals(mLastAtrist))){
+							mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
+									false);
+						}
 					}
 					
 				}
@@ -544,16 +550,7 @@ public class BluetoothMusicServcie extends Service implements
 
 		if (nPlayStatus != mLastPlayStatus) {
 			mLastPlayStatus = nPlayStatus;
-			try {
-				int n = mBTMmanager.mListeners.beginBroadcast();
-				for (int i = 0; i < n; i++) {
-					mBTMmanager.mListeners.getBroadcastItem(i)
-							.onPlaybackStateChanged(nPlayStatus == 1 ? 0 : 1);
-				}
-				mBTMmanager.mListeners.finishBroadcast();
-			} catch (Exception e) {
-				LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
-			}
+			mBluetoothMusicModel.syncPlayPauseState(nPlayStatus);
 		}
 		switch (nPlayStatus) {
 		case AudioControl.STREAM_STATUS_SUSPEND:
@@ -567,6 +564,8 @@ public class BluetoothMusicServcie extends Service implements
 			mBluetoothMusicModel.isPlaying = false;
 			mBluetoothMusicModel.isPlay = true;
 			mBluetoothMusicModel.isAccPlay = true;
+			//若是已经播放则将手动暂停标志位重置
+			mBluetoothMusicModel.isHandPuse = false;
 			mBluetoothMusicModel.setStreamMute();
 			if(!isPowerOn && !pressPowerDelay && isCanRelievePowerState){
 				if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
@@ -639,7 +638,7 @@ public class BluetoothMusicServcie extends Service implements
 	}
 
 	@Override
-	public void onID3Changed(String title, String album, String artist,
+	public void onID3Changed(String title, String album,String artist,
 			String totalTime) {
 		Log.i(TAG, "ID3Changed,title = " + title 
 				+ ",artist = " + artist + ",album = " + album + "totalTime = " + totalTime);
@@ -695,7 +694,7 @@ public class BluetoothMusicServcie extends Service implements
 
 			if(mBluetoothMusicModel.hfpStatus == 1){
 				if(!mBluetoothMusicModel.isSupportMusic()){
-					mHandler.sendEmptyMessageDelayed(NO_SUPPORT_BLUETOOTHMUSIC,0);
+					mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
 					isUpdateView = false;
 				}
 				
@@ -707,7 +706,7 @@ public class BluetoothMusicServcie extends Service implements
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 			
 			if(isUpdateView){
-				mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
+//				mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
 			}
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
@@ -716,16 +715,14 @@ public class BluetoothMusicServcie extends Service implements
 			if (mBluetoothMusicModel.a2dpStatus == 0) {
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
 				mBluetoothMusicModel.notifyAutoCoreWarning();
-				
-				int hfpStatus = mBluetoothMusicModel.getHfpStatus();
-				Log.i(TAG, "hfpStatus = " + hfpStatus);
-				
-				if(hfpStatus == 1){
-					mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
-					isUpdateView = false;
-				}
+				mBluetoothMusicModel.resetBtStatus();
+//				if(!mBluetoothMusicModel.isSupportMusic()){
+//					mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
+//					isUpdateView = false;
+//				}
 				
 				isCanRelievePowerState = false;
+				mBluetoothMusicModel.streamStatus = 0;
 			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
 //				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
 //					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
@@ -744,6 +741,7 @@ public class BluetoothMusicServcie extends Service implements
 				mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
 			}
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+			isUpdateView = true;
 
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
 			mBluetoothMusicModel.avrcpStatus = state;
@@ -751,7 +749,6 @@ public class BluetoothMusicServcie extends Service implements
 					+ mBluetoothMusicModel.avrcpStatus);
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 		}
-		isUpdateView = true;
 	}
 
 	@Override

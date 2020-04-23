@@ -128,6 +128,16 @@ public class MusicPersenter implements IObserver {
 			LogUtil.i(TAG, "ACTIVITY_RESUME");
 			mIMusicModel.activityResume();
 			break;
+			
+		case MusicActionDefine.ACTIVITY_START:
+			LogUtil.i(TAG, "ACTIVITY_START");
+			mIMusicModel.activityStart();
+			break;
+			
+		case MusicActionDefine.ACTIVITY_STOP:
+			LogUtil.i(TAG, "ACTIVITY_STOP");
+			mIMusicModel.activityStop();
+			break;
 
 		default:
 			break;

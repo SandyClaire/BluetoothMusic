@@ -143,5 +143,9 @@ public interface IMusicModel {
 	public void setHandPause(boolean b);
 	
 	public void activityResume();
+	
+	public void activityStart();
+	
+	public void activityStop();
 
 }
