@@ -551,7 +551,10 @@ public class BluetoothMusicServcie extends Service implements
 		if (nPlayStatus != mLastPlayStatus) {
 			mLastPlayStatus = nPlayStatus;
 			mBluetoothMusicModel.syncPlayPauseState(nPlayStatus);
-		}
+		} else {
+                        LogUtil.i(TAG, "play status has no change, return.");
+                        return;
+                }
 		switch (nPlayStatus) {
 		case AudioControl.STREAM_STATUS_SUSPEND:
 			mBluetoothMusicModel.isPausing = false;
