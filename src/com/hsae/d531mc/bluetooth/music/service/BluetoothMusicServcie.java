@@ -570,11 +570,11 @@ public class BluetoothMusicServcie extends Service implements
 			//若是已经播放则将手动暂停标志位重置
 			mBluetoothMusicModel.isHandPuse = false;
 			mBluetoothMusicModel.setStreamMute();
+			AutoSettings.getInstance().setPowerState(true);
 			if(!isPowerOn && !pressPowerDelay && isCanRelievePowerState){
 				if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
 					try {
 						Log.i(TAG, "setPowerState,value = true");
-						AutoSettings.getInstance().setPowerState(true);
 						mBluetoothMusicModel.powerStatus = true;
 						mBluetoothMusicModel.setHasSet(false);
 					} catch (RemoteException e) {
