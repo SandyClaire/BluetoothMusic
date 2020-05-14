@@ -105,8 +105,9 @@ public class BluetoothMusicServcie extends Service implements
 						try {
 							mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
 							mBluetoothMusicModel.getMusicInfo();
-							mBluetoothMusicModel.isPlay = true;
-							mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
+							//此时才尝试准备播放，还没有真的开始播放，不修改播放状态判定及VIew按钮状态
+							//mBluetoothMusicModel.isPlay = true;
+							//mBluetoothMusicModel.updatePlayStatus(mBluetoothMusicModel.isPlay);
 						
 						} catch (RemoteException e) {
 						}
@@ -129,6 +130,8 @@ public class BluetoothMusicServcie extends Service implements
 						break;
 					case POSITION_NOTIFY_DELAY:
 						isPositionNotifyDelay = false;
+						break;
+					default:
 						break;
 					}
 					
