@@ -716,7 +716,11 @@ public class BluetoothMusicServcie extends Service implements
 			}
 		} else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
 
-			mBluetoothMusicModel.a2dpStatus = state;
+			if ((profile==2) && (state==0)){
+				mBluetoothMusicModel.a2dpStatus = -3;
+			}else {
+				mBluetoothMusicModel.a2dpStatus = state;
+			}
 
 			if (mBluetoothMusicModel.a2dpStatus == 0) {
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
@@ -754,6 +758,13 @@ public class BluetoothMusicServcie extends Service implements
 			LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = "
 					+ mBluetoothMusicModel.avrcpStatus);
 			mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+		}else if (nProfile == MangerConstant.PROFILE_PIMDATA_CHANNEL){
+			if (state==0){
+				mBluetoothMusicModel.a2dpStatus = state;
+				if(isUpdateView){
+					mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
+				}
+			}
 		}
 	}
 
