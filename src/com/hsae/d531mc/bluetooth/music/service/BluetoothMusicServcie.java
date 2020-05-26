@@ -1,7 +1,5 @@
 package com.hsae.d531mc.bluetooth.music.service;
 
-import java.security.acl.LastOwnerException;
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,21 +18,17 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.os.RemoteException;
-import android.provider.Telephony.Mms;
 import android.util.Log;
 
 import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
-import com.hsae.autosdk.hmi.HmiConst;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.Soc.SocListener;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
 import com.hsae.autosdk.settings.AutoSettings;
-import com.hsae.autosdk.settings.AutoSettings.DisplayListener;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
-import com.hsae.autosdk.vehicle.VehicleConst.Ill.DayNight;
 import com.hsae.d531mc.bluetooth.music.entry.MusicBean;
 import com.hsae.d531mc.bluetooth.music.util.Util;
 
@@ -59,20 +53,18 @@ public class BluetoothMusicServcie extends Service implements
 	private String mTimePosition = "-1";
 	private Soc mSoc;
 	// power 状态监听
-	private PowerListener mPowerListener = new PowerListener();
-	private AutoSettings mAutoSettings;
-	private boolean HfpStatus = false;
-	private boolean isPowerOn = true;
-	private boolean pressPowerDelay = false;
+//	private PowerListener mPowerListener = new PowerListener();
+//	private AutoSettings mAutoSettings;
+//	private boolean HfpStatus = false;
+//	private boolean isPowerOn = true;
+//	private boolean pressPowerDelay = false;
 	private boolean isPositionNotifyDelay = false;
-	private boolean isCanRelievePowerState = false;
 	private boolean isUpdateView = true;
 	private AccBroadcastReceiver mReceiver = null;
 	
 	private static final int BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE = 1;
 	private static final int BLUETOOTH_MUSIC_CONNECT_PLAY = 2;
 	private static final int NO_SUPPORT_BLUETOOTHMUSIC = 3;
-	private static final int PRESS_POWER_DELAY_TIME = 4;
 	private static final int ID3_CHANGE_SEND_TO_MCAN = 5;
 	private static final int SET_MUTE = 6;
 	private static final int POSITION_NOTIFY_DELAY = 7;
@@ -116,10 +108,6 @@ public class BluetoothMusicServcie extends Service implements
 					case NO_SUPPORT_BLUETOOTHMUSIC:
 						Log.i(TAG, "NO_SUPPORT_BLUETOOTHMUSIC");
 						mBluetoothMusicModel.updateMsgByConnectStatusChange(-3);
-						break;
-						
-					case PRESS_POWER_DELAY_TIME:
-						pressPowerDelay = false;
 						break;
 						
 					case ID3_CHANGE_SEND_TO_MCAN:
@@ -171,12 +159,12 @@ public class BluetoothMusicServcie extends Service implements
 		mContext = getApplicationContext();
 		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
 		mSoc = new Soc();
-		mAutoSettings = AutoSettings.getInstance();
-		try {
-			mAutoSettings.registerDisplayCallback(mPowerListener);
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
+//		mAutoSettings = AutoSettings.getInstance();
+//		try {
+//			mAutoSettings.registerDisplayCallback(mPowerListener);
+//		} catch (RemoteException e) {
+//			e.printStackTrace();
+//		}
 		registAccBroadcast();
 		mBluetoothMusicModel.setBluetoothAllCallback(this);
 		mBTMmanager = BTMusicManager.getInstance(getApplicationContext());
@@ -224,11 +212,11 @@ public class BluetoothMusicServcie extends Service implements
 
 	@Override
 	public void onDestroy() {
-		try {
-			mAutoSettings.unregisterDisplayCallback(mPowerListener);
-			mSoc.unregisterListener(mSocListener);
-		} catch (RemoteException e) {
-		}
+//		try {
+//			mAutoSettings.unregisterDisplayCallback(mPowerListener);
+//		} catch (RemoteException e) {
+//		}
+		mSoc.unregisterListener(mSocListener);
 		
 		mContext.unregisterReceiver(mReceiver);
 
@@ -469,80 +457,80 @@ public class BluetoothMusicServcie extends Service implements
 		}
 	};
 
-	/**
-	 * power 按键监听
-	 * 
-	 * @author wangda
-	 * 
-	 */
-	private class PowerListener implements DisplayListener {
-
-		@Override
-		public void onBrightnessResponse(int arg0) {
-		}
-
-		@Override
-		public void onContrastResponse(int arg0) {
-		}
-
-		@Override
-		public void onDayNightAutoStateResponse(DayNight arg0) {
-		}
-
-		@Override
-		public void onScreenStateResponse(boolean power) {
-			Log.i(TAG, "onScreenStateResponse = " + power);
-			
-			if (mBluetoothMusicModel == null) {
-				LogUtil.i(TAG,
-						"onScreenStateResponse mBluetoothMusicModel is null");
-				return;
-			}
-			mBluetoothMusicModel.powerStatus = power;
-			if (power) {
-				if(!isPowerOn){
-					
-					if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
-						
-						if((mBluetoothMusicModel.getA2dpStatus() == 1)){
-							notifyAutoCoreConnectStatus(true);
-						}else {
-							notifyAutoCoreConnectStatus(false);
-						}
-						
-						if(("".equals(mLastTitle)) && ("".equals(mLastAlbum)) && ("".equals(mLastAtrist))){
-							mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
-									false);
-						}
-					}
-					
-				}
-				
-				isPowerOn = true;
-				pressPowerDelay = false;
-			}else {
-				
-				try {
-					pressPowerDelay = true;
-					isPowerOn = false;
-					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
-						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 4000);
-					}
-				//	mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				
-				if (mBluetoothMusicModel.isActivityShow) {
-					Log.i(TAG, "BluetoothMusic,power off to launcher");
-					Intent intent = new Intent(Intent.ACTION_MAIN);
-					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-					intent.addCategory(Intent.CATEGORY_HOME);
-					startActivity(intent);
-				}
-			}
-		}
-	}
+//	/**
+//	 * power 按键监听
+//	 * 
+//	 * @author wangda
+//	 * 
+//	 */
+//	private class PowerListener implements DisplayListener {
+//
+//		@Override
+//		public void onBrightnessResponse(int arg0) {
+//		}
+//
+//		@Override
+//		public void onContrastResponse(int arg0) {
+//		}
+//
+//		@Override
+//		public void onDayNightAutoStateResponse(DayNight arg0) {
+//		}
+//
+//		@Override
+//		public void onScreenStateResponse(boolean power) {
+//			Log.i(TAG, "onScreenStateResponse = " + power);
+//			
+//			if (mBluetoothMusicModel == null) {
+//				LogUtil.i(TAG,
+//						"onScreenStateResponse mBluetoothMusicModel is null");
+//				return;
+//			}
+//			mBluetoothMusicModel.powerStatus = power;
+//			if (power) {
+//				if(!isPowerOn){
+//					
+//					if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
+//						
+//						if((mBluetoothMusicModel.getA2dpStatus() == 1)){
+//							notifyAutoCoreConnectStatus(true);
+//						}else {
+//							notifyAutoCoreConnectStatus(false);
+//						}
+//						
+//						if(("".equals(mLastTitle)) && ("".equals(mLastAlbum)) && ("".equals(mLastAtrist))){
+//							mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
+//									false);
+//						}
+//					}
+//					
+//				}
+//				
+//				isPowerOn = true;
+//				pressPowerDelay = false;
+//			}else {
+//				
+//				try {
+//					pressPowerDelay = true;
+//					isPowerOn = false;
+//					if(!mHandler.hasMessages(PRESS_POWER_DELAY_TIME)){
+//						mHandler.sendEmptyMessageDelayed(PRESS_POWER_DELAY_TIME, 4000);
+//					}
+//				//	mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+//				} catch (Exception e) {
+//					e.printStackTrace();
+//				}
+//				
+//				if (mBluetoothMusicModel.isActivityShow) {
+//					Log.i(TAG, "BluetoothMusic,power off to launcher");
+//					Intent intent = new Intent(Intent.ACTION_MAIN);
+//					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//					intent.addCategory(Intent.CATEGORY_HOME);
+//					startActivity(intent);
+//				}
+//			}
+//		}
+//	}
 
 	@Override
 	public void onPlayStatusChanged(int state) {
@@ -573,18 +561,6 @@ public class BluetoothMusicServcie extends Service implements
 			//若是已经播放则将手动暂停标志位重置
 			mBluetoothMusicModel.isHandPuse = false;
 			mBluetoothMusicModel.setStreamMute();
-			try {
-				AutoSettings.getInstance().setPowerState(true);
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-			if(!isPowerOn && !pressPowerDelay && isCanRelievePowerState){
-				if(mBluetoothMusicModel.getSource().getCurrentSource() == App.BT_MUSIC){
-					Log.i(TAG, "setPowerState,value = true");
-					mBluetoothMusicModel.powerStatus = true;
-					mBluetoothMusicModel.setHasSet(false);
-				}
-			}
 			break;
 		}
 
@@ -605,14 +581,10 @@ public class BluetoothMusicServcie extends Service implements
 			}
 		}
 
-		if(pressPowerDelay){
-			nPlayStatus = 0;
-		}
-		
 		if (mBluetoothMusicModel.streamStatus != nPlayStatus) {
 			mBluetoothMusicModel.streamStatus = nPlayStatus;
-			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA, isPositionNotifyDelay = " + isPositionNotifyDelay + ", onPlayStatusChanged,PowerState  = " + mBluetoothMusicModel.powerStatus);
-			if(mBluetoothMusicModel.powerStatus && (mBluetoothMusicModel.hfpStatus == 1)){
+			LogUtil.i(TAG, "notifyAutroMusicInfo AAAAAA, isPositionNotifyDelay = " + isPositionNotifyDelay/* + ", onPlayStatusChanged,PowerState  = " + mBluetoothMusicModel.powerStatus*/);
+			if(/*mBluetoothMusicModel.powerStatus && (*/mBluetoothMusicModel.hfpStatus == 1/*)*/){
 				if(mBluetoothMusicModel.isCanPositionNotify && !isPositionNotifyDelay){
 					mBluetoothMusicModel.notifyAutroMusicInfo(getMusicBean(), true,
 							false);
@@ -726,24 +698,7 @@ public class BluetoothMusicServcie extends Service implements
 				LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
 				mBluetoothMusicModel.notifyAutoCoreWarning();
 				mBluetoothMusicModel.resetBtStatus();
-//				if(!mBluetoothMusicModel.isSupportMusic()){
-//					mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
-//					isUpdateView = false;
-//				}
-				
-				isCanRelievePowerState = false;
 				mBluetoothMusicModel.streamStatus = 0;
-			}else if (mBluetoothMusicModel.a2dpStatus == 1) {
-//				if(mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)){
-//					mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
-//				}
-				new Timer().schedule(new TimerTask() {
-					
-					@Override
-					public void run() {
-						isCanRelievePowerState = true;
-					}
-				}, 2500);
 			}
 
 			mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
