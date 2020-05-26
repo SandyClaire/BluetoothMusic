@@ -729,7 +729,7 @@ public class BluetoothMusicModel {
 				isAudioFocused = true;
 				mSource.setFocusedApp(App.BT_MUSIC.ordinal());
 				if (a2dpStatus == 1) {
-					if (powerStatus) {
+//					if (powerStatus) {
 						LogUtil.i(TAG, "notifyAutroMusicInfo OnAudioFocusChangeListener");
 						
 						if (mBean != null) {
@@ -745,7 +745,7 @@ public class BluetoothMusicModel {
 								isSyncPostionToMcan = true;
 							}
 						}, 1500);
-					}
+//					}
 					
 					//notifyAutroMusicInfo(mBean);
 					if (mBean != null) {
@@ -759,10 +759,10 @@ public class BluetoothMusicModel {
 				mainAudioChanged(isActive());
 				
 				try {
-					if (!AutoSettings.getInstance().getPowerState()) {
-						Log.i(TAG, "AUDIOFOCUS_GAIN  inPowerOffStatus ");
-					    return;
-					}
+//					if (!AutoSettings.getInstance().getPowerState()) {
+//						Log.i(TAG, "AUDIOFOCUS_GAIN  inPowerOffStatus ");
+//					    return;
+//					}
 					
 					if (!isPhone) {
 						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
@@ -931,7 +931,7 @@ public class BluetoothMusicModel {
 	private String lastAtrist = "";
 	private String lastAlbum = "";
 	private int lastPlayStatus = 1;
-	public boolean powerStatus = true;
+//	public boolean powerStatus = true;
 	public boolean accStatus = true;
 	private boolean hasSet = false;
 	private boolean isOnFW = false; // 是否处于快进快退之中
@@ -956,12 +956,10 @@ public class BluetoothMusicModel {
 		String atrist = bean.getAtrist();
 		String album = bean.getAlbum();
 
-		boolean audioFocus = bean.isAudioFocus();
-
-		if (!powerStatus) {
-			LogUtil.i(TAG, "notifyAutroMusicInfo isPowerOff");
-			return;
-		}
+//		if (!powerStatus) {
+//			LogUtil.i(TAG, "notifyAutroMusicInfo isPowerOff");
+//			return;
+//		}
 
 		if (!accStatus) {
 			LogUtil.i(TAG, "notifyAutroMusicInfo accStatus is false");
@@ -1022,14 +1020,14 @@ public class BluetoothMusicModel {
 		return isHfpConnect;
 	}
 
-	public boolean isPowerOff() {
-		boolean status = false;
-		try {
-			status = !AutoSettings.getInstance().getPowerState();
-		} catch (RemoteException e) {
-		}
-		return status;
-	}
+//	public boolean isPowerOff() {
+//		boolean status = false;
+//		try {
+//			status = !AutoSettings.getInstance().getPowerState();
+//		} catch (RemoteException e) {
+//		}
+//		return status;
+//	}
 
 	private void syncMusicInfo(BTMusicInfo info,boolean isId3) {
 		
