@@ -798,7 +798,7 @@ public class BluetoothMusicModel {
 						audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_DISABLE);
 						AVRCPControl(AudioControl.CONTROL_PAUSE);
 					} else {
-						isPhone =!isPlaying; 
+						isPhone = (!isPlaying);
 						LogUtil.i(TAG,
 								"audiofocus loss caused by callstatus , pause by mobile self" + isPlaying);
 					}
@@ -1242,11 +1242,7 @@ public class BluetoothMusicModel {
 	}
 	
 	public Source getSource(){
-		if(mSource != null){
-			return mSource;
-		}else {
-			return new Source();
-		}
+		return mSource;
 	}
 	
 	public void setHasSet(boolean hasSet) {

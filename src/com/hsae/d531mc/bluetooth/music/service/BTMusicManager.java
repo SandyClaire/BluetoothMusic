@@ -351,11 +351,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
 		tipText.setText(tip + " " + newTitle);
 
-		if (isTipPopShow && tipRequest != null) {
-//			tipRequest.hidePopup();
-			tipRequest.showPopup();
-			// tipRequest = null;
-		} else if (tipRequest != null) {
+		if (tipRequest != null) {
 			tipRequest.showPopup();
 		}
 	}
