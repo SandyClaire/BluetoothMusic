@@ -20,7 +20,7 @@
     <string name="music_album_unknow">Unknown Album</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth.</string>
-    <string name="music_bluetooth_disconnect_tip">Not connected to Bluetooth device</string>
+    <string name="music_bluetooth_disconnect_tip">Not connected to Bluetooth Media Audio</string>
     <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife is connected \n Bluetooth music function cannot be used</string>
     <string name="tip_text_main_no_device_connected">Bluetooth Device Disconnected</string>
     <string name="tip_text_main_no_device_connected2">as the right picture:\nplease ensure your mobile bluetooth is powered on,and can be found.</string>

@@ -19,7 +19,7 @@
     <string name="music_album_unknow">未知专辑名</string>
     <string name="music_bluetooth_disconnect">未连接</string>
     <string name="music_bluetooth_disconnect_summery">请连接蓝牙设备</string>
-    <string name="music_bluetooth_disconnect_tip">蓝牙设备未连接 </string>
+    <string name="music_bluetooth_disconnect_tip">蓝牙未连接媒体音频</string>
     <string name="music_bluetooth_carlife_connect_tip">百度CarLife连接时\n蓝牙音乐功能无法使用</string>
     <string name="visible_devices">可用设备</string>
     <string name="pair_devices">配对列表</string>
