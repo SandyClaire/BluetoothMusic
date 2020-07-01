@@ -7,10 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -190,6 +188,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 	public void pause() throws RemoteException {
 		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
 //		mBluetoothMusicModel.isHandPuse = true;
+		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
 		LogUtil.i(TAG, "------------- PAUSE ");
 	}
 
@@ -207,6 +206,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		if (mBluetoothMusicModel.tryToSwitchSource()) {
 			mBluetoothMusicModel.requestAudioFocus(false);
 		}
+		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
 		LogUtil.i(TAG, "------------- PLAY2 ");
 	}
 
@@ -280,8 +280,7 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 		intent.setClassName(mContext, "com.hsae.d531mc.bluetooth.music.MusicMainActivity");
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		mContext.startActivity(intent);
-
-		// mBluetoothMusicModel.requestAudioFocus(true);
+		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
 		LogUtil.i(TAG, "------------- show ");
 	}
 
@@ -410,4 +409,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			mBluetoothMusicModel.requestAudioFocus(false);
 		}
 	}
+
+    @Override
+    public void doRequestAudioFocus() throws RemoteException {
+        mBluetoothMusicModel.requestAudioFocus(true);
+    }
 }
