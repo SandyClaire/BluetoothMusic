@@ -410,4 +410,9 @@ public class BTMusicManager extends IBTMusicManager.Stub {
 			mBluetoothMusicModel.requestAudioFocus(false);
 		}
 	}
+
+    @Override
+    public void doRequestAudioFocus() throws RemoteException {
+        mBluetoothMusicModel.requestAudioFocus(true);
+    }
 }
