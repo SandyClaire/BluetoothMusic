@@ -631,6 +631,18 @@ public class BluetoothMusicModel {
                             AudioManager.AUDIOFOCUS_GAIN);
                     if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                         LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点成功");
+                        synchronized (lockOfBTMmanager) {
+                            try {
+                                int n = mBTMmanager.mListeners.beginBroadcast();
+                                for (int i = 0; i < n; i++) {
+                                    mBTMmanager.mListeners.getBroadcastItem(i).onFocusChange(
+                                            AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
+                                }
+                                mBTMmanager.mListeners.finishBroadcast();
+                            } catch (Exception e) {
+                                LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+                            }
+                        }
                         onFocusChanged(AUDIO_FOCESED);
                         isAudioFocused = true;
                         mSource.setFocusedApp(App.BT_MUSIC.ordinal());
@@ -659,6 +671,18 @@ public class BluetoothMusicModel {
                         AudioManager.AUDIOFOCUS_GAIN);
                 if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
                     LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点成功");
+                    synchronized (lockOfBTMmanager) {
+                        try {
+                            int n = mBTMmanager.mListeners.beginBroadcast();
+                            for (int i = 0; i < n; i++) {
+                                mBTMmanager.mListeners.getBroadcastItem(i).onFocusChange(
+                                        AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
+                            }
+                            mBTMmanager.mListeners.finishBroadcast();
+                        } catch (Exception e) {
+                            LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+                        }
+                    }
                     isAudioFocused = true;
                     mSource.setFocusedApp(App.BT_MUSIC.ordinal());
                     mainAudioChanged(showOrBack);
@@ -713,6 +737,17 @@ public class BluetoothMusicModel {
 
         @Override
         public void onAudioFocusChange(int focusChange) {
+            synchronized (lockOfBTMmanager) {
+                try {
+                    int n = mBTMmanager.mListeners.beginBroadcast();
+                    for (int i = 0; i < n; i++) {
+                        mBTMmanager.mListeners.getBroadcastItem(i).onFocusChange(focusChange);
+                    }
+                    mBTMmanager.mListeners.finishBroadcast();
+                } catch (Exception e) {
+                    LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+                }
+            }
             switch (focusChange) {
             case AudioManager.AUDIOFOCUS_GAIN:
                 playReason = REASON_AUDIOFOCUS_CHANGED;
