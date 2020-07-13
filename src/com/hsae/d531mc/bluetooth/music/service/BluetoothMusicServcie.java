@@ -554,8 +554,10 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
             mBluetoothMusicModel.isPlaying = false;
             mBluetoothMusicModel.isPlay = true;
             mBluetoothMusicModel.isAccPlay = true;
-            // 若是已经播放则将手动暂停标志位重置
-            mBluetoothMusicModel.isHandPuse = false;
+         // 若是已经播放则将手动暂停标志位重置,增加判断：若是当前点击过来暂停键，但是由于手机响应慢等原因导致又回调了一次palying，则标志位不重置
+            if (!mBluetoothMusicModel.isPausing) {
+                mBluetoothMusicModel.isHandPuse = false;
+            }
             mBluetoothMusicModel.setStreamMute();
             break;
         }
