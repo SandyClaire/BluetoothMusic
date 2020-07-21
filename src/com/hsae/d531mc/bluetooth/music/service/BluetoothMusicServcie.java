@@ -188,13 +188,12 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
             if (intent.getAction().equals(ACTION_ACC_STATE)) {
                 mBluetoothMusicModel.accState = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
                 Log.i(TAG, "accStatus = " + mBluetoothMusicModel.accState);
-                if (mBluetoothMusicModel.accState) {
-                    // mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
-                    //
-                    // mBluetoothMusicModel
-                    // .updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-                    //
-                    // mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
+                if (mBluetoothMusicModel.accState && mBluetoothMusicModel.isAccPlay) {
+                    try {
+                        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     try {
                         mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
