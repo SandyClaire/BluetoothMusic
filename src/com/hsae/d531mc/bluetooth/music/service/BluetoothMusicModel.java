@@ -97,8 +97,6 @@ public class BluetoothMusicModel {
 
     private AudioManager audioManager;
 
-    public boolean isAccPlay = false;
-
     public boolean isActivityShow = false;
 
     // ACC状态

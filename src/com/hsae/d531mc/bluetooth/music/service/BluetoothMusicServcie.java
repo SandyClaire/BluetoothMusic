@@ -51,6 +51,8 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
     private BTMusicManager mBTMmanager;
     private String mTimePosition = "-1";
     private Soc mSoc;
+    private boolean isAccPlay;
+    private boolean accPlayStatus ;
     // power 状态监听
     // private PowerListener mPowerListener = new PowerListener();
     // private AutoSettings mAutoSettings;
@@ -188,13 +190,17 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
             if (intent.getAction().equals(ACTION_ACC_STATE)) {
                 mBluetoothMusicModel.accState = intent.getExtras().getBoolean(EXTRA_ACC_STATE);
                 Log.i(TAG, "accStatus = " + mBluetoothMusicModel.accState);
-                if (mBluetoothMusicModel.accState && mBluetoothMusicModel.isAccPlay) {
+                if (mBluetoothMusicModel.accState && isAccPlay) {
                     try {
+                        //此状态设为true是防止快速acc OFF/ON时,第一次的play还没有成功，紧接着又是一个pause，下次ACCon时不会播放
+                        //此不一定100%生效，需要测试看结果
+                        accPlayStatus = true;
                         mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PLAY);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 } else {
+                   isAccPlay = accPlayStatus;
                     try {
                         mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
                     } catch (RemoteException e) {
@@ -203,7 +209,6 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
                 }
             }
         }
-
     }
 
     @Override
@@ -532,8 +537,8 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
         Log.i(TAG, "PlayStatusChanged,status = " + state);
 
         int nPlayStatus = state;
+        accPlayStatus = state ==1;
         LogUtil.i(TAG, "A2DP_PLAYSTATUS -- nPlayStatus = " + nPlayStatus);
-
         if (nPlayStatus != mLastPlayStatus) {
             mLastPlayStatus = nPlayStatus;
             mBluetoothMusicModel.syncPlayPauseState(nPlayStatus);
@@ -545,14 +550,12 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
         case AudioControl.STREAM_STATUS_SUSPEND:
             mBluetoothMusicModel.isPausing = false;
             mBluetoothMusicModel.isPlay = false;
-            mBluetoothMusicModel.isAccPlay = false;
             mBluetoothMusicModel.setTimingEnd();
             break;
         case AudioControl.STREAM_STATUS_STREAMING:
             mBluetoothMusicModel.setTimingBegins();
             mBluetoothMusicModel.isPlaying = false;
             mBluetoothMusicModel.isPlay = true;
-            mBluetoothMusicModel.isAccPlay = true;
          // 若是已经播放则将手动暂停标志位重置,增加判断：若是当前点击过来暂停键，但是由于手机响应慢等原因导致又回调了一次palying，则标志位不重置
             if (!mBluetoothMusicModel.isPausing) {
                 mBluetoothMusicModel.isHandPuse = false;
