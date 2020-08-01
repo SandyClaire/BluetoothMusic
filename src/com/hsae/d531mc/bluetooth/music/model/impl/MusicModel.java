@@ -351,4 +351,20 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
         mBluetoothMusicModel.isActivityShow = false;
     }
 
+    /**
+     * 获取HFP连接状态
+     */
+    @Override
+    public int getHfpConnectStatus() {
+        int backCode = 0;
+        try {
+            backCode = mBluetoothMusicModel.getConnectStatus(MangerConstant.PROFILE_HF_CHANNEL, 0);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        LogUtil.i(TAG, "--- getHfpConnectStatus = " + backCode);
+        return backCode;
+    }
+    
+
 }

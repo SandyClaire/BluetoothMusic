@@ -526,6 +526,9 @@ public class MusicMainActivity extends Activity implements ISubject,
 		return super.onKeyDown(keyCode, event);
 	}
 
+	/**
+     * 0:A2DP 未连接;1：A2DP已连接;-3：A2DP未连接且HFP已连接
+     */
 	@Override
 	public void updateViewByConnectStatus(int status) {
 		LogUtil.i(TAG, "updateViewByConnectStatus " + status);

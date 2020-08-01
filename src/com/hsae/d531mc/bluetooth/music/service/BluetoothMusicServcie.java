@@ -25,7 +25,6 @@ import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.Soc.SocListener;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
-import com.hsae.autosdk.settings.AutoSettings;
 import com.hsae.autosdk.source.Source;
 import com.hsae.autosdk.source.SourceConst.App;
 import com.hsae.autosdk.util.LogUtil;
@@ -658,57 +657,42 @@ public class BluetoothMusicServcie extends Service implements BluetoothAllCallba
     @Override
     public void onConnectStateChanged(int profile, int state, int reason) {
         Log.i(TAG, "onConnectStateChanged,profile = " + profile + ",state = " + state + ",reason = " + reason);
-
-        if (state < 0)
-            return;
-
-        int nProfile = profile;
-        if (nProfile == MangerConstant.PROFILE_HF_CHANNEL) {
+        if (profile == MangerConstant.PROFILE_HF_CHANNEL) {
             mBluetoothMusicModel.hfpStatus = state;
-
-            int a2dpStatus = mBluetoothMusicModel.getA2dpStatus();
-            Log.i(TAG, "A2dpStatus = " + a2dpStatus);
-
-            if (mBluetoothMusicModel.hfpStatus == 1) {
-                if (!mBluetoothMusicModel.isSupportMusic()) {
-                    mHandler.sendEmptyMessage(NO_SUPPORT_BLUETOOTHMUSIC);
-                    isUpdateView = false;
-                }
-
-            } else if (mBluetoothMusicModel.hfpStatus == 0) {
-                if (mHandler.hasMessages(NO_SUPPORT_BLUETOOTHMUSIC)) {
-                    mHandler.removeMessages(NO_SUPPORT_BLUETOOTHMUSIC);
-                }
+            if (state == 1) {
+                mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus == 1 ? 1 : -3);
+            } else {
+                mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus == 1 ? 1 : 0);
             }
             mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
 
-            if (isUpdateView) {
-                // mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus);
-            }
-        } else if (nProfile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
+        } else if (profile == MangerConstant.PROFILE_AUDIO_STREAM_CHANNEL) {
             mBluetoothMusicModel.a2dpStatus = state;
-
-            if (mBluetoothMusicModel.a2dpStatus == 0) {
+            if (state == 1) {
+                if (isUpdateView) {
+                    mBluetoothMusicModel.updateMsgByConnectStatusChange(1);
+                }
+            } else {
                 LogUtil.i(TAG, "notifyAutoCoreWarning AAAAAAA");
                 mBluetoothMusicModel.notifyAutoCoreWarning();
                 mBluetoothMusicModel.resetBtStatus();
                 mBluetoothMusicModel.streamStatus = 0;
+                if (isUpdateView) {
+                    mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.hfpStatus == 1 ? -3 : 0);
+                }
             }
 
             mBluetoothMusicModel.syncBtStatus(mBluetoothMusicModel.a2dpStatus);
-            if (isUpdateView) {
-                mBluetoothMusicModel.updateMsgByConnectStatusChange(mBluetoothMusicModel.a2dpStatus);
-            }
             mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
             isUpdateView = true;
 
-        } else if (nProfile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
+        } else if (profile == MangerConstant.PROFILE_AUDIO_CONTROL_CHANNEL) {
             mBluetoothMusicModel.avrcpStatus = state;
             LogUtil.i(TAG, "PROFILE_AUDIO_CONTROL_CHANNEL --- avrcpStatus = " + mBluetoothMusicModel.avrcpStatus);
             mHandler.sendEmptyMessage(BLUETOOTH_MUSIC_CONNECT_STATUS_CHANGE);
         }
     }
-
+    
     @Override
     public void onPowerStateChanged(int state) {
         Log.i(TAG, "onPowerStateChanged,status = " + state);

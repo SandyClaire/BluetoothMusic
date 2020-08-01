@@ -148,4 +148,6 @@ public interface IMusicModel {
 	
 	public void activityStop();
 
+    public int getHfpConnectStatus();
+
 }

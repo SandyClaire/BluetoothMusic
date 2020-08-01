@@ -150,7 +150,7 @@ public class MusicPersenter implements IObserver {
 		int btPowerStatus = mIMusicModel.getBTPowerStatus();
 		int status = mIMusicModel.getA2DPConnectStatus();
 		//boolean isCarlifeConnected = mIMusicModel.getCarlifeConnectStatus(); 
-		
+		int hfpstatus = mIMusicModel.getHfpConnectStatus();
 		if(btPowerStatus != MangerConstant.BTPOWER_STATUS_ON){
 			status = -2;
 		}
@@ -175,7 +175,12 @@ public class MusicPersenter implements IObserver {
 			mIMusicView.updatePlayBtnByStatus(isPlay);
 		}
 		
-		mIMusicView.updateViewByConnectStatus(status);
+		if (status != 1 && hfpstatus == 1) {
+            mIMusicView.updateViewByConnectStatus(-3);
+        }
+        else {
+            mIMusicView.updateViewByConnectStatus(status);
+        }
 		initBg();
 		
 	}
