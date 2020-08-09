@@ -85,9 +85,7 @@ public class MusicModel extends ContactsSubjecter implements IMusicModel {
     @Override
     public void setAVRCPControl(int command) {
         try {
-            if (command == AudioControl.CONTROL_PAUSE || command == AudioControl.CONTROL_PLAY) {
-                mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_IN_;
-            }
+            mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_IN_;
             mBluetoothMusicModel.AVRCPControl(command);
             getMusicMatedata();
             if (command == AudioControl.CONTROL_PAUSE) {
