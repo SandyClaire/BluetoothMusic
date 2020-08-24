@@ -20,7 +20,7 @@
     <string name="music_album_unknow">Unknown Album</string>
     <string name="music_bluetooth_disconnect">Disconnected</string>
     <string name="music_bluetooth_disconnect_summery">Please connect bluetooth.</string>
-    <string name="music_bluetooth_disconnect_tip">Not connected to Bluetooth Media Audio</string>
+    <string name="music_bluetooth_disconnect_tip">Bluetooth Device Disconnected</string>
     <string name="music_bluetooth_carlife_connect_tip">Baidu CarLife is connected \n Bluetooth music function cannot be used</string>
     <string name="tip_text_main_no_device_connected">Bluetooth Device Disconnected</string>
     <string name="tip_text_main_no_device_connected2">as the right picture:\nplease ensure your mobile bluetooth is powered on,and can be found.</string>
@@ -42,6 +42,6 @@
     <string name="bluetooth_enable_carplay_text">Apple Carplay is connected, The bluetooth function cannot be used</string>
     <string name="music_switch_split">/</string>
     <string name="bluetooth_power_not_open">Bluetooth is OFF</string>
-    <string name="no_support_bluetooth_music">Your connected device does not support Bluetooth Audio.</string>
+    <string name="no_support_bluetooth_music">Not connected to Bluetooth Media Audio.</string>
 
 </resources>

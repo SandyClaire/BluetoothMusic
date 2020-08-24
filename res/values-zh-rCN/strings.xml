@@ -19,7 +19,7 @@
     <string name="music_album_unknow">未知专辑名</string>
     <string name="music_bluetooth_disconnect">未连接</string>
     <string name="music_bluetooth_disconnect_summery">请连接蓝牙设备</string>
-    <string name="music_bluetooth_disconnect_tip">蓝牙未连接媒体音频</string>
+    <string name="music_bluetooth_disconnect_tip">蓝牙已断开</string>
     <string name="music_bluetooth_carlife_connect_tip">百度CarLife连接时\n蓝牙音乐功能无法使用</string>
     <string name="visible_devices">可用设备</string>
     <string name="pair_devices">配对列表</string>
@@ -36,7 +36,7 @@
     <string name="music_switch_split">/</string>
     <string name="bluetooth_disconnect">断开</string>
     <string name="bluetooth_power_not_open">蓝牙未打开</string>
-    <string name="no_support_bluetooth_music">您连接的设备不支持蓝牙音乐功能</string>
+    <string name="no_support_bluetooth_music">蓝牙未连接媒体音频</string>
    
 
      <string name="tip_text_main_no_device_connected">蓝牙设备未连接</string>
