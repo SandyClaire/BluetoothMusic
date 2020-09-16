@@ -1055,15 +1055,15 @@ public class BluetoothMusicModel {
 
             if (info == null) {
                 LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo info is null");
-//                try {
-//                    int n = mBTMmanager.mListeners.beginBroadcast();
-//                    for (int i = 0; i < n; i++) {
-//                        mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
-//                    }
-//                    mBTMmanager.mListeners.finishBroadcast();
-//                } catch (Exception e) {
-//                    LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
-//                }
+                try {
+                    int n = mBTMmanager.mListeners.beginBroadcast();
+                    for (int i = 0; i < n; i++) {
+                        mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+                    }
+                    mBTMmanager.mListeners.finishBroadcast();
+                } catch (Exception e) {
+                    LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+                }
             } else {
                 LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo : lastTitle = " + lastTitle + " , lastAtrist = "
                         + lastAtrist + " , lastAlbum = " + lastAlbum + " , lastPlayStatus = " + lastPlayStatus
