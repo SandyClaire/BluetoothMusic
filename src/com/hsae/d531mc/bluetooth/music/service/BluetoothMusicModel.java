@@ -20,6 +20,7 @@ import com.anwsdk.service.AudioControl;
 import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.phone.BtPhoneProxy;
+import com.hsae.autosdk.instrument.Instrument;
 import com.hsae.autosdk.ipod.IPodProxy;
 import com.hsae.autosdk.os.Soc;
 import com.hsae.autosdk.os.SocConst.UsbDevices;
@@ -569,15 +570,6 @@ public class BluetoothMusicModel {
         return cn.getClassName().equals(MusicPlayUI);
     }
 
-    /**
-     * @Description: 通知中间件音频焦点是否已获得，并且中间件切换音源
-     * @param isChanged
-     */
-    public void mainAudioChanged(boolean isActivite) {
-        LogUtil.i(TAG, "mainAudioChanged == " + mSource.getCurrentSource() + "isActivite = " + isActivite);
-        mSource.mainAudioChanged(App.BT_MUSIC, isActivite);
-    }
-
     public boolean isAudioFocused = false;
     int playtimes = 0;
 
@@ -644,7 +636,6 @@ public class BluetoothMusicModel {
                         onFocusChanged(AUDIO_FOCESED);
                         isAudioFocused = true;
                         mSource.setFocusedApp(App.BT_MUSIC.ordinal());
-                        mainAudioChanged(showOrBack);
                         AVRCPControl(AudioControl.CONTROL_PLAY);
                     } else {
                         LogUtil.i(TAG, "cruze,requestAudioFocus == 获取音频焦点失败");
@@ -683,7 +674,6 @@ public class BluetoothMusicModel {
                     }
                     isAudioFocused = true;
                     mSource.setFocusedApp(App.BT_MUSIC.ordinal());
-                    mainAudioChanged(showOrBack);
 
                     audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
 
@@ -780,7 +770,6 @@ public class BluetoothMusicModel {
                     LogUtil.i(TAG, "notifyAutoCoreWarning 1111111111");
                     notifyAutoCoreWarning();
                 }
-                mainAudioChanged(isActive());
 
                 try {
                     // if (!AutoSettings.getInstance().getPowerState()) {
@@ -804,12 +793,10 @@ public class BluetoothMusicModel {
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT:
                 LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT");
                 isAudioFocused = true;
-                mainAudioChanged(isActive());
                 break;
             case AudioManager.AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK:
                 LogUtil.i(TAG, "cruze  mAFCListener---audio focus change AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK");
                 isAudioFocused = true;
-                mainAudioChanged(isActive());
                 break;
             case AudioManager.AUDIOFOCUS_LOSS:
                 playReason = REASON_AUDIOFOCUS_CHANGED;
@@ -1068,15 +1055,15 @@ public class BluetoothMusicModel {
 
             if (info == null) {
                 LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo info is null");
-                try {
-                    int n = mBTMmanager.mListeners.beginBroadcast();
-                    for (int i = 0; i < n; i++) {
-                        mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
-                    }
-                    mBTMmanager.mListeners.finishBroadcast();
-                } catch (Exception e) {
-                    LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
-                }
+//                try {
+//                    int n = mBTMmanager.mListeners.beginBroadcast();
+//                    for (int i = 0; i < n; i++) {
+//                        mBTMmanager.mListeners.getBroadcastItem(i).syncBtMusicInfo(info);
+//                    }
+//                    mBTMmanager.mListeners.finishBroadcast();
+//                } catch (Exception e) {
+//                    LogUtil.i(TAG, " ---- Exception = " + e.toString(), e);
+//                }
             } else {
                 LogUtil.i(TAG, "notifyAutroMusicInfo syncMusicInfo : lastTitle = " + lastTitle + " , lastAtrist = "
                         + lastAtrist + " , lastAlbum = " + lastAlbum + " , lastPlayStatus = " + lastPlayStatus
@@ -1116,6 +1103,9 @@ public class BluetoothMusicModel {
 
         synchronized (lockOfBTMmanager) {
             LogUtil.i(TAG, "notifyAutoCoreWarning : NONDISPLAY");
+            if (mSource.getCurrentSource() == App.BT_MUSIC) {
+                Instrument.getInstance().sendPeripheralConnection(0X02,0);
+            }
         }
     }
 

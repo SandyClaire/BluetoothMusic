@@ -20,6 +20,8 @@ import com.anwsdk.service.MangerConstant;
 import com.hsae.autosdk.bt.music.BTMusicInfo;
 import com.hsae.autosdk.bt.music.IBTMusicListener;
 import com.hsae.autosdk.bt.music.IBTMusicManager;
+import com.hsae.autosdk.diagnose.Diagnose;
+import com.hsae.autosdk.diagnose.Diagnose.DiagnoseLogicListener;
 import com.hsae.autosdk.hmi.HmiConst;
 import com.hsae.autosdk.popup.PopupListener;
 import com.hsae.autosdk.popup.PopupRequest;
@@ -30,370 +32,388 @@ import com.hsae.d531mc.bluetooth.music.R;
 
 public class BTMusicManager extends IBTMusicManager.Stub {
 
-	private static final String TAG = "BTMusicManager";
+    private static final String TAG = "BTMusicManager";
 
-	private Context mContext;
-	private static BTMusicManager mManager;
-	private BluetoothMusicModel mBluetoothMusicModel;
-	public RemoteCallbackList<IBTMusicListener> mListeners = new RemoteCallbackList<IBTMusicListener>();
-	private String newTitle = " ";
-	private boolean showPop = false;
+    private Context mContext;
+    private static BTMusicManager mManager;
+    private BluetoothMusicModel mBluetoothMusicModel;
+    public RemoteCallbackList<IBTMusicListener> mListeners = new RemoteCallbackList<IBTMusicListener>();
+    private String newTitle = " ";
+    private boolean showPop = false;
 
-	private BTMusicManager(Context mContext) {
-		super();
-		this.mContext = mContext;
-		mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
-		LogUtil.e(TAG, "BTMusicManager INIT");
-	}
+    private BTMusicManager(Context mContext) {
+        super();
+        this.mContext = mContext;
+        mBluetoothMusicModel = BluetoothMusicModel.getInstance(mContext);
+        LogUtil.e(TAG, "BTMusicManager INIT");
+        mDiagnose.registerListener(new DiagnoseLogicListener() {
 
-	public static BTMusicManager getInstance(Context context) {
-		if (null == mManager) {
-			mManager = new BTMusicManager(context);
-		}
-		return mManager;
-	}
+            @Override
+            public void onRadioParamChanged(int arg0, int arg1) {
+            }
 
-	@Override
-	public int backward() throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+            @Override
+            public void onDiagnoseStateChanged(boolean diagnose) {
+                try {
+                    if (mBluetoothMusicModel.getCurrentSource() == App.BT_MUSIC) {
+                        mBluetoothMusicModel.audioSetStreamMode(diagnose ? MangerConstant.AUDIO_STREAM_MODE_DISABLE
+                                : MangerConstant.AUDIO_STREAM_MODE_ENABLE);
+                    }
+                } catch (RemoteException e) {
+                }
+            }
+        });
+    }
 
-	@Override
-	public int forward() throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public static BTMusicManager getInstance(Context context) {
+        if (null == mManager) {
+            mManager = new BTMusicManager(context);
+        }
+        return mManager;
+    }
 
-	@Override
-	public String getAlbumName() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    Diagnose mDiagnose = new Diagnose();
 
-	@Override
-	public String getArtistName() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public int backward() throws RemoteException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public Bitmap getArtwork() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public int forward() throws RemoteException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public int getRepeatMode() throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public String getAlbumName() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public int getShuffleMode() throws RemoteException {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    @Override
+    public String getArtistName() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public String getTrackName() throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Bitmap getArtwork() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public void hide() throws RemoteException {
-		mBluetoothMusicModel.finishActivity();
-		LogUtil.i(TAG, "------------------ hide");
-	}
+    @Override
+    public int getRepeatMode() throws RemoteException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public boolean isConnected() throws RemoteException {
-		return mBluetoothMusicModel.a2dpStatus == 1;
-	}
+    @Override
+    public int getShuffleMode() throws RemoteException {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	boolean isFrist = true;
-	long downTime = System.currentTimeMillis();
-	long upTime = System.currentTimeMillis();
+    @Override
+    public String getTrackName() throws RemoteException {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	/**
-	 * 方控上一首下一首按键
-	 */
-	@Override
-	public void onHmiChanged(int hmiIndex, boolean down) {
-		LogUtil.i("onHmiChanged", "down == " + down + ", hmiIndex == " + hmiIndex);
-		if (hmiIndex == HmiConst.HMI.SEEKUP.ordinal() || hmiIndex == HmiConst.HMI.SEEKDOWN.ordinal()) {
+    @Override
+    public void hide() throws RemoteException {
+        mBluetoothMusicModel.finishActivity();
+        LogUtil.i(TAG, "------------------ hide");
+    }
 
-			if (down) {
-				downTime = isFrist ? System.currentTimeMillis() : (downTime == 0) ? System.currentTimeMillis()
-						: downTime;
-				isFrist = false;
-			} else {
-				upTime = System.currentTimeMillis();
-				LogUtil.e(TAG, "hmi long seek = " + (upTime - downTime));
-//				if ((upTime - downTime) < 1500) {
-					seek(hmiIndex, false);
-//				} else {
-//					downTime = 0;
-//					upTime = 0;
-//					return;
-//				}
-			}
-		}
-	}
+    @Override
+    public boolean isConnected() throws RemoteException {
+        return mBluetoothMusicModel.a2dpStatus == 1;
+    }
 
-	private void seek(int index, boolean isLong) {
-		LogUtil.i("seek", "isLong == " + isLong + ", index == " + index);
-		if (!isLong) {
-			if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
-				try {
-					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
-					if (!mBluetoothMusicModel.isActive()) {
-						showPop = true;
-					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				LogUtil.i(TAG, "------------- SEEKUP_NEXT ");
-			} else if (index == HmiConst.HMI.SEEKUP.ordinal()) {
-				try {
-					mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
-					if (!mBluetoothMusicModel.isActive()) {
-						showPop = true;
-					}
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-				LogUtil.i(TAG, "------------- SEEKDOWN_PREV ");
-			}
-			
-			new Handler().postDelayed(new Runnable() {
+    boolean isFrist = true;
+    long downTime = System.currentTimeMillis();
+    long upTime = System.currentTimeMillis();
 
-				@Override
-				public void run() {
-					try {
-						mBluetoothMusicModel.getMusicInfo();
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
-				}
-			}, 400);
-		
-		}
-		downTime = 0;
-		upTime = 0;
-	}
+    /**
+     * 方控上一首下一首按键
+     */
+    @Override
+    public void onHmiChanged(int hmiIndex, boolean down) {
+        LogUtil.i("onHmiChanged", "down == " + down + ", hmiIndex == " + hmiIndex);
+        if (hmiIndex == HmiConst.HMI.SEEKUP.ordinal() || hmiIndex == HmiConst.HMI.SEEKDOWN.ordinal()) {
 
-	@Override
-	public void pause() throws RemoteException {
-		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		mBluetoothMusicModel.isHandPuse = true;
-		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
-		LogUtil.i(TAG, "------------- PAUSE ");
-	}
+            if (down) {
+                downTime = isFrist ? System.currentTimeMillis() : (downTime == 0) ? System.currentTimeMillis()
+                        : downTime;
+                isFrist = false;
+            } else {
+                upTime = System.currentTimeMillis();
+                LogUtil.e(TAG, "hmi long seek = " + (upTime - downTime));
+                // if ((upTime - downTime) < 1500) {
+                seek(hmiIndex, false);
+                // } else {
+                // downTime = 0;
+                // upTime = 0;
+                // return;
+                // }
+            }
+        }
+    }
 
-	@Override
-	public void play() throws RemoteException {
-	    LogUtil.i(TAG, "------------- PLAY2 ");
-	    mBluetoothMusicModel.isHandPuse = false;
+    private void seek(int index, boolean isLong) {
+        LogUtil.i("seek", "isLong == " + isLong + ", index == " + index);
+        if (!isLong) {
+            if (index == HmiConst.HMI.SEEKDOWN.ordinal()) {
+                try {
+                    mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
+                    if (!mBluetoothMusicModel.isActive()) {
+                        showPop = true;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                LogUtil.i(TAG, "------------- SEEKUP_NEXT ");
+            } else if (index == HmiConst.HMI.SEEKUP.ordinal()) {
+                try {
+                    mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
+                    if (!mBluetoothMusicModel.isActive()) {
+                        showPop = true;
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                LogUtil.i(TAG, "------------- SEEKDOWN_PREV ");
+            }
+
+            new Handler().postDelayed(new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        mBluetoothMusicModel.getMusicInfo();
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }, 400);
+
+        }
+        downTime = 0;
+        upTime = 0;
+    }
+
+    @Override
+    public void pause() throws RemoteException {
+        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+        mBluetoothMusicModel.isHandPuse = true;
+        mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
+        LogUtil.i(TAG, "------------- PAUSE ");
+    }
+
+    @Override
+    public void play() throws RemoteException {
+        LogUtil.i(TAG, "------------- PLAY2 ");
+        mBluetoothMusicModel.isHandPuse = false;
         if (mBluetoothMusicModel.tryToSwitchSource()) {
             mBluetoothMusicModel.requestAudioFocus(false);
         }
-		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
-	}
+        mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
+    }
 
-	@Override
-	public void playByName(String arg0) throws RemoteException {
-		// TODO Auto-generated method stub
-	}
+    @Override
+    public void playByName(String arg0) throws RemoteException {
+        // TODO Auto-generated method stub
+    }
 
-	@Override
-	public void popUpCurrentMode() throws RemoteException {
-		LogUtil.i(TAG, "popUpCurrentMode ");
-		showPop(0);
-	}
+    @Override
+    public void popUpCurrentMode() throws RemoteException {
+        LogUtil.i(TAG, "popUpCurrentMode ");
+        showPop(0);
+    }
 
-	Handler handler = new Handler(Looper.getMainLooper());
-	Runnable runnable = new Runnable() {
+    Handler handler = new Handler(Looper.getMainLooper());
+    Runnable runnable = new Runnable() {
 
-		@Override
-		public void run() {
-//			showPopUp(mContext.getResources().getString(R.string.app_name));
-		}
-	};
+        @Override
+        public void run() {
+            // showPopUp(mContext.getResources().getString(R.string.app_name));
+        }
+    };
 
-	private void showPop(long delayMillis) {
-//		handler.removeCallbacks(runnable);
-//		handler.postDelayed(runnable, delayMillis);
-	}
+    private void showPop(long delayMillis) {
+        // handler.removeCallbacks(runnable);
+        // handler.postDelayed(runnable, delayMillis);
+    }
 
-	@Override
-	public void prev() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
-		LogUtil.i(TAG, "------------- PREV ");
-	}
+    @Override
+    public void prev() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = false;
+        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_BACKWARD);
+        LogUtil.i(TAG, "------------- PREV ");
+    }
 
-	@Override
-	public void next() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
-		LogUtil.i(TAG, "------------- NEXT ");
-	}
+    @Override
+    public void next() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = false;
+        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_FORWARD);
+        LogUtil.i(TAG, "------------- NEXT ");
+    }
 
-	@Override
-	public void registerBTMusicListener(IBTMusicListener arg0) throws RemoteException {
-		LogUtil.e(TAG, "registerBTMusicListener");
-		if (arg0 !=null) {
-			mListeners.register(arg0);
-		}
-	}
+    @Override
+    public void registerBTMusicListener(IBTMusicListener arg0) throws RemoteException {
+        LogUtil.e(TAG, "registerBTMusicListener");
+        if (arg0 != null) {
+            mListeners.register(arg0);
+        }
+    }
 
-	@Override
-	public void setRepeatMode(int nAttrValue) throws RemoteException {
-	}
+    @Override
+    public void setRepeatMode(int nAttrValue) throws RemoteException {
+    }
 
-	@Override
-	public void setShuffleMode(int nAttrValue) throws RemoteException {
-	}
+    @Override
+    public void setShuffleMode(int nAttrValue) throws RemoteException {
+    }
 
-	@Override
-	public void show() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		Intent intent = new Intent();
-		intent.setPackage("com.hsae.d531mc.bluetooth.music");
-		intent.setClassName(mContext, "com.hsae.d531mc.bluetooth.music.MusicMainActivity");
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		mContext.startActivity(intent);
-		mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
-		LogUtil.i(TAG, "------------- show ");
-	}
+    @Override
+    public void show() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = false;
+        Intent intent = new Intent();
+        intent.setPackage("com.hsae.d531mc.bluetooth.music");
+        intent.setClassName(mContext, "com.hsae.d531mc.bluetooth.music.MusicMainActivity");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+        mBluetoothMusicModel.playReason = BluetoothMusicModel.REASON_OUT_;
+        LogUtil.i(TAG, "------------- show ");
+    }
 
-	@Override
-	public void unregisterBTMusicListener(IBTMusicListener arg0) throws RemoteException {
-		mListeners.unregister(arg0); 
-		System.gc();
-	}
-	public BTMusicInfo getBtMusicInfo() throws RemoteException {
-		return mBluetoothMusicModel.getCurrentMusicInfo();
-	}
+    @Override
+    public void unregisterBTMusicListener(IBTMusicListener arg0) throws RemoteException {
+        mListeners.unregister(arg0);
+        System.gc();
+    }
 
-	@Override
-	public void disconnectA2dp() throws RemoteException {
-		LogUtil.i(TAG, "--------- disconnectA2dp ");
-		mBluetoothMusicModel.isDisByIpod = true;
-		//mBluetoothMusicModel.a2dpDisconnect();
-	}
+    public BTMusicInfo getBtMusicInfo() throws RemoteException {
+        return mBluetoothMusicModel.getCurrentMusicInfo();
+    }
 
-	@Override
-	public String getBtMacAddress() throws RemoteException {
-		LogUtil.i(TAG, "--------- getBtMacAddress ");
-		return null;
-	}
+    @Override
+    public void disconnectA2dp() throws RemoteException {
+        LogUtil.i(TAG, "--------- disconnectA2dp ");
+        mBluetoothMusicModel.isDisByIpod = true;
+        // mBluetoothMusicModel.a2dpDisconnect();
+    }
 
-	@Override
-	public void exitDiagnoseMode() throws RemoteException {
-		if (mBluetoothMusicModel.getCurrentSource() == App.BT_MUSIC) {
-			mBluetoothMusicModel.audioSetStreamMode(MangerConstant.AUDIO_STREAM_MODE_ENABLE);
-		}
-	}
+    @Override
+    public String getBtMacAddress() throws RemoteException {
+        LogUtil.i(TAG, "--------- getBtMacAddress ");
+        return null;
+    }
 
-	@Override
-	public void playByVR() throws RemoteException {
-		this.show();
-	}
+    @Override
+    public void exitDiagnoseMode() throws RemoteException {
+    }
 
-	private PopupRequest tipRequest;
-	private TextView tipText;
-	private boolean isTipPopShow = false;
+    @Override
+    public void playByVR() throws RemoteException {
+        this.show();
+    }
 
-	private void showPopUp(String tip) {
-		LogUtil.i(TAG, "tipListener tipRequest =null " + (tipRequest == null));
+    private PopupRequest tipRequest;
+    private TextView tipText;
+    private boolean isTipPopShow = false;
 
-		if (null == tipRequest) {
+    private void showPopUp(String tip) {
+        LogUtil.i(TAG, "tipListener tipRequest =null " + (tipRequest == null));
 
-			final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-			params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
-			params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
-					|WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
-			params.format = PixelFormat.TRANSLUCENT;
+        if (null == tipRequest) {
 
-			params.width = LayoutParams.MATCH_PARENT;
-			params.height = LayoutParams.WRAP_CONTENT;
+            final WindowManager.LayoutParams params = new WindowManager.LayoutParams();
+            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY;
+            params.flags = WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
+                    | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+            params.format = PixelFormat.TRANSLUCENT;
 
-			params.gravity = Gravity.TOP;
+            params.width = LayoutParams.MATCH_PARENT;
+            params.height = LayoutParams.WRAP_CONTENT;
 
-			final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
-			tipText = (TextView) tipView.findViewById(R.id.text_tip);
-			try {
-				tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
-			} catch (Exception e) {
+            params.gravity = Gravity.TOP;
 
-				LogUtil.i(TAG, "Exception " + e);// TODO: handle exception
-			}
-		}
-		newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
-		tipText.setText(tip + " " + newTitle);
+            final View tipView = LayoutInflater.from(mContext).inflate(R.layout.popup_tip, null);
+            tipText = (TextView) tipView.findViewById(R.id.text_tip);
+            try {
+                tipRequest = PopupRequest.getPopupRequest(mContext, Popup.BT_MUSIC, tipView, params, tipListener);
+            } catch (Exception e) {
 
-		if (tipRequest != null) {
-			tipRequest.showPopup();
-		}
-	}
+                LogUtil.i(TAG, "Exception " + e);// TODO: handle exception
+            }
+        }
+        newTitle = "".equals(mBluetoothMusicModel.mTitel) ? mContext.getResources().getString(
+                R.string.music_matedate_unsupport) : mBluetoothMusicModel.mTitel;
+        tipText.setText(tip + " " + newTitle);
 
-	PopupListener tipListener = new PopupListener() {
+        if (tipRequest != null) {
+            tipRequest.showPopup();
+        }
+    }
 
-		@Override
-		public void onShow() {
-			LogUtil.i(TAG, "tipListener onShow");
-			isTipPopShow = true;
-			showPop = true;
-		}
+    PopupListener tipListener = new PopupListener() {
 
-		@Override
-		public void onHide() {
-			LogUtil.i(TAG, "tipListener onHide");
-			isTipPopShow = false;
-			showPop = false;
-		}
-	};
+        @Override
+        public void onShow() {
+            LogUtil.i(TAG, "tipListener onShow");
+            isTipPopShow = true;
+            showPop = true;
+        }
 
-	@Override
-	public void pauseByVr() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = true;
-		if (mBluetoothMusicModel.isPlay) {
-			mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-		}
-		LogUtil.i(TAG, "------------- pauseByVr ");
-	}
+        @Override
+        public void onHide() {
+            LogUtil.i(TAG, "tipListener onHide");
+            isTipPopShow = false;
+            showPop = false;
+        }
+    };
 
-	public void onTitleChange(String title) {
-		if (!newTitle.equals(title)) {
-			newTitle = title;
-			if (showPop) {
-				showPop(0);
-			}
-		}
-	}
+    @Override
+    public void pauseByVr() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = true;
+        if (mBluetoothMusicModel.isPlay) {
+            mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+        }
+        LogUtil.i(TAG, "------------- pauseByVr ");
+    }
 
-	@Override
-	public int getPlayState() throws RemoteException {
-		
-		return mBluetoothMusicModel.isPlay?0:1;
-	}
+    public void onTitleChange(String title) {
+        if (!newTitle.equals(title)) {
+            newTitle = title;
+            if (showPop) {
+                showPop(0);
+            }
+        }
+    }
 
-	@Override
-	public void pauseByLauncher() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = true;
-		mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
-	}
+    @Override
+    public int getPlayState() throws RemoteException {
 
-	@Override
-	public void playByLauncher() throws RemoteException {
-		mBluetoothMusicModel.isHandPuse = false;
-		if (mBluetoothMusicModel.tryToSwitchSource()) {
-			mBluetoothMusicModel.requestAudioFocus(false);
-		}
-	}
+        return mBluetoothMusicModel.isPlay ? 0 : 1;
+    }
+
+    @Override
+    public void pauseByLauncher() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = true;
+        mBluetoothMusicModel.AVRCPControl(AudioControl.CONTROL_PAUSE);
+    }
+
+    @Override
+    public void playByLauncher() throws RemoteException {
+        mBluetoothMusicModel.isHandPuse = false;
+        if (mBluetoothMusicModel.tryToSwitchSource()) {
+            mBluetoothMusicModel.requestAudioFocus(false);
+        }
+    }
 
     @Override
     public void doRequestAudioFocus() throws RemoteException {
